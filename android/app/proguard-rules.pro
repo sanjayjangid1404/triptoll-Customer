@@ -1,0 +1,4 @@
+-keep class com.razorpay.** { *; }
+-dontwarn com.razorpay.**
+-keepclassmembers class * { @com.razorpay.* <methods>; }
+-keep class proguard.annotation.** { *; }

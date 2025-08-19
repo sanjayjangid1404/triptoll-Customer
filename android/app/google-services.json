@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "726901716400",
+    "project_id": "triptoll",
+    "storage_bucket": "triptoll.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726901716400:android:a1a4326d731d7224101275",
+        "android_client_info": {
+          "package_name": "customers.triptoll.in"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9tXluerb-jMevScjrcHo2nqYuOaMGR5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726901716400:android:d758a7badf3ecafb101275",
+        "android_client_info": {
+          "package_name": "service.triptoll.in"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9tXluerb-jMevScjrcHo2nqYuOaMGR5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
