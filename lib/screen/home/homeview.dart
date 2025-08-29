@@ -60,7 +60,6 @@ class _HomePageState extends State<HomePage> {
 
 
   // 🔸 Jaipur fallback location
-  final LatLng _defaultJaipur = const LatLng(26.9124, 75.7873);
 
 
 
@@ -186,27 +185,7 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-  Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String query) async {
-    if (query.isEmpty) return [];
 
-    final url =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk&components=country:in';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data['status'] == 'OK') {
-        return List<Map<String, dynamic>>.from(data['predictions'].map((prediction) {
-          return {
-            'description': prediction['description'],
-            'place_id': prediction['place_id'],
-          };
-        }));
-      }
-    }
-    return [];
-  }
 
 
   Future<void> _getAddressFromLatLng(double lat, double lng) async {
@@ -863,7 +842,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-         bottomSheet:auhController.latestBookingListResponse!=null && auhController.latestBookingListResponse!.isNotEmpty &&  auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="pending" && auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="delivered" ?
+         bottomSheet:auhController.latestBookingListResponse!=null && auhController.latestBookingListResponse!.isNotEmpty &&  auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="paid" && auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="cancelled" ?
          Container(
            padding: const EdgeInsets.only(top: 20),
            // Space for the drag handle
@@ -975,20 +954,26 @@ class _HomePageState extends State<HomePage> {
                              ),
 
                              auhController.latestBookingListResponse![index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
-                             Row(
-                               mainAxisAlignment: MainAxisAlignment.end,
-                               children: [
+
                                  InkWell(
                                    onTap: (){
                                      Get.find<AuthController>().getBookingDriver(bookingID:auhController.latestBookingListResponse![index]!.id.toString(),isCall: true);
                                    },
                                    child: Padding(
-                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                     child: Text("Track Order",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                                     padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
+                                     child: Container(
+                                       width:double.infinity,
+                                         height:35,
+                                         alignment:Alignment.center,
+
+                                         decoration:BoxDecoration(
+                                           color: AppColors.secondaryGradient,
+                                           borderRadius: BorderRadius.circular(10)
+                                         ),
+                                         child: Text("Track Order",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
                                    ),
                                  )
-                               ],
-                             ):
+                              :
                              Row(
                                mainAxisAlignment: MainAxisAlignment.end,
                                children: [
@@ -1019,204 +1004,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<Map<String, double>> _getPlaceLatLng(String placeId) async {
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk'
-    );
-
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['status'] == 'OK') {
-          final location = data['result']['geometry']['location'];
-          return {
-            'lat': location['lat'],
-            'lng': location['lng'],
-          };
-        }
-      }
-      throw Exception('Failed to get location details');
-    } catch (e) {
-      print('Error getting place details: $e');
-      throw e;
-    }
-  }
-
-  Widget _buildLocationField({
-    required String label,
-    required TextEditingController controller,
-    required VoidCallback onTap,
-  }) {
-    return TextField(
-      controller: controller,
-      readOnly: true,
-      onTap: onTap,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: const Icon(Icons.location_on),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-  }
 }
-
-
-// class LocationPicker extends StatelessWidget {
-//   const LocationPicker({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final GooglePlace googlePlace = GooglePlace("AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk");
-//     final TextEditingController searchController = TextEditingController();
-//
-//     return Scaffold(
-//       appBar: AppBar(title: const Text("Select Location")),
-//       body: Column(
-//         children: [
-//           Padding(
-//             padding: const EdgeInsets.all(12.0),
-//             child: TextField(
-//               controller: searchController,
-//               decoration: InputDecoration(
-//                 hintText: "Search location",
-//                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-//               ),
-//               onChanged: (value) {
-//                 // TODO: Add autocomplete with googlePlace.autocomplete.get(value)
-//               },
-//             ),
-//           ),
-//           const Expanded(
-//             child: Center(
-//               child: Text("Show Google Map here with marker & location picker"),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget showRunningDetailsSheet(BookingListResponse notificationResponse,BuildContext context) {
-//     return  Container(
-//         padding: const EdgeInsets.only(top: 20), // Space for the drag handle
-//         decoration: const BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.only(
-//             topLeft: Radius.circular(20),
-//             topRight: Radius.circular(20),
-//           ),
-//         ),
-//         child: DraggableScrollableSheet(
-//           expand: false,
-//           shouldCloseOnMinExtent: false,
-//
-//           initialChildSize: 0.5, // Initial height (40% of screen)
-//           minChildSize: 0.3, // Minimum height when dragged down
-//           maxChildSize: 0.7, // Maximum height when dragged up
-//           builder: (context, scrollController) {
-//             return SingleChildScrollView(
-//               controller: scrollController,
-//               child: ConstrainedBox(
-//                   constraints: BoxConstraints(
-//                     minHeight: MediaQuery.of(context).size.height * 0.3, // Match minChildSize
-//                   ),child: Container(
-//
-//
-//                 padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-//
-//
-//
-//                 decoration: BoxDecoration(
-//                   borderRadius: BorderRadius.only(topRight: Radius.circular(6),topLeft: Radius.circular(6)),
-//
-//                   color:Colors.white,
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: AppColors.primaryGradient.withOpacity(0.1), // Very light grey
-//                       blurRadius: 20.0,
-//                       spreadRadius: 8.0,
-//                       offset: Offset(0, 5),),
-//                     BoxShadow(
-//                       color: AppColors.secondaryGradient.withOpacity(0.9), // Inner white glow
-//                       blurRadius: 10.0,
-//                       spreadRadius: -5.0, // Negative spread for inner effect
-//                       offset: Offset(0, 0),
-//                     ),
-//                   ],
-//
-//                 ),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: [
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-//                       child: Align(
-//                           alignment: Alignment.centerLeft,
-//                           child: Text("Current Order",style: TextStyle(fontSize: 18,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.start,)),
-//                     ),
-//
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical: 4),
-//                       child: Row(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Icon(Icons.location_on_outlined,color: Colors.green,size: 25,),
-//                           SizedBox(width: 5,),
-//                           Expanded(child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//
-//                               Text(notificationResponse.pickupAddress!,maxLines: 2,style: TextStyle(fontSize: 13),),
-//                             ],
-//                           ))
-//
-//                         ],
-//                       ),
-//                     ),
-//
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 0.0),
-//                       child: Row(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Icon(Icons.location_on_outlined,color: Colors.red,size: 25,),
-//                           SizedBox(width: 5,),
-//                           Expanded(child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//
-//                               Text(notificationResponse.dropAddress!,maxLines: 2,style: TextStyle(fontSize: 13),),
-//                             ],
-//                           ))
-//
-//                         ],
-//                       ),
-//                     ),
-//
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.end,
-//                       children: [
-//                         InkWell(
-//                           onTap: (){
-//                             Get.find<AuthController>().getBookingDriver(bookingID:notificationResponse.id.toString(),isCall: true);
-//                           },
-//                           child: Padding(
-//                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-//                             child: Text("Track Order",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
-//                           ),
-//                         )
-//                       ],
-//                     )
-//                   ],
-//                 ),
-//               )),
-//             );
-//           },
-//         ),
-//
-//     );
-//   }
-// }
 

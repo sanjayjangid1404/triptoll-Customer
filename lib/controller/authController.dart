@@ -226,6 +226,7 @@ class AuthController extends GetxController implements GetxService
 
   }
 
+  String? activeBookingID;
   Future<void>bookingNow({
     required String amount,
     required String categoryId,
@@ -274,10 +275,20 @@ class AuthController extends GetxController implements GetxService
     {
       isShowDriver = true;
 
-      showCustomSnackBar("Booking Process",isError: false);
-      getBookingDriver(bookingID: response.body["id"].toString());
-      newBookingID = response.body["id"].toString();
-      notifyDriver(newBookingID);
+      showCustomSnackBar("Booking Process", isError: false);
+
+      String newId = response.body["id"].toString();
+
+      // सिर्फ तब update करना है जब नई ID आए
+      if (activeBookingID != newId) {
+        activeBookingID = newId;
+        newBookingID = newId;
+        notifyDriver(newBookingID);
+      }
+
+      // सिर्फ activeBookingID वाली call ही चलानी है
+      getBookingDriver(bookingID: activeBookingID);
+
 
 
       update();
@@ -946,68 +957,64 @@ class AuthController extends GetxController implements GetxService
 
   }
   BookingdriverResponse? driver = BookingdriverResponse();
+  LatLng? driverCurrentLocation;
 
-  Future<void>getBookingDriver({String? bookingID,bool? isCall = false})
-  async {
+  Future<void> getBookingDriver({String? bookingID, bool? isCall = false}) async {
+    // अगर ये bookingID अब active नहीं है तो return कर दो
+    if (activeBookingID != null && bookingID != activeBookingID) {
+      print("Skipping old bookingID: $bookingID");
+      return;
+    }
 
     isBookingDetails = true;
-
     update();
-    print(getUserDeviceID());
     driver = null;
 
-
-
-   // vehicleData = null;
     Response response = await authRepo.getBookingDriver(bookingID: bookingID);
 
-
-
-
-    if(response.statusCode==200 || response.statusCode ==400)
-    {
-
-
-      if(response.body["status"]) {
+    if (response.statusCode == 200 || response.statusCode == 400) {
+      if (response.body["status"]) {
         driver = BookingdriverResponse.fromJson(response.body);
 
-        if(isCall!){
-          Driver driver2 = Driver(name: driver!.driverDetails!.firstName!, vehicleType: driver!.driverDetails!.vehicleType!, vehicleName: driver!.driverDetails!.vehicleNumber??"", mobileNumber: driver!.driverDetails!.contactNumber??"",id: driver!.driverDetails!.id??"");
+        if (isCall!) {
+          Driver driver2 = Driver(
+            name: driver!.driverDetails!.firstName!,
+            vehicleType: driver!.driverDetails!.vehicleType!,
+            vehicleName: driver!.driverDetails!.vehicleNumber ?? "",
+            mobileNumber: driver!.driverDetails!.contactNumber ?? "",
+            id: driver!.driverDetails!.id ?? "",
+          );
 
-          getBookingDetails(bookingID:bookingID,driverLng:driver!.driverDetails!.long,driverLat: driver!.driverDetails!.lat,driver: driver2 );
 
+          driverCurrentLocation = LatLng(double.parse(driver!.driverDetails!.lat.toString()),double.parse(driver!.driverDetails!.long.toString()));
+          update();
+          getBookingDetails(
+            bookingID: bookingID,
+            driverLng: driver!.driverDetails!.long,
+            driverLat: driver!.driverDetails!.lat,
+            driver: driver2,
+          );
+        }
+      } else {
+        // सिर्फ active booking पर ही दोबारा call करना
+        if (bookingID == activeBookingID) {
+          getBookingDriver(bookingID: bookingID);
         }
       }
-      else {
-      //  showCustomSnackBar(response.body["message"]);
+
+      update();
+    } else if (response.statusCode == 404) {
+      if (bookingID == activeBookingID) {
         getBookingDriver(bookingID: bookingID);
       }
-
-
-     // getAllBookingLoading = false;
-      update();
-    }else if(response.statusCode ==404){
-     // showCustomSnackBar(response.body["message"]);
-      getBookingDriver(bookingID: bookingID);
-    }
-    else {
-
-
-      // dynamic data = jsonDecode(response.body);
-
+    } else {
       ApiChecker.checkApi(response);
-
-
-
-
     }
 
     isBookingDetails = false;
     update();
-
-
-
   }
+
 
 
 

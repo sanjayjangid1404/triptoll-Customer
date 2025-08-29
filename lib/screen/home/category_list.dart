@@ -1118,7 +1118,7 @@ class _CategoryListState extends State<CategoryList> {
           const SizedBox(height: 20),
 
           // Driver info (shown when found)
-          if (authController.driver==null) ...[
+          if (authController.driver==null || authController.driver!.driverDetails==null) ...[
             const Text(
               'Finding you a driver',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

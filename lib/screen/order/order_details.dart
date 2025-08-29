@@ -210,7 +210,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
                 SizedBox(height: 30,),
 
-                authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "new"  ?  InkWell(
+                authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "new" || authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "accpeted"  || authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "accepted" ?  InkWell(
                   onTap: (){
                     AppContants.showNoteBottomSheet(context,authController,authController.bookingDetailsResponse!.id.toString(),true,Get.back());
 

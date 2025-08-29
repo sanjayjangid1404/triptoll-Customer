@@ -47,6 +47,7 @@ class UserTrackingScreen extends StatefulWidget {
 class _UserTrackingScreenState extends State<UserTrackingScreen> {
   late GoogleMapController _mapController;
   LatLng? _currentUserLocation;
+  AuthController authController = Get.find<AuthController>();
   LatLng? _currentDriverLocation;
   String customOrderId  = "";
   Set<Marker> _markers = {};
@@ -111,21 +112,14 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
   }
 
   void _initializeLocations() {
-    _currentDriverLocation = widget.driverInitialLocation;
+    _currentDriverLocation = authController.driverCurrentLocation?? widget.driverInitialLocation;
 
     if(Get.find<AuthController>().detailsResponse!=null) {
       _addMarkers();
     }
   }
 
-  Future<BitmapDescriptor> _loadCustomMarker2() async {
-    final ByteData data = await rootBundle.load('assets/images/driver_mark.png');
-    final Uint8List bytes = data.buffer.asUint8List();
-    final ui.Codec codec = await ui.instantiateImageCodec(bytes, targetWidth: 48); // Resize to 48px width
-    final ui.FrameInfo frame = await codec.getNextFrame();
-    final ByteData? resizedBytes = await frame.image.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.fromBytes(resizedBytes!.buffer.asUint8List());
-  }
+
 
   @override
   void dispose() {
@@ -136,6 +130,8 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
   }
   void _addMarkers() {
 
+
+    print("_currentDriverLocation=>${authController.driverCurrentLocation?? widget.driverInitialLocation}");
     if(Get.find<AuthController>().detailsResponse!.startTrip.toString() == "no"){
       _markers = {
         Marker(
@@ -152,7 +148,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
         if (_currentDriverLocation != null)
           Marker(
             markerId: const MarkerId('driver_location'),
-            position: _currentDriverLocation!,
+            position: authController.driverCurrentLocation?? widget.driverInitialLocation!,
             infoWindow: const InfoWindow(title: 'Driver'),
             icon: _driverIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange), // Fallback to default if custom icon fails
           ),
@@ -170,7 +166,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
         if (_currentDriverLocation != null)
           Marker(
             markerId: const MarkerId('driver_location'),
-            position: _currentDriverLocation!,
+            position: authController.driverCurrentLocation?? widget.driverInitialLocation!!,
             infoWindow: const InfoWindow(title: 'Driver'),
             icon: _driverIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange), // Fallback to default if custom icon fails
           ),
@@ -235,14 +231,14 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     return (10000000 + random.nextInt(90000000)).toString(); // 8 digit random
   }
 
-  void _openRazorpayPayment() {
+  void _openRazorpayPayment(String id,amount) {
 
     var options = {
-      'key': 'rzp_live_oG0h8ePD7JSECO',
-      'amount': (double.parse(widget.bookingID.totalAmount.toString()) * 100).round(), // Convert to paise
+      'key': 'rzp_live_RAJBCQWCkgqpEb',
+      'amount': amount, // Convert to paise
       'name': 'Triptoll',
       'description': 'Booking Payment',
-      'order_id': customOrderId, // custom 8 digit order id
+      'order_id': id, // custom 8 digit order id
       'prefill': {
         'contact': '${widget.bookingID!.contactNumber??"123123123"}',
         'email': 'tritoll@gmail.com'
@@ -257,6 +253,41 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
     } catch (e) {
       debugPrint('Error: $e');
+    }
+  }
+
+  Future<String?> createRazorpayOrderId({required int amount}) async {
+    const String keyId = 'rzp_live_RAJBCQWCkgqpEb';      // 🔑 Your Key ID
+    const String keySecret = 'DfWgvxPob2CSxM147onlshnF';  // 🔒 Your Key Secret (⚠️ sensitive!)
+
+    final String basicAuth = 'Basic ' + base64Encode(utf8.encode('$keyId:$keySecret'));
+
+    final url = Uri.parse('https://api.razorpay.com/v1/orders');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': basicAuth,
+      },
+      body: jsonEncode({
+        "amount": amount,     // amount in paise (₹500 = 50000)
+        "currency": "INR",
+        "receipt": "receipt_${DateTime.now().millisecondsSinceEpoch}"
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+      print("data=>$data");
+
+      if(data["id"]!=null){
+        _openRazorpayPayment(data['id'].toString(),amount);
+      }
+      return data['id']; // <-- This is the order_id
+    } else {
+      print("Failed to create order: ${response.statusCode} ${response.body}");
+      return null;
     }
   }
 
@@ -302,7 +333,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     try {
       print('Fetching route between $_currentDriverLocation and ${widget.bookingLocation}');
       final route = await _getRouteBetweenPoints(
-        _currentDriverLocation!,
+        authController.driverCurrentLocation?? widget.driverInitialLocation!,
         widget.bookingLocation!,
       );
 
@@ -644,7 +675,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
               bottomSheet:authController.detailsResponse!=null &&  authController.detailsResponse!.orderStatus.toString().toLowerCase() == "delivered"
             ?
               InkWell(
-                onTap: _openRazorpayPayment,
+                onTap: (){createRazorpayOrderId(amount: (double.parse(widget.bookingID.totalAmount.toString()) * 100).round());},
                 child: Container(height: 45,
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -655,7 +686,26 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                   ),
                   child: Text("Pay ${AppContants.rupessSystem} ${widget.bookingID.totalAmount}",style: TextStyle(fontSize: 16,color: Colors.white),),
                 ),
-              ):SizedBox()
+              ):InkWell(
+                onTap: (){
+
+
+                  authController.getBookingDriver(bookingID: widget.bookingID.id.toString(),isCall: false);
+                  _initializeLocations();
+
+                  _startTracking();
+                  },
+                child: Container(height: 45,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.secondaryGradient
+                  ),
+                  child: Text("Track Your Parcel",style: TextStyle(fontSize: 16,color: Colors.white),),
+                ),
+              )
 
           );
             },

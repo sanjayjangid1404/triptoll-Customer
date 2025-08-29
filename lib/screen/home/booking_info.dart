@@ -713,45 +713,7 @@ class _BookingInfoState extends State<BookingInfo> {
                   },
                 ),
                 SizedBox(height: 10,),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: GestureDetector(
-                      onTap: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Stop Location",)),
-                        );
 
-                        if (result != null) {
-                          setState(() {
-                            stopLocations.add({
-                              'lat': result['lat'],
-                              'lng': result['lng'],
-                              'address': result['address'],
-                            });
-
-                            final newIndex = stopLocations.length - 1;
-                            houseNoCt[newIndex] = TextEditingController();
-                            senderName[newIndex] = TextEditingController(text: Get.find<AuthController>().getUserName()??"");
-                            sendMobile[newIndex] = TextEditingController(text: Get.find<AuthController>().getUserPhone()??"");
-                            _addMarkers(); // Update map with stop markers
-                            _getRouteBetweenPoints(pickLat: widget.pickLat,pickLng: widget.pickLng,stopLocations: stopLocations);
-                          });
-                        }
-                      },
-                      child: Row(
-
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.add_circle_outline_outlined, color: Colors.red,size: 30,),
-                          SizedBox(width: 5),
-                          Text("Add Stop", style: TextStyle(fontSize: 16)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(height: 10,),
                 // Divider(
                 //   color: Colors.grey,
