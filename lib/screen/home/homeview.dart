@@ -94,6 +94,15 @@ class _HomePageState extends State<HomePage> {
 
       startBookingRefresh();
       _getCurrentLocation();
+      Get.snackbar(
+        "Booking",
+        "Click on Delivery button to proceed booking",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.blue,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(10),
+        duration: const Duration(seconds: 10),
+      );
       setState(() {
 
       });
@@ -396,12 +405,12 @@ class _HomePageState extends State<HomePage> {
                                   setState(() {
                                     select = 0;
                                   });
-          
+
                                   Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
                                 },
                                 child: Container(
                                 //  margin: EdgeInsets.only(right: 15),
-          
+
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
                                   decoration: BoxDecoration(

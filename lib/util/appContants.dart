@@ -38,11 +38,13 @@ class AppContants
   static String createCustomerURL = "Customer/customerCreate";
   static String forgetPasswordURL = "User/forgotPasswordOTP";
   static String updatePasswordURL = "User/updatePassword";
+  static String driverFAQURl = "Home/getFaq/customer";
   static String cancelOrderURL = "Booking/orderCancelled";
   static String saveBookingURl = "Booking/saveBooking";
   static String orderPaymentURL = "Booking/orderPayment";
   static String notifyDriverURL = "Booking/notifyDrivers";
   static String getAllVehicle = "home/getAllCategory";
+  static String ticketRezURL = "Driver/ticketRezByDriver";
   static String getAllBookingURL = "Booking/getAllBooking";
   static String runningBookingURL = "Booking/check_running_order_customer";
   static String getBookingDetails = "Booking/getBookingDetail";

@@ -37,7 +37,11 @@ class AuthRepo{
     return await apiClient.postMultipartData(
         AppContants.createCustomerURL,body,[]);
   }
+  Future<Response> driverFAQ() async {
 
+    return await apiClient.getData(
+        AppContants.driverFAQURl);
+  }
   Future<Response> forgetPassword(body) async {
     return await apiClient.postData(
         AppContants.forgetPasswordURL,body);
@@ -46,6 +50,11 @@ class AuthRepo{
   Future<Response> updatePassword(body) async {
     return await apiClient.postData(
         AppContants.updatePasswordURL,body);
+  }
+  Future<Response> ticketRez(body) async {
+
+    return await apiClient.postMultipartData(
+        AppContants.ticketRezURL,body,[]);
   }
 
   Future<Response> checkPayment({String? bookingID}) async {
@@ -126,9 +135,11 @@ class AuthRepo{
     required String stopCharge,
     required String totalAmount,
     required String totalDistance,
+    required String distance,
     required String vehicleId,
     required String vehicleImg,
     required String vehicleName,
+    required String expectedTime,
   }) async {
     final body = {
       "amount": amount,
@@ -154,10 +165,12 @@ class AuthRepo{
       "stop_address": stopAddress,
       "stop_charge": stopCharge,
       "total_amount": totalAmount,
+      'distance' : distance,
       "total_distance": totalDistance,
       "vehicle_id": vehicleId,
       "vehicle_img": vehicleImg,
       "vehicle_name": vehicleName,
+      "expected_time": expectedTime,
     };
 
     return await apiClient.postData(AppContants.saveBookingURl, body);

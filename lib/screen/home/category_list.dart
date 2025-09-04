@@ -26,11 +26,13 @@ class CategoryList extends StatefulWidget {
 
   double pickLat;
   double pickLng;
+  String distance;
+  String expectedTime;
   Map<int, TextEditingController> houseNoCt = {};
   Map<int, TextEditingController> senderName = {};
   Map<int, TextEditingController> sendMobile = {};
   List<Map<String, dynamic>> stopLocations = [];
-  CategoryList({super.key,required this.pickAddress,required this.pickLat,required this.pickLng
+  CategoryList({super.key,required this.distance,required this.expectedTime,required this.pickAddress,required this.pickLat,required this.pickLng
     ,required this.dropAddress,required this.senderName,required this.sendMobile,required this.houseNoCt,required this.stopLocations});
 
 
@@ -59,10 +61,32 @@ class _CategoryListState extends State<CategoryList> {
   // bool isDiscountApplied = false;
   String selectedPayment = "Online"; // default
 
+  late StreamSubscription _driverStream;
 
   @override
   void initState() {
     super.initState();
+    _driverStream = Stream.periodic(Duration(seconds: 60), (count) => count).listen((count) {
+      if (count >= 10 && Get.find<AuthController>().driver == null) {
+        Get.find<AuthController>().cancelOrder(
+          bookingID: Get.find<AuthController>().newBookingID,
+          reason: "No driver found in 10 minutes",
+          comment: "Auto-cancelled",
+          isOrder: false,
+        );
+        Get.snackbar(
+          "Ride Cancelled",
+          "All drivers are busy, please try after some time",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orangeAccent,
+          colorText: Colors.white,
+          duration: Duration(seconds: 12),
+          margin: EdgeInsets.all(12),
+          borderRadius: 8,
+        );
+        _driverStream.cancel();
+      }
+    });
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -97,6 +121,7 @@ class _CategoryListState extends State<CategoryList> {
 
   @override
   void dispose() {
+    _driverStream.cancel();
     _timer.cancel();
     super.dispose();
   }
@@ -851,8 +876,25 @@ class _CategoryListState extends State<CategoryList> {
                        'totalFare': (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0),
                      };
 
-                     authController.bookingNow(amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0), categoryId: "", categoryName: "", discount: "0", discountPercentage: "0", dropAddress: lastStopLocation["address"], dropAddressHeading: "", dropLat: lastStopLocation["lat"].toString(), dropLong: lastStopLocation["lng"].toString(), paymentType: selectedPayment, pickupAddress: widget.pickAddress, pickupHeading: "", pickupLat: widget.pickLat.toString(), pickupLong: widget.pickLng.toString(),
-                         rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(), receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
+                     authController.bookingNow(
+                         distance: widget.distance,
+                         expectedTime: widget.expectedTime,
+                         amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),
+                         categoryId: "",
+                         categoryName: "",
+                         discount: "0",
+                         discountPercentage: "0",
+                         dropAddress: lastStopLocation["address"],
+                         dropAddressHeading: "",
+                         dropLat: lastStopLocation["lat"].toString(),
+                         dropLong: lastStopLocation["lng"].toString(),
+                         paymentType: selectedPayment,
+                         pickupAddress: widget.pickAddress,
+                         pickupHeading: "",
+                         pickupLat: widget.pickLat.toString(),
+                         pickupLong: widget.pickLng.toString(),
+                         rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
+                         receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
                          totalAmount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0), totalDistance: calculateDistanceWithPickup(
                          pickLat:widget.pickLat,
                          pickLng:  widget.pickLng,

@@ -205,7 +205,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
 
         bottomSheet: InkWell(
           onTap: (){
-            authController.bookingNow(amount: totalFare.toStringAsFixed(0), categoryId: "", categoryName: "", discount: discountAmount.toStringAsFixed(0), discountPercentage: discountPercentage.toStringAsFixed(0), dropAddress: dropAddress, dropAddressHeading: "", dropLat: dropLat.toString(), dropLong: dropLng.toString(), paymentType: "Cash", pickupAddress: pickAddress, pickupHeading: "", pickupLat: pickLat.toString(), pickupLong: pickLng.toString(), rate: rate.toString(), receiverContactNumber: sendMobile, receiverName: sendName, stopAddress: "", stopCharge: "", totalAmount: totalAmount.toStringAsFixed(0), totalDistance: distanceInKm.toStringAsFixed(0), vehicleId: vehicleData.id.toString(), vehicleImg: vehicleData.fileName.toString(), vehicleName: vehicleData.name.toString());
+            authController.bookingNow(distance: '',expectedTime: '',amount: totalFare.toStringAsFixed(0), categoryId: "", categoryName: "", discount: discountAmount.toStringAsFixed(0), discountPercentage: discountPercentage.toStringAsFixed(0), dropAddress: dropAddress, dropAddressHeading: "", dropLat: dropLat.toString(), dropLong: dropLng.toString(), paymentType: "Cash", pickupAddress: pickAddress, pickupHeading: "", pickupLat: pickLat.toString(), pickupLong: pickLng.toString(), rate: rate.toString(), receiverContactNumber: sendMobile, receiverName: sendName, stopAddress: "", stopCharge: "", totalAmount: totalAmount.toStringAsFixed(0), totalDistance: distanceInKm.toStringAsFixed(0), vehicleId: vehicleData.id.toString(), vehicleImg: vehicleData.fileName.toString(), vehicleName: vehicleData.name.toString());
 
 
           },

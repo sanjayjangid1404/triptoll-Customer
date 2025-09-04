@@ -23,6 +23,7 @@ import 'package:triptoll/screen/home/homeview.dart';
 import '../api/api_checker.dart';
 
 import '../model/category_type_response.dart';
+import '../model/faq_response_model.dart';
 import '../model/subCategoryVehicle.dart';
 import '../model/vehicle_data.dart';
 import '../repo/auth_repo.dart';
@@ -63,8 +64,79 @@ class AuthController extends GetxController implements GetxService
 
   File? get image =>_image;
 
+  List<FaqDriverResponse>faqDriverResponse = [];
+  RxBool isDataLoading = false.obs;
+  Future<void>getDriverFAQ()
+  async {
+
+    // isUploading = true;
 
 
+
+
+
+    Response response = await authRepo.driverFAQ();
+    faqDriverResponse = [];
+
+    //  LoginResponse? loginResponse;
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+
+      for(int i=0; i<response.body.length; i++){
+        faqDriverResponse.add(FaqDriverResponse.fromJson(response.body[i]));
+        isDataLoading.value = true;
+      }
+
+
+      update();
+
+
+
+
+
+
+
+
+
+    }
+    else {
+
+
+    }
+
+    // isUploading = false;
+    // Globs.hideHUD();
+    update();
+
+
+
+  }
+  Future<void>ticketRez(body)
+  async {
+
+    Response response = await authRepo.ticketRez(body);
+
+    //  LoginResponse? loginResponse;
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+      showCustomSnackBar("Ticket raise successfully",isError: false);
+
+      Get.back();
+    }
+    else {
+
+
+    }
+
+    update();
+
+
+
+  }
 
 
 
@@ -231,7 +303,7 @@ class AuthController extends GetxController implements GetxService
     required String amount,
     required String categoryId,
     required String categoryName,
-
+    required String expectedTime,
     required String discount,
     required String discountPercentage,
     required String dropAddress,
@@ -254,6 +326,7 @@ class AuthController extends GetxController implements GetxService
     required String vehicleId,
     required String vehicleImg,
     required String vehicleName,
+    required String distance,
   })
   async {
 
@@ -267,7 +340,7 @@ class AuthController extends GetxController implements GetxService
 
 
 
-    Response response = await authRepo.bookNow(amount: amount, categoryId: categoryId, categoryName: categoryName, cusId: getUserID()??"", discount: discount, discountPercentage: discountPercentage, dropAddress: dropAddress, dropAddressHeading: dropAddressHeading, dropLat: dropLat, dropLong: dropLong, paymentType: paymentType, pickupAddress: pickupAddress, pickupHeading: pickupHeading, pickupLat: pickupLat, pickupLong: pickupLong, rate: rate, receiverContactNumber: receiverContactNumber, receiverName: receiverName, senderContactNumber: getUserPhone()??"", senderName: getUserName()??"", stopAddress: stopAddress, stopCharge: stopCharge, totalAmount: totalAmount, totalDistance: totalDistance, vehicleId: vehicleId, vehicleImg: vehicleImg, vehicleName: vehicleName);
+    Response response = await authRepo.bookNow(distance: distance,expectedTime: expectedTime,amount: amount, categoryId: categoryId, categoryName: categoryName, cusId: getUserID()??"", discount: discount, discountPercentage: discountPercentage, dropAddress: dropAddress, dropAddressHeading: dropAddressHeading, dropLat: dropLat, dropLong: dropLong, paymentType: paymentType, pickupAddress: pickupAddress, pickupHeading: pickupHeading, pickupLat: pickupLat, pickupLong: pickupLong, rate: rate, receiverContactNumber: receiverContactNumber, receiverName: receiverName, senderContactNumber: getUserPhone()??"", senderName: getUserName()??"", stopAddress: stopAddress, stopCharge: stopCharge, totalAmount: totalAmount, totalDistance: totalDistance, vehicleId: vehicleId, vehicleImg: vehicleImg, vehicleName: vehicleName);
 
   //  LoginResponse? loginResponse;
 

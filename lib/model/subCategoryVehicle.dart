@@ -22,7 +22,7 @@ class SubCategoryVehicle {
     }
     _status = json['status'];
   }
-  String? _message;
+  dynamic _message;
   List<Data>? _data;
   bool? _status;
 SubCategoryVehicle copyWith({  String? message,

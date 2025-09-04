@@ -33,7 +33,70 @@ class _BookingInfoState extends State<BookingInfo> {
   bool _isRouteDrawn = false;
   bool isActive = false;
   final String _googleMapsApiKey = 'AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk';
+  Future<Map<String, dynamic>> calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) async {
+    const apiKey = "AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk";
 
+    final url =
+    Uri.parse("https://routes.googleapis.com/directions/v2:computeRoutes");
+
+    final headers = {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": apiKey,
+      "X-Goog-FieldMask": "routes.distanceMeters,routes.duration"
+    };
+
+    final body = jsonEncode({
+      "origin": {
+        "location": {
+          "latLng": {"latitude": lat1, "longitude": lon1}
+        }
+      },
+      "destination": {
+        "location": {
+          "latLng": {"latitude": lat2, "longitude": lon2}
+        }
+      },
+      "travelMode": "DRIVE"
+    });
+
+    print("➡️ Sending request to $url");
+    print("➡️ Headers: $headers");
+    print("➡️ Body: $body");
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    print("⬅️ Status Code: ${response.statusCode}");
+    print("⬅️ Response Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      if (data["routes"] != null && data["routes"].isNotEmpty) {
+        final route = data["routes"][0];
+        final distance = route["distanceMeters"];
+        final durationRaw = route["duration"]; // e.g. "5234s"
+
+        // convert seconds → readable format
+        int seconds = int.tryParse(durationRaw.replaceAll("s", "")) ?? 0;
+        int hours = seconds ~/ 3600;
+        int minutes = (seconds % 3600) ~/ 60;
+        String durationText =
+        hours > 0 ? "${hours}h ${minutes}m" : "${minutes}m";
+
+        return {
+          "chosen": {
+            "distanceValue": distance,
+            "durationText": durationText,
+          }
+        };
+      } else {
+        throw Exception("No route found in response: $data");
+      }
+    } else {
+      throw Exception("Failed: ${response.statusCode} - ${response.body}");
+    }
+  }
    Map<int, TextEditingController> houseNoCt = {};
    Map<int, TextEditingController> senderName = {};
    Map<int, TextEditingController> sendMobile = {};
@@ -780,20 +843,47 @@ class _BookingInfoState extends State<BookingInfo> {
                 // SizedBox(height: 10,),
 
                 InkWell(
-                  onTap: (){
+                  onTap: () async {
+                    if (validateFields()) {
+                      try {
+                        // Call the API and wait for result
+                        final result = await calculateDistance(
+                          widget.pickLat,
+                          widget.pickLng,
+                          widget.dropLat,
+                          widget.dropLng,
+                        );
 
-                    print(validateFields());
-                    if(validateFields()){
-                      Get.to(CategoryList(dropAddress: widget.dropAddress,pickAddress: widget.pickAddress,pickLat: widget.pickLat,pickLng: widget.pickLng,sendMobile: sendMobile,senderName: senderName,houseNoCt: houseNoCt,stopLocations: stopLocations,));
-                    }else {
+                        final chosen = result['chosen'];
+                        final km = (chosen['distanceValue'] as int) / 1000.0;
+                        final duration = chosen['durationText'];
+
+                        // Store them in string variables
+                        String distanceText = "${km.toStringAsFixed(2)} KM";
+                        String timeText = duration;
+
+                        print("Distance: $distanceText, Time: $timeText");
+
+                        // Now navigate and pass values
+                        Get.to(CategoryList(
+                          dropAddress: widget.dropAddress,
+                          pickAddress: widget.pickAddress,
+                          pickLat: widget.pickLat,
+                          pickLng: widget.pickLng,
+                          sendMobile: sendMobile,
+                          senderName: senderName,
+                          houseNoCt: houseNoCt,
+                          stopLocations: stopLocations,
+                          distance: distanceText,
+                          expectedTime: timeText,
+                        ));
+                      } catch (e) {
+                        print("Error: $e");
+                        showCustomSnackBar("Failed to calculate distance");
+                      }
+                    } else {
                       showCustomSnackBar("Enter Receiver details");
                     }
-
-                   //
-                    // Get.offAllNamed(RouteHelper.getHomeView());
-
-
-
                   },
                   child: Container(
 
