@@ -22,6 +22,7 @@ import 'package:triptoll/util/custom_snackbar.dart';
 
 import '../../model/booking_list_response.dart';
 import '../widget/nav_bar.dart';
+import 'feedback_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -115,8 +116,6 @@ class _HomePageState extends State<HomePage> {
     stopBookingRefresh(); // Stop when widget is disposed
     super.dispose();
   }
-
-
 
   void _setPosition(LatLng position) {
     setState(() {
@@ -263,7 +262,6 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.only(left: 0.0,right: 8,top: 0),
               child: GestureDetector(
                 onTap: () async {
-                  // TODO: Navigate to forget password screen
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Pick Location",)),
@@ -979,7 +977,9 @@ class _HomePageState extends State<HomePage> {
                                            color: AppColors.secondaryGradient,
                                            borderRadius: BorderRadius.circular(10)
                                          ),
-                                         child: Text("Track Order",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                         child: Text(
+                                           auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
+                                           "Pay ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![0]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
                                    ),
                                  )
                               :

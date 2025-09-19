@@ -764,6 +764,7 @@ class _BookingInfoState extends State<BookingInfo> {
                                   ),
                                 ),
                               ),
+
                             ],
                           ),
                         ),
@@ -823,6 +824,43 @@ class _BookingInfoState extends State<BookingInfo> {
                 ),*/
 
 
+                SizedBox(height: 10,),
+
+                GetBuilder<AuthController>(builder: (authController) {
+                  return CheckboxListTile(value: isActive,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                    activeColor: AppColors.primaryGradient,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isActive = value!;
+                        if(value == true) {
+                          sendMobile[0] =
+                              TextEditingController(
+                                text: authController
+                                    .getUserPhone() ?? '',
+                              );
+                          senderName[0] =
+                              TextEditingController(
+                                text: authController
+                                    .getUserName() ?? '',
+                              );
+                        }else{
+                          sendMobile.remove(0);
+                          senderName.remove(0);
+                        }
+                      });
+
+                    },
+                    title: Text("Use Previous Details",
+                      style: TextStyle(fontSize: 13,
+                          color: Colors.black,
+                          fontFamily: AppFonts.poppinsMedium),),
+
+
+                  );
+                }),
                 SizedBox(height: 10,),
                 
                 // CheckboxListTile(value: isActive,

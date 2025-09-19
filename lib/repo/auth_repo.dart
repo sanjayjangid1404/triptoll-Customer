@@ -62,7 +62,7 @@ class AuthRepo{
         AppContants.checkPaymentURL,{"booking_id":bookingID});
   }Future<Response> cancelOrder({String? bookingID,String? userID,String? reason,String? comment}) async {
     return await apiClient.postData(
-        AppContants.cancelOrderURL,{"booking_id":bookingID,/*"cus_id":userID,"reason":reason,"additional_comment":comment*/});
+        AppContants.cancelOrderURL,{"booking_id":bookingID,"reason":reason,/*"cus_id":userID,"reason":reason,"additional_comment":comment*/});
   }
 
   Future<Response> getAllBooking({String? status,String? limit,String? offset,String? userID}) async {
@@ -76,15 +76,27 @@ class AuthRepo{
           "customer_id":userID!
     });
   }
+  Future<Response> feedBackDriver({String? bookingId,String? driverId,String? rating,String? userID,String? feedback}) async {
+    return await apiClient.postData(AppContants.orderRatingURL,{
+          "cus_id":userID!,
+          "booking_id":bookingId,
+          "driverId":driverId,
+          "rating":rating,
+          "feedback":feedback,});
+  }
 
   Future<Response> getBookingDetails({String? bookingID,String? userID}) async {
-    return await apiClient.getData(
-        "${AppContants.getBookingDetails}/$bookingID?user_type=customer&user_id=$userID");
+    // return await apiClient.getData("${AppContants.getBookingDetails}/$bookingID?user_type=customer&user_id=$userID");
+    return await apiClient.getDataWithBody(AppContants.getBookingDetails, {
+          "booking_id":bookingID.toString()});
   }
 
   Future<Response> getBookingDriver({String? bookingID}) async {
     return await apiClient.getData(
         "${AppContants.driverDetailsURL}?booking_id=$bookingID");
+  }
+  Future<Response> getFaqList() async {
+    return await apiClient.getData(AppContants.faqListURL);
   }
 
   Future<Response> getCategorySub(String id) async {

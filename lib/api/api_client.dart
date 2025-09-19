@@ -61,6 +61,46 @@ class ApiClient extends GetxService {
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
+  Future<Response> postData(String uri, dynamic body, {Map<String, String>? headers}) async {
+    try {
+      if(Foundation.kDebugMode) {
+        print('====> API Call: ${appBaseUrl!+uri}\nHeader: $_mainHeaders');
+        print('====> API Body: ${jsonEncode(body)}');
+      }
+      Http.Response _response = await Http.post(
+        Uri.parse(appBaseUrl!+uri),
+        body: jsonEncode(body),
+        headers: headers ?? _mainHeaders,
+      ).timeout(Duration(seconds: timeoutInSeconds));
+      return handleResponse(_response, uri);
+    } catch (e) {
+      return Response(statusCode: 1, statusText: noInternetMessage);
+    }
+  }
+  Future<Response> getDataWithBody(String uri, dynamic body, {Map<String, String>? headers}) async {
+    try {
+      if (Foundation.kDebugMode) {
+        print('====> API Call (GET with body): ${appBaseUrl + uri}\nHeader: $_mainHeaders');
+        print('====> API Body: ${jsonEncode(body)}');
+      }
+
+      Http.Request request = Http.Request(
+        "GET",
+        Uri.parse(appBaseUrl + uri),
+      );
+
+      request.body = jsonEncode(body);
+      request.headers.addAll(headers ?? _mainHeaders!);
+
+      Http.StreamedResponse streamedResponse = await request.send().timeout(Duration(seconds: timeoutInSeconds));
+      Http.Response response = await Http.Response.fromStream(streamedResponse);
+
+      return handleResponse(response, uri);
+    } catch (e) {
+      print('------------${e.toString()}');
+      return Response(statusCode: 1, statusText: noInternetMessage);
+    }
+  }
 
   Future<Response> getDataOther(String uri, {Map<String, dynamic>? query, Map<String, String>? headers}) async {
     try {
@@ -78,22 +118,6 @@ class ApiClient extends GetxService {
     }
   }
 
-  Future<Response> postData(String uri, dynamic body, {Map<String, String>? headers}) async {
-    try {
-      if(Foundation.kDebugMode) {
-        print('====> API Call: ${appBaseUrl!+uri}\nHeader: $_mainHeaders');
-        print('====> API Body: ${jsonEncode(body)}');
-      }
-      Http.Response _response = await Http.post(
-        Uri.parse(appBaseUrl!+uri),
-        body: jsonEncode(body),
-        headers: headers ?? _mainHeaders,
-      ).timeout(Duration(seconds: timeoutInSeconds));
-      return handleResponse(_response, uri);
-    } catch (e) {
-      return Response(statusCode: 1, statusText: noInternetMessage);
-    }
-  }
 
   Future<Response> facePost(String uri, dynamic body, {Map<String, String>? headers}) async {
     try {

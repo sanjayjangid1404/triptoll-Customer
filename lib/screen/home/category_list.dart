@@ -41,7 +41,7 @@ class CategoryList extends StatefulWidget {
   State<CategoryList> createState() => _CategoryListState();
 }
 
-class _CategoryListState extends State<CategoryList> {
+class _CategoryListState extends State<CategoryList>  with SingleTickerProviderStateMixin{
   int selectIndex = 0;
   int selectItem = 0;
   Data? selectData;
@@ -62,12 +62,26 @@ class _CategoryListState extends State<CategoryList> {
   String selectedPayment = "Online"; // default
 
   late StreamSubscription _driverStream;
-
+  double _progress = 1.0;
+  Duration _remaining = const Duration(minutes: 10);
+  void _startTimer() {
+    const total = 600; // 10 min in seconds
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remaining.inSeconds <= 1) {
+        timer.cancel();
+      } else {
+        setState(() {
+          _remaining = _remaining - const Duration(seconds: 1);
+          _progress = _remaining.inSeconds / total;
+        });
+      }
+    });
+  }
   @override
   void initState() {
     super.initState();
     _driverStream = Stream.periodic(Duration(seconds: 60), (count) => count).listen((count) {
-      if (count >= 10 && Get.find<AuthController>().driver == null) {
+      if (count >= 9 && Get.find<AuthController>().driver == null) {
         Get.find<AuthController>().cancelOrder(
           bookingID: Get.find<AuthController>().newBookingID,
           reason: "No driver found in 10 minutes",
@@ -118,7 +132,11 @@ class _CategoryListState extends State<CategoryList> {
 
   }
 
-
+  String _format(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return "$m:$s";
+  }
   @override
   void dispose() {
     _driverStream.cancel();
@@ -473,8 +491,6 @@ class _CategoryListState extends State<CategoryList> {
                           polylines: _polylines,
                           myLocationEnabled: true,
                           myLocationButtonEnabled: false,
-
-                          // Map interaction controls
                           zoomGesturesEnabled: true,
                           scrollGesturesEnabled: true,
                           tiltGesturesEnabled: true,
@@ -644,6 +660,36 @@ class _CategoryListState extends State<CategoryList> {
                                     ),
                                   );
                                 },
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text('Total distance  :-'),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(widget.distance,maxLines: 2,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14
+                                    ),),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text('Expected Time :-'),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(widget.expectedTime,maxLines: 2,style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14
+                                  ),),
+                                ],
                               ),
                              /* Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -901,7 +947,7 @@ class _CategoryListState extends State<CategoryList> {
                          stops:  widget.stopLocations
                      ).toStringAsFixed(0), vehicleId: authController.vehicleData!.data![selectIndex].id??"", vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
                          vehicleName: authController.vehicleData!.data![selectIndex].name??"");
-
+                     _startTimer();
                      print(bookingData);
 
 
@@ -1172,7 +1218,41 @@ class _CategoryListState extends State<CategoryList> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),
-            const CircularProgressIndicator(),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 1.0, end: _progress),
+              duration: const Duration(milliseconds: 500),
+              builder: (context, value, child) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: CircularProgressIndicator(
+                        value: value,
+                        strokeWidth: 8,
+                        backgroundColor: Colors.grey.shade300,
+                        color: Colors.red,
+                      ),
+                    ),
+                    AnimatedScale(
+                      scale: 1 + (1 - value) * 0.05, // slight scale effect
+                      duration: const Duration(milliseconds: 500),
+                      child: Text(
+                        _format(_remaining),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            // const CircularProgressIndicator(),
             const SizedBox(height: 20),
           ] else ...[
             Row(

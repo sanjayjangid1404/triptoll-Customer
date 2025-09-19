@@ -20,6 +20,7 @@ import 'controller/authController.dart';
 import 'util/get_di.dart' as di;
 import 'package:triptoll/util/appImage.dart';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,13 +35,17 @@ void main() async{
 
   await di.init();
   await Firebase.initializeApp();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
 
     }
   });
-
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
   /* await FaceCamera.initialize();
   await Firebase.initializeApp();*/
   runApp( MyApp());

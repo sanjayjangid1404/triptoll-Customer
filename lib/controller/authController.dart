@@ -23,6 +23,7 @@ import 'package:triptoll/screen/home/homeview.dart';
 import '../api/api_checker.dart';
 
 import '../model/category_type_response.dart';
+import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
 import '../model/subCategoryVehicle.dart';
 import '../model/vehicle_data.dart';
@@ -49,6 +50,7 @@ class AuthController extends GetxController implements GetxService
   BookingDetailsResponse? bookingDetailsResponse = BookingDetailsResponse();
   List<BookingListResponse?> bookingListResponse = [];
   List<BookingListResponse?> latestBookingListResponse = [];
+  List<FaqModel?> faqLIstResponse = [];
   VehicleData? vehicleData = VehicleData();
   int? getIndex;
   List<String>banners = ["https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLifetime-Family-Plan-offer-slider.1c6725bf.webp&w=3840&q=75",
@@ -207,29 +209,32 @@ class AuthController extends GetxController implements GetxService
 
   //  LoginResponse? loginResponse;
 
-    if(response.statusCode==200 || response.statusCode ==400)
+    if(response.statusCode== 200 || response.statusCode ==400)
     {
+      if(response.body["status"].toString() == "false"){
+        showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
+      }else{
+        showCustomSnackBar(response.body["msg"], getXSnackBar: false,isError: false);
+        // loginResponse = LoginResponse.fromJson(response.body);
+        // _lResponse = LoginResponse.fromJson(response.body);
+        authRepo.saveUserToken(response.body['token']);
+        authRepo.saveUserName(response.body['name']);
+        authRepo.saveUserEmail(response.body['email']);
+        authRepo.saveUserPhone(response.body['contact_number']);
+        // authRepo.saveUserPassword(password);
+        authRepo.saveUserId(response.body['id'].toString());
+        // if(response.body["success"]) {
+        //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
+        // }
+        Get.offAllNamed(RouteHelper.getHomeView());
 
-      showCustomSnackBar(response.body["msg"], getXSnackBar: false,isError: false);
-      // loginResponse = LoginResponse.fromJson(response.body);
-      // _lResponse = LoginResponse.fromJson(response.body);
-       authRepo.saveUserToken(response.body['token']);
-       authRepo.saveUserName(response.body['name']);
-       authRepo.saveUserEmail(response.body['email']);
-       authRepo.saveUserPhone(response.body['contact_number']);
-      // authRepo.saveUserPassword(password);
-      authRepo.saveUserId(response.body['id'].toString());
-      // if(response.body["success"]) {
-      //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
-      // }
-      Get.offAllNamed(RouteHelper.getHomeView());
 
+        _image = null;
+      }
 
-      _image = null;
     }
     else {
-
-
+      showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
       // dynamic data = jsonDecode(response.body);
 
       ApiChecker.checkApi(response);
@@ -501,20 +506,23 @@ class AuthController extends GetxController implements GetxService
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
-
-      showCustomSnackBar(response.body["msg"], getXSnackBar: false,isError: false);
-      // loginResponse = LoginResponse.fromJson(response.body);
-      // _lResponse = LoginResponse.fromJson(response.body);
-      authRepo.saveUserToken(response.body['token']);
-      authRepo.saveUserName(response.body['name']);
-      authRepo.saveUserEmail(response.body['email']??"");
-      authRepo.saveUserPhone(response.body['contact_number']);
-      // authRepo.saveUserPassword(password);
-      authRepo.saveUserId(response.body['id'].toString());
-      // if(response.body["success"]) {
-      //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
-      // }
-      Get.offAllNamed(RouteHelper.getHomeView());
+      if(response.body["status"].toString() == "false"){
+        showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
+      }else{
+        showCustomSnackBar(response.body["msg"], getXSnackBar: false,isError: false);
+        // loginResponse = LoginResponse.fromJson(response.body);
+        // _lResponse = LoginResponse.fromJson(response.body);
+        authRepo.saveUserToken(response.body['token']);
+        authRepo.saveUserName(response.body['name']);
+        authRepo.saveUserEmail(response.body['email']??"");
+        authRepo.saveUserPhone(response.body['contact_number']);
+        // authRepo.saveUserPassword(password);
+        authRepo.saveUserId(response.body['id'].toString());
+        // if(response.body["success"]) {
+        //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
+        // }
+        Get.offAllNamed(RouteHelper.getHomeView());
+      }
 
       update();
     }
@@ -609,6 +617,34 @@ class AuthController extends GetxController implements GetxService
 
 
 
+      ApiChecker.checkApi(response);
+      isRegistration = false;
+      update();
+
+      return null;
+
+    }
+
+
+
+
+
+  }
+  Future<dynamic>feedBackFun({rating, feedback, driverId, bookingId, userID}) async {
+
+    update();
+    Response response = await authRepo.feedBackDriver(userID: userID,bookingId: bookingId,driverId: driverId,feedback: feedback,rating:rating );
+
+    print(response.body);
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+      update();
+      showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
+      return response.body;
+
+    }
+    else {
       ApiChecker.checkApi(response);
       isRegistration = false;
       update();
@@ -924,7 +960,7 @@ class AuthController extends GetxController implements GetxService
 
 
 
-
+    print('::::::::::${response.body.toString()}');
     if(response.statusCode==200 || response.statusCode ==400)
     {
 
@@ -937,13 +973,15 @@ class AuthController extends GetxController implements GetxService
 
         print("driverLat!=>$driverLat!");
         print("driverLng!=>$driverLng!");
+        print("driverLng!=>${bookingDetailsResponse!.startTrip}!");
         if(bookingDetailsResponse!.startTrip.toString().toLowerCase() == "yes"){
           Get.to(UserTrackingScreen(
               driver: driver!,
               bookingID: bookingDetailsResponse!,
               bookingIdNew: bookingID!,
               bookingLocation: LatLng(double.parse(bookingDetailsResponse!.dropLat!), double.parse(bookingDetailsResponse!.dropLong!)), driverInitialLocation: LatLng(double.parse(driverLat), double.parse(driverLng))));
-        }else {
+        }
+        else {
           Get.to(UserTrackingScreen(
               driver: driver!,
               bookingID: bookingDetailsResponse!,
@@ -1030,6 +1068,7 @@ class AuthController extends GetxController implements GetxService
 
   }
   BookingdriverResponse? driver = BookingdriverResponse();
+  FaqModel? faqModel = FaqModel();
   LatLng? driverCurrentLocation;
 
   Future<void> getBookingDriver({String? bookingID, bool? isCall = false}) async {
@@ -1085,6 +1124,32 @@ class AuthController extends GetxController implements GetxService
     }
 
     isBookingDetails = false;
+    update();
+  }
+
+  Future<void>getFaqListFunction() async {
+
+    update();
+    Response response = await authRepo.getFaqList();
+
+
+
+    faqLIstResponse = [];
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+
+      for(int i=0; i<response.body.length; i++){
+        faqLIstResponse.add( FaqModel.fromJson(response.body[i]));
+      }
+
+      update();
+    }
+    else {
+
+      ApiChecker.checkApi(response);
+
+    }
     update();
   }
 

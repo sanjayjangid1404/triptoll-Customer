@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/controller/authController.dart';
@@ -47,8 +48,10 @@ class AppContants
   static String ticketRezURL = "Driver/ticketRezByDriver";
   static String getAllBookingURL = "Booking/getAllBooking";
   static String runningBookingURL = "Booking/check_running_order_customer";
+  static String orderRatingURL = "Booking/orderRating";
   static String getBookingDetails = "Booking/getBookingDetail";
   static String driverDetailsURL = "Driver/getDriverDetails";
+  static String faqListURL = "Home/getFaq/customer";
   static String categoryVehicleURL = "home/getVehicleByCategoryId/";
   static String verifyOtpURl = "verify-otp";
   static String myComplaintURl = "get-my-complaints";
@@ -293,6 +296,17 @@ class AppContants
     TextEditingController _noteController = TextEditingController();
     TextEditingController _reasonController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
+    final List<String> reasons = [
+      'Change of plan',
+      'Wrong details entered',
+      'Price-related issues',
+      'Long wait time',
+      'Alternative arrangement',
+      'Last-minute emergencies',
+      'Other',
+    ];
+
+    String? selectedReason;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -317,21 +331,44 @@ class AppContants
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 12),
-              TextFormField(
-                controller: _reasonController,
-                maxLines: 4,
+              // TextFormField(
+              //   controller: _reasonController,
+              //   maxLines: 4,
+              //   decoration: InputDecoration(
+              //     hintText: "Write reason...",
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //   ),
+              //   validator: (value) {
+              //     if (value == null || value.trim().isEmpty) {
+              //       return "Note can't be empty";
+              //     }
+              //     return null;
+              //   },
+              // ),
+              DropdownButtonFormField<String>(
                 decoration: InputDecoration(
-                  hintText: "Write reason...",
+                  labelText: 'Select a reason',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Note can't be empty";
-                  }
-                  return null;
+                value: selectedReason,
+                items: reasons.map((reason) {
+                  return DropdownMenuItem<String>(
+                    value: reason,
+                    child: Text(reason),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  // setState(() {
+                    selectedReason = value;
+                  // });
                 },
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Please select a reason' : null,
               ),
               SizedBox(height: 16),
               Text(
@@ -358,10 +395,23 @@ class AppContants
               SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: () {
-
-                  authController.cancelOrder(bookingID: bookingID,reason: _reasonController.text,comment: _noteController.text,isOrder:isOrder);
-                  back;
-                  back;
+                  if(selectedReason == null || selectedReason!.isEmpty) {
+                    Get.snackbar(
+                      'Error',
+                      'Please select a reason',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }else{
+                    authController.cancelOrder(bookingID: bookingID,
+                        reason: selectedReason!,
+                        comment: _noteController.text,
+                        isOrder: isOrder);
+                    back;
+                    back;
+                  }
                 },
 
                 label: Text("Cancel",style: TextStyle(fontSize: 14,color: Colors.white),),

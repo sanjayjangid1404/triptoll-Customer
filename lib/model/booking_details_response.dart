@@ -437,9 +437,9 @@ BookingDetailsResponse copyWith({  String? id,
   String? get discountPercentage => _discountPercentage;
   String? get paymentType => _paymentType;
   dynamic get trnId => _trnId;
-  String? get pickupLat => _pickupLat;
-  String? get pickupLong => _pickupLong;
-  String? get pickupAddress => _pickupAddress;
+  dynamic get pickupLat => _pickupLat;
+  dynamic get pickupLong => _pickupLong;
+  dynamic get pickupAddress => _pickupAddress;
   String? get senderName => _senderName;
   String? get senderContactNumber => _senderContactNumber;
   String? get apartmentType => _apartmentType;

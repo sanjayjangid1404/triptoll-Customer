@@ -23,6 +23,7 @@ import 'package:http/http.dart' as http;
 import 'package:triptoll/util/appImage.dart';
 import '../../controller/authController.dart';
 import '../../util/appContants.dart';
+import 'feedback_screen.dart';
 
 class UserTrackingScreen extends StatefulWidget {
   final LatLng bookingLocation;
@@ -200,7 +201,15 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     print("Signature: ${response.signature}");
 
     Get.find<AuthController>().orderPayment(widget.bookingID!.id.toString(),widget.bookingID!.driverId.toString(),response.paymentId.toString(),"success",context,customOrderId);
-
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) =>  FeedbackBottomSheet(bookingID: widget.bookingID,),
+    );
     // Navigate to success screen or process booking
     // Get.to(ReviewBooking(data: bookingData));
   }

@@ -59,11 +59,12 @@ dependencies:
   smooth_page_indicator :
   quickalert: ^1.1.0
   flutter_animation_progress_bar:
-
-
+  firebase_crashlytics: ^5.0.1
   google_maps_flutter :
   geolocator: ^10.0.0
   geocoding: ^2.1.1
+  flutter_html:
+  flutter_rating_bar: ^4.0.1
 
 
   google_maps_webservice :
@@ -101,7 +102,7 @@ flutter:
 
   assets:
     - assets/images/
-
+    - assets/
 
   fonts:
     - family: Poppins

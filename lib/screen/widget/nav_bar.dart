@@ -5,7 +5,10 @@ import 'package:triptoll/screen/home/order_list.dart';
 
 import '../payment/payment_list.dart';
 import '../sideMenu_item/contact_us.dart';
+import '../sideMenu_item/faq_list_screen.dart';
+import '../sideMenu_item/privacy.dart';
 import '../sideMenu_item/profile_view.dart';
+import '../sideMenu_item/terms_condition.dart';
 
 class NavBar extends StatelessWidget {
   @override
@@ -64,7 +67,7 @@ class NavBar extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.info_outline),
               title: Text('FAQ'),
-              onTap: () => null,
+              onTap: () => Get.to(FrequentlyAskedQuestionsScreen()),
             ),
             ListTile(
               leading: Icon(Icons.contact_page_outlined),
@@ -74,13 +77,13 @@ class NavBar extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.policy_outlined),
               title: Text('Privacy Policy'),
-              onTap: () => null,
+              onTap: () => Get.to(PrivacyPolicyPage()),
             ),
 
             ListTile(
               leading: Icon(Icons.policy_outlined),
               title: Text('Terms And Conditions'),
-              onTap: () => null,
+              onTap: () => Get.to(TermsAndCondition()),
             ),
             ListTile(
               leading: Icon(Icons.policy_outlined),
