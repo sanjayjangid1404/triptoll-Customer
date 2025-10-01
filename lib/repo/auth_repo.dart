@@ -42,6 +42,11 @@ class AuthRepo{
     return await apiClient.getData(
         AppContants.driverFAQURl);
   }
+  Future<Response> checkTicketLimits(body) async {
+
+    return await apiClient.postMultipartData(
+        AppContants.checkTicketLimit,body,[]);
+  }
   Future<Response> forgetPassword(body) async {
     return await apiClient.postData(
         AppContants.forgetPasswordURL,body);
@@ -103,6 +108,14 @@ class AuthRepo{
     return await apiClient.getData(
         AppContants.categoryVehicleURL+id);
   }
+  Future<Response> getWalletHistory({String? userID}) async {
+    print("call");
+    return await apiClient.postMultipartData(
+        "${AppContants.getWalletHistoryURL}",{
+      "user_id":userID.toString(),
+      "user_type":"customer",
+    },[]);
+  }
 
   Future<Response> notifyDriver(String id) async {
     return await apiClient.postData(
@@ -119,6 +132,26 @@ class AuthRepo{
           "razorpay_payment_id":key,
           "payment_status":status,
           "order_id":orderID,
+    });
+  }
+  Future<Response> orderPaymentWallet({String? id,String? driverID,String? key,String? status,String? orderID}) async {
+    return await apiClient.postData(
+        AppContants.orderPaymentURL,{
+          "booking_id":id,
+          "driver_id":driverID,
+          "razorpay_payment_id":key,
+          "payment_status":status,
+          "payment_type":'wallet',
+          "order_id":orderID,
+    });
+  }
+  Future<Response> addWalletPayment({String? customerID,String? amount,String? trnId}) async {
+    return await apiClient.postData(
+        AppContants.addCustomerWalletURL,{
+          "customer_id":customerID,
+          "amount":amount,
+          "payment_type":"wallet recharge",
+          "trn_id":trnId,
     });
   }
 

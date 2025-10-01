@@ -73,7 +73,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
+      Get.find<AuthController>().getWalletHistory();
 
       print(jsonEncode(widget.bookingID!));
 
@@ -182,7 +182,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     // }
 
   }
-
+  bool isChecked = false;
   void isCompleted()async{
 
    // isComplete = await Get.find<AuthController>().checkBookingComplete(bookingID: widget.bookingID.id.toString());
@@ -457,7 +457,15 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
         builder: (authController) {
 
           widget.bookingID = authController.detailsResponse??widget.bookingID;
-
+          double totalAmount = 0;
+          if (authController.walletResponseList.isNotEmpty) {
+            totalAmount = authController.walletResponseList
+                .map((e) {
+              double amount = double.tryParse(e.walletAmount ?? "0") ?? 0;
+              return (e.trnType?.toLowerCase() == "debit") ? -amount : amount;
+            })
+                .reduce((a, b) => a + b);
+          }
 
           if(authController.detailsResponse!=null){
             _addMarkers();
@@ -680,22 +688,71 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                   ),
                 ],
               ),
-
               bottomSheet:authController.detailsResponse!=null &&  authController.detailsResponse!.orderStatus.toString().toLowerCase() == "delivered"
             ?
-              InkWell(
-                onTap: (){createRazorpayOrderId(amount: (double.parse(widget.bookingID.totalAmount.toString()) * 100).round());},
-                child: Container(height: 45,
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: AppColors.secondaryGradient
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  (double.parse(widget.bookingID.totalAmount.toString()) <= totalAmount && totalAmount != 0.00) ?
+                Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                  children: [
+                    Checkbox(
+                      visualDensity: VisualDensity.compact,
+                      value: isChecked,
+                      onChanged: (value) {
+                        setState(() {
+                          isChecked = value ?? false;
+                        });
+                      },
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Wallet Amount",
+                          style: TextStyle(fontSize: 16,fontWeight: ui.FontWeight.w500),
+                        ),
+                        Text(
+                          "₹${totalAmount.toStringAsFixed(2)}",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ],
+                                ),
+                ) : SizedBox.shrink(),
+                  InkWell(
+                    onTap: (){
+                      String randomNumber = "";
+                      final random = Random();
+                      int number = 10000000 + random.nextInt(90000000);
+                      setState(() {
+                        randomNumber = number.toString();
+                      });
+                      isChecked == false ?
+                      createRazorpayOrderId(amount: (double.parse(widget.bookingID.totalAmount.toString()) * 100).round()) :
+                      Get.find<AuthController>().orderPaymentWithWallet(widget.bookingID!.id.toString(),widget.bookingID!.driverId.toString(),randomNumber.toString(),"success",context,customOrderId);
+                      },
+                    child: Container(height: 45,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.secondaryGradient
+                      ),
+                      child: Text("Pay ${AppContants.rupessSystem} ${widget.bookingID.totalAmount}",style: TextStyle(fontSize: 16,color: Colors.white),),
+                    ),
                   ),
-                  child: Text("Pay ${AppContants.rupessSystem} ${widget.bookingID.totalAmount}",style: TextStyle(fontSize: 16,color: Colors.white),),
-                ),
-              ):InkWell(
+                ],
+              ):
+              InkWell(
                 onTap: (){
 
 

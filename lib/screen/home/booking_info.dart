@@ -853,7 +853,7 @@ class _BookingInfoState extends State<BookingInfo> {
                       });
 
                     },
-                    title: Text("Use Previous Details",
+                    title: Text("Use My Details",
                       style: TextStyle(fontSize: 13,
                           color: Colors.black,
                           fontFamily: AppFonts.poppinsMedium),),

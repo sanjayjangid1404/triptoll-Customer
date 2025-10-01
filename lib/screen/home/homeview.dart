@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
 
   double? dropLat;
   double? dropLng;
-
+  AuthController authController = Get.find<AuthController>();
   LatLng? currentLocation;
   GoogleMapController? _mapController;
    Set<Marker> markers = {};
@@ -91,7 +91,11 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
-
+      authController.getDriverFAQ();
+      authController.checkTicket({
+        "driver_id":authController.getUserID().toString(),
+        "user_type":"customer"
+      });
 
       startBookingRefresh();
       _getCurrentLocation();
@@ -387,104 +391,104 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
           
-                    Positioned(
-                      bottom: 0, // distance from bottom
-                      left: 0,
-                      right: 0,
-                      child: SizedBox(
-                        height: 60,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  setState(() {
-                                    select = 0;
-                                  });
-
-                                  Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
-                                },
-                                child: Container(
-                                //  margin: EdgeInsets.only(right: 15),
-
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.35),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.8),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(AppImage.parcelImage,width: 25,),
-                                      SizedBox(width: 4,),
-                                      Text("Delivery",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              /*Expanded(
-                                  flex:1,
-                                  child: InkWell(
-                                    onTap: (){
-                                      setState(() {
-                                        select = 1;
-                                      });
-                                      Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(right: 15),
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.symmetric(vertical: 5),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.35),
-                                            blurRadius: 1,
-                                            spreadRadius: 1,
-                                            // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                                          ),
-                                          BoxShadow(
-                                            color: Colors.white.withOpacity(0.8),
-                                            blurRadius: 1,
-                                            spreadRadius: 1,
-                                            // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(AppImage.logisticImage,width: 25,),
-                                          SizedBox(width: 4,),
-                                          Text("Taxi",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                                        ],
-                                      ),
-                                    )
-                                  ))*/
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   bottom: 0, // distance from bottom
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: SizedBox(
+                    //     height: 60,
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         children: [
+                    //           InkWell(
+                    //             onTap: (){
+                    //               setState(() {
+                    //                 select = 0;
+                    //               });
+                    //
+                    //               Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                    //             },
+                    //             child: Container(
+                    //             //  margin: EdgeInsets.only(right: 15),
+                    //
+                    //               alignment: Alignment.center,
+                    //               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                    //               decoration: BoxDecoration(
+                    //                 borderRadius: BorderRadius.circular(15),
+                    //                 color: Colors.white,
+                    //                 boxShadow: [
+                    //                   BoxShadow(
+                    //                     color: Colors.black.withOpacity(0.35),
+                    //                     blurRadius: 1,
+                    //                     spreadRadius: 1,
+                    //                     // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                    //                   ),
+                    //                   BoxShadow(
+                    //                     color: Colors.white.withOpacity(0.8),
+                    //                     blurRadius: 1,
+                    //                     spreadRadius: 1,
+                    //                     // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //               child: Row(
+                    //                 mainAxisAlignment: MainAxisAlignment.center,
+                    //                 children: [
+                    //                   Image.asset(AppImage.parcelImage,width: 25,),
+                    //                   SizedBox(width: 4,),
+                    //                   Text("Delivery",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           /*Expanded(
+                    //               flex:1,
+                    //               child: InkWell(
+                    //                 onTap: (){
+                    //                   setState(() {
+                    //                     select = 1;
+                    //                   });
+                    //                   Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                    //                 },
+                    //                 child: Container(
+                    //                   margin: EdgeInsets.only(right: 15),
+                    //                   alignment: Alignment.center,
+                    //                   padding: EdgeInsets.symmetric(vertical: 5),
+                    //                   decoration: BoxDecoration(
+                    //                     borderRadius: BorderRadius.circular(15),
+                    //                     color: Colors.white,
+                    //                     boxShadow: [
+                    //                       BoxShadow(
+                    //                         color: Colors.black.withOpacity(0.35),
+                    //                         blurRadius: 1,
+                    //                         spreadRadius: 1,
+                    //                         // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                    //                       ),
+                    //                       BoxShadow(
+                    //                         color: Colors.white.withOpacity(0.8),
+                    //                         blurRadius: 1,
+                    //                         spreadRadius: 1,
+                    //                         // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                    //                       ),
+                    //                     ],
+                    //                   ),
+                    //                   child: Row(
+                    //                     mainAxisAlignment: MainAxisAlignment.center,
+                    //                     children: [
+                    //                       Image.asset(AppImage.logisticImage,width: 25,),
+                    //                       SizedBox(width: 4,),
+                    //                       Text("Taxi",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                    //                     ],
+                    //                   ),
+                    //                 )
+                    //               ))*/
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
           
                     /*Padding(
                       padding: const EdgeInsets.only(left: 30.0,right: 8,top: 25),
@@ -572,9 +576,61 @@ class _HomePageState extends State<HomePage> {
           
                           ],
                         ),*/
-          
                         const SizedBox(height: 0),
-          
+                        SizedBox(
+                          height: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: (){
+                                    setState(() {
+                                      select = 0;
+                                    });
+
+                                    Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                                  },
+                                  child: Container(
+                                    //  margin: EdgeInsets.only(right: 15),
+
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.35),
+                                          blurRadius: 1,
+                                          spreadRadius: 1,
+                                          // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.8),
+                                          blurRadius: 1,
+                                          spreadRadius: 1,
+                                          // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(AppImage.parcelImage,width: 25,),
+                                        SizedBox(width: 4,),
+                                        Text("Delivery",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
                         // Pickup Location
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 0,vertical: 0),

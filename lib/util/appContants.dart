@@ -46,12 +46,15 @@ class AppContants
   static String notifyDriverURL = "Booking/notifyDrivers";
   static String getAllVehicle = "home/getAllCategory";
   static String ticketRezURL = "Driver/ticketRezByDriver";
+  static String checkTicketLimit = "Driver/checkTicketLimit";
   static String getAllBookingURL = "Booking/getAllBooking";
   static String runningBookingURL = "Booking/check_running_order_customer";
   static String orderRatingURL = "Booking/orderRating";
   static String getBookingDetails = "Booking/getBookingDetail";
   static String driverDetailsURL = "Driver/getDriverDetails";
   static String faqListURL = "Home/getFaq/customer";
+  static String getWalletHistoryURL = "Driver/getWalletHistory";
+  static String addCustomerWalletURL = "Customer/addCustomerWallet";
   static String categoryVehicleURL = "home/getVehicleByCategoryId/";
   static String verifyOtpURl = "verify-otp";
   static String myComplaintURl = "get-my-complaints";

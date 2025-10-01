@@ -76,7 +76,8 @@ class BookingDetailsResponse {
       String? acceptTime, 
       dynamic closeTime, 
       String? discount, 
-      String? discountPercentage, 
+      String? paymentStatus,
+      String? discountPercentage,
       String? paymentType, 
       dynamic trnId, 
       String? pickupLat, 
@@ -129,6 +130,7 @@ class BookingDetailsResponse {
     _totalAmount = totalAmount;
     _stopCharge = stopCharge;
     _bookingDate = bookingDate;
+    _paymentStatus = paymentStatus;
     _orderStatus = orderStatus;
     _readStatus = readStatus;
     _acceptTime = acceptTime;
@@ -190,6 +192,7 @@ class BookingDetailsResponse {
     _totalAmount = json['total_amount'];
     _stopCharge = json['stop_charge'];
     _bookingDate = json['booking_date'];
+    _paymentStatus = json['payment_status'];
     _orderStatus = json['order_status']??"";
     _readStatus = json['read_status'];
     _acceptTime = json['accept_time'];
@@ -254,6 +257,7 @@ class BookingDetailsResponse {
   String? _totalAmount;
   String? _stopCharge;
   String? _bookingDate;
+  String? _paymentStatus;
   String? _orderStatus;
   String? _readStatus;
   String? _acceptTime;
@@ -312,6 +316,7 @@ BookingDetailsResponse copyWith({  String? id,
   String? totalAmount,
   String? stopCharge,
   String? bookingDate,
+  String? paymentStatus,
   String? orderStatus,
   String? readStatus,
   String? acceptTime,
@@ -370,6 +375,7 @@ BookingDetailsResponse copyWith({  String? id,
   totalAmount: totalAmount ?? _totalAmount,
   stopCharge: stopCharge ?? _stopCharge,
   bookingDate: bookingDate ?? _bookingDate,
+  paymentStatus: paymentStatus ?? _paymentStatus,
   orderStatus: orderStatus ?? _orderStatus,
   readStatus: readStatus ?? _readStatus,
   acceptTime: acceptTime ?? _acceptTime,
@@ -429,6 +435,7 @@ BookingDetailsResponse copyWith({  String? id,
   String? get totalAmount => _totalAmount;
   String? get stopCharge => _stopCharge;
   String? get bookingDate => _bookingDate;
+  String? get paymentStatus => _paymentStatus;
   String? get orderStatus => _orderStatus;
   String? get readStatus => _readStatus;
   String? get acceptTime => _acceptTime;
@@ -490,6 +497,7 @@ BookingDetailsResponse copyWith({  String? id,
     map['total_amount'] = _totalAmount;
     map['stop_charge'] = _stopCharge;
     map['booking_date'] = _bookingDate;
+    map['payment_status'] = _paymentStatus;
     map['order_status'] = _orderStatus;
     map['read_status'] = _readStatus;
     map['accept_time'] = _acceptTime;

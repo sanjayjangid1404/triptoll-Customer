@@ -28,6 +28,7 @@ class CategoryList extends StatefulWidget {
   double pickLng;
   String distance;
   String expectedTime;
+  int? selectedIndex12;
   Map<int, TextEditingController> houseNoCt = {};
   Map<int, TextEditingController> senderName = {};
   Map<int, TextEditingController> sendMobile = {};
@@ -101,7 +102,6 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
         _driverStream.cancel();
       }
     });
-
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _waitingTime++;
@@ -434,14 +434,35 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     }
     return points;
   }
-
+  List<double> updatedFares = [];
+  List<int> decreaseCount = [];
+  List<bool> hasIncreased = [];
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
       builder: (authController) {
+        if (authController.vehicleData == null ||
+            authController.vehicleData!.data == null ||
+            cachedFaresAndRates == null ||
+            cachedFaresAndRates!.isEmpty) {
+          return Center(
+            child: CircularProgressIndicator(color: AppColors.primaryGradient),
+          );
+        }
+        final length = authController.vehicleData!.data!.length;
 
+// ✅ Initialize lists once, using proper cachedFaresAndRates
+        if (updatedFares.length != length) {
+          updatedFares = List.generate(
+            length,
+                (i) => cachedFaresAndRates?[i]['totalFare']?.toDouble() ?? 0.0,
+          );
+          decreaseCount = List.generate(length, (_) => 0);
+          hasIncreased = List.generate(length, (_) => false);
+
+          print('✅ updatedFares initialized: $updatedFares');
+        }
         //authController.isShowDriver ?
-
         return
           PopScope(
             canPop: false, // Disables default back navigation
@@ -691,6 +712,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                   ),),
                                 ],
                               ),
+                             SizedBox(
+                               height: 40,
+                             )
                              /* Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: GestureDetector(
@@ -803,67 +827,172 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                 SizedBox(height: 15,),
 
               authController.isVehicle ? Center(child: CircularProgressIndicator(color: AppColors.primaryGradient,),):
-              ListView.builder(
+              ListView.builder (
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data!.length:0,
+                itemCount: authController.vehicleData?.data?.length ?? 0,
                 shrinkWrap: true,
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 itemBuilder: (context, index) {
-                  final double baseFare = cachedFaresAndRates?[index]['totalFare'] ?? 0;
-                  final double randomRate = cachedFaresAndRates?[index]['randomRate'] ?? 0;
-                  print(baseFare);
-
-                  return  InkWell(
-                  onTap: (){
-                    setState(() {
-                      selectIndex = index;
-                    });
-                  },
-                  child: Container(
-
-                    margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: selectIndex == index ? AppColors.secondaryGradient: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                            flex:3,
-                            child: Image.network("${AppContants.imageURL}uploaded_files/category_img/${authController.vehicleData!.data![index].fileName}",height: 40,)),
-                        Expanded(
-                            flex:7,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-
-                                      Text("${authController.vehicleData!.data![index].name??""}",style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w700),),
-                                    // Text("${authController.vehicleData!.data![index].model??""}",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
-                                      Text("${authController.vehicleData!.data![index].maxLoad??"0"} Kg",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
-
-
-                                    ],
-                                  ),
+                  final double baseFare =
+                      cachedFaresAndRates?[index]['totalFare']?.toDouble() ?? 0.0;
+                  if (index >= updatedFares.length) {
+                    updatedFares.add(baseFare);
+                  }
+                  if (index >= decreaseCount.length) {
+                    decreaseCount.add(0);
+                  }
+                  if (index >= hasIncreased.length) {
+                    hasIncreased.add(false);
+                  }
+                  return authController.isShowDriver ? SizedBox()
+                  : InkWell(
+                    onTap: () {
+                      setState(() {
+                        selectIndex = index;
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: selectIndex == index
+                              ? AppColors.secondaryGradient
+                              : Colors.grey.shade300,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 🔹 vehicle row
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Image.network(
+                                  "${AppContants.imageURL}uploaded_files/category_img/${authController.vehicleData!.data![index].fileName}",
+                                  height: 40,
                                 ),
-                                Text("${AppContants.rupessSystem}${baseFare.toStringAsFixed(0)
-                                }",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.w700),),
+                              ),
+                              Expanded(
+                                flex: 7,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${authController.vehicleData!.data![index].name ?? ""}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${authController.vehicleData!.data![index].maxLoad ?? "0"} Kg",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black.withOpacity(0.6),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          if (selectIndex == index) ...[
+                            SizedBox(height: 30),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                              GestureDetector(
+                                onTap: () {
+                                  double currentFare = updatedFares[index];
+                                  double minFare = baseFare * 0.90; // max 10% decrease
+
+                                  if (currentFare > baseFare) {
+                                    // Unlimited decrease of 10% (baseFare se upar hai)
+                                    updatedFares[index] -= baseFare * 0.10;
+                                  } else if (currentFare > minFare) {
+                                    // Step-wise decrease until 10% total
+                                    if (decreaseCount[index] == 0)
+                                      updatedFares[index] -= baseFare * 0.05;
+                                    else if (decreaseCount[index] == 1)
+                                      updatedFares[index] -= baseFare * 0.08;
+                                    else if (decreaseCount[index] == 2)
+                                      updatedFares[index] -= baseFare * 0.10;
+
+                                    decreaseCount[index]++;
+                                    if (updatedFares[index] < minFare) updatedFares[index] = minFare;
+                                  }
+                                  setState(() {});
+                                },
+                                            child: Icon(Icons.remove_circle,
+                                              color: (updatedFares[index] <= baseFare * 0.90)
+                                                  ? Colors.grey // 10% kam ho gaya → disable
+                                                  : Colors.green,
+                                            size: 40,),
+                                          ),
+                              Spacer(),
+                              Column(
+                                  children: [
+                                    Text(
+                                      "${AppContants.rupessSystem}${updatedFares[index].toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        color: AppColors.primaryGradient,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Recommended fare: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(1)}",
+                                      style: TextStyle(fontSize: 15, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    double currentFare = updatedFares[index];
+
+                                    if (currentFare < baseFare && decreaseCount[index] > 0) {
+                                      double percent = 0.0;
+
+                                      if (decreaseCount[index] == 2)
+                                        percent = 0.05; // reverse of step 1
+                                      else if (decreaseCount[index] == 1)
+                                        percent = 0.08; // reverse of step 2
+                                      else if (decreaseCount[index] == 0)
+                                        percent = 0.10; // reverse of step 3
+
+                                      updatedFares[index] += baseFare * percent;
+                                      decreaseCount[index]--;
+
+                                      // Clamp not to exceed baseFare while in reverse
+                                      if (updatedFares[index] > baseFare) {
+                                        updatedFares[index] = baseFare;
+                                        decreaseCount[index] = 0;
+                                      }
+                                    } else {
+                                      // BaseFare or above → unlimited +10% increments
+                                      updatedFares[index] += baseFare * 0.10;
+                                    }
+                                  });
+                                },
+                                  child: Icon(Icons.add_circle,
+                                      color: Colors.green, size: 40),
+                                ),
                               ],
-                            ))
-
-
-                      ],
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-
-                  ),
-                );
-              },),
+                  );
+                },
+              ),
 
 
                 SizedBox(height: 80,)
@@ -941,7 +1070,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          pickupLong: widget.pickLng.toString(),
                          rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
                          receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
-                         totalAmount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0), totalDistance: calculateDistanceWithPickup(
+                         totalAmount: updatedFares[selectIndex].toStringAsFixed(2), totalDistance: calculateDistanceWithPickup(
                          pickLat:widget.pickLat,
                          pickLng:  widget.pickLng,
                          stops:  widget.stopLocations
@@ -949,7 +1078,6 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          vehicleName: authController.vehicleData!.data![selectIndex].name??"");
                      _startTimer();
                      print(bookingData);
-
 
                     // Get.to(ReviewBooking(data: bookingData,));
                    },
@@ -1128,6 +1256,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                     children: [
                       ChoiceChip(
                         label: Text("Cash"),
+                        backgroundColor: Colors.white,
                         selected: selectedPayment == "Cash",
                         onSelected: (_) {
                           setState(() => selectedPayment = "Cash");
@@ -1136,10 +1265,20 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
 
                       SizedBox(width: 20,),
                       ChoiceChip(
+                        backgroundColor: Colors.white,
                         label: Text("Online"),
                         selected: selectedPayment == "Online",
                         onSelected: (_) {
                           setState(() => selectedPayment = "Online");
+                        },
+                      ),
+                      SizedBox(width: 20,),
+                      ChoiceChip(
+                        backgroundColor: Colors.white,
+                        label: Text("Wallet"),
+                        selected: selectedPayment == "Wallet",
+                        onSelected: (_) {
+                          setState(() => selectedPayment = "Wallet");
                         },
                       ),
                     ],

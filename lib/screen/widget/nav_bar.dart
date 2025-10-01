@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/order_list.dart';
 
+import '../home/WalletView.dart';
 import '../payment/payment_list.dart';
 import '../sideMenu_item/contact_us.dart';
 import '../sideMenu_item/faq_list_screen.dart';
@@ -58,6 +59,11 @@ class NavBar extends StatelessWidget {
               onTap: () => Get.to(OrderList()),
             ),
             ListTile(
+              leading: Icon(Icons.wallet),
+              title: Text('Wallet'),
+              onTap: () => Get.to(WalletView()),
+            ),
+            ListTile(
               leading: Icon(Icons.payment_outlined),
               title: Text('Payments'),
               onTap: () => Get.to(PaymentList()),
@@ -91,11 +97,11 @@ class NavBar extends StatelessWidget {
               onTap: () => null,
             ),
             Divider(),
-            ListTile(
-              title: Text('Refer & Earn'),
-              leading: Icon(Icons.share_outlined),
-              onTap: () => null,
-            ),
+            // ListTile(
+            //   title: Text('Refer & Earn'),
+            //   leading: Icon(Icons.share_outlined),
+            //   onTap: () => null,
+            // ),
 
             ListTile(
               title: Text('Logout'),

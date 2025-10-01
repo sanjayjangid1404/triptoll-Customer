@@ -23,10 +23,12 @@ import 'package:triptoll/screen/home/homeview.dart';
 import '../api/api_checker.dart';
 
 import '../model/category_type_response.dart';
+import '../model/check_ticket_limit_model.dart';
 import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
 import '../model/subCategoryVehicle.dart';
 import '../model/vehicle_data.dart';
+import '../model/wallet_responce_model.dart';
 import '../repo/auth_repo.dart';
 import '../screen/home/userTraking_view.dart';
 import '../util/appContants.dart';
@@ -68,6 +70,17 @@ class AuthController extends GetxController implements GetxService
 
   List<FaqDriverResponse>faqDriverResponse = [];
   RxBool isDataLoading = false.obs;
+  Rx<CheckTicketLimitModel> checkTicketLimitModel = CheckTicketLimitModel().obs;
+  Future<void> checkTicket(body) async {
+    Response response = await authRepo.checkTicketLimits(body);
+    if (response.statusCode == 200) {
+      checkTicketLimitModel.value = CheckTicketLimitModel.fromJson(response.body);
+
+    }
+    else {
+    }
+    update();
+  }
   Future<void>getDriverFAQ()
   async {
 
@@ -127,7 +140,7 @@ class AuthController extends GetxController implements GetxService
 
       showCustomSnackBar("Ticket raise successfully",isError: false);
 
-      Get.back();
+      // Get.back();
     }
     else {
 
@@ -388,6 +401,32 @@ class AuthController extends GetxController implements GetxService
 
 
 
+  }
+
+  List<WalletResponse>walletResponseList = [];
+  Future<void> getWalletHistory() async {
+    isLoading = true;
+
+    update();
+    print(getUserDeviceID());
+
+    walletResponseList = [];
+
+    Response response = await authRepo.getWalletHistory(userID: getUserID());
+
+    //  LoginResponse? loginResponse;
+
+    if (response.statusCode == 200 || response.statusCode == 400) {
+      for (int i = 0; i < response.body.length; i++) {
+        walletResponseList.add(WalletResponse.fromJson(response.body[i]));
+      }
+    }
+    else {
+      ApiChecker.checkApi(response);
+    }
+
+    isLoading = false;
+    update();
   }
 
   Future<void>getCategoryVehicle(String id)
@@ -709,6 +748,106 @@ class AuthController extends GetxController implements GetxService
 
 
   }
+  Future<void>orderPaymentWithWallet(String id,String driverID,String key,String status,BuildContext context,String orderID)
+  async {
+
+    isVehicle = true;
+
+    update();
+    print(getUserDeviceID());
+    subCategoryVehicle = null;
+
+
+
+    Response response = await authRepo.orderPaymentWallet(id: id,status: status,driverID: driverID,key: key,orderID: orderID);
+
+  //  LoginResponse? loginResponse;
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          text: 'Payment Completed Successfully!',
+          onConfirmBtnTap: (){
+            Get.offAll(HomePage());
+          }
+      );
+
+      // subCategoryVehicle = SubCategoryVehicle.fromJson(response.body);
+      //
+      // isVehicle = false;
+      update();
+    }
+    else {
+
+
+      // dynamic data = jsonDecode(response.body);
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    isVehicle = false;
+    update();
+
+
+
+  }
+  Future<void>addWalletPaymentFun({String? amount, String? transitionId, required BuildContext context})
+  async {
+
+    isVehicle = true;
+
+    update();
+    print(getUserDeviceID());
+    subCategoryVehicle = null;
+
+
+
+    Response response = await authRepo.addWalletPayment(customerID: getUserID(),amount: amount,trnId: transitionId);
+
+  //  LoginResponse? loginResponse;
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          text: 'Transaction Completed Successfully!',
+          onConfirmBtnTap: (){
+            Get.offAll(HomePage());
+          }
+      );
+
+      // subCategoryVehicle = SubCategoryVehicle.fromJson(response.body);
+      //
+      // isVehicle = false;
+      update();
+    }
+    else {
+
+
+      // dynamic data = jsonDecode(response.body);
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    isVehicle = false;
+    update();
+
+
+
+  }
 
   List<Map<String, double>>? cachedFaresAndRates = [];
   Future<void>getAllVehicleData()
@@ -974,6 +1113,7 @@ class AuthController extends GetxController implements GetxService
         print("driverLat!=>$driverLat!");
         print("driverLng!=>$driverLng!");
         print("driverLng!=>${bookingDetailsResponse!.startTrip}!");
+        print("driverLng!=>${bookingDetailsResponse!.paymentStatus}!");
         if(bookingDetailsResponse!.startTrip.toString().toLowerCase() == "yes"){
           Get.to(UserTrackingScreen(
               driver: driver!,
@@ -988,6 +1128,9 @@ class AuthController extends GetxController implements GetxService
               bookingIdNew: bookingID!,
               bookingLocation: LatLng(double.parse(bookingDetailsResponse!.pickupLat!), double.parse(bookingDetailsResponse!.pickupLong!)), driverInitialLocation: LatLng(double.parse(driverLat), double.parse(driverLng))));
         }
+        // if(bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "delivered"){
+        //   Get.offAllNamed(RouteHelper.getHomeView());
+        // }
 
 
       }

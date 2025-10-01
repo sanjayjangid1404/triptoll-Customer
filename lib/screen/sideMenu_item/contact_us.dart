@@ -24,6 +24,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
   void initState() {
     super.initState();
     authController.getDriverFAQ();
+    authController.checkTicket({
+      "driver_id":authController.getUserID().toString(),
+      "user_type":"customer"
+    });
   }
 
   @override
@@ -204,8 +208,15 @@ class _ContactUsPageState extends State<ContactUsPage> {
               ],
             ),
             SizedBox(height: 32),
-            // Submit Button
-            _buildSubmitButton(),
+           Obx(() {
+             return  authController.checkTicketLimitModel.value.hasExceededLimit == false ?
+             _buildSubmitButton() :  const Text(
+               'You have used two tickets, which are currently awaiting approval from the Triptoll team.',
+               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400,
+                   color: Colors.black),
+               textAlign: TextAlign.center,
+             );
+           },),
             const SizedBox(height: 30),
 
             // Additional Information
@@ -316,6 +327,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
               "faq_id":selectedFaqId.toString(),
               "user_type":"customer"
 
+            });
+            authController.checkTicket({
+              "driver_id":authController.getUserID().toString(),
+              "user_type":"customer"
             });
           }
           else {
