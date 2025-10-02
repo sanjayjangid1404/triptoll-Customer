@@ -267,7 +267,7 @@ class _WalletViewState extends State<WalletView> {
   TextEditingController _amountController = TextEditingController();
 
   void _showPaymentPopup(BuildContext context) {
-
+    final _formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -288,97 +288,104 @@ class _WalletViewState extends State<WalletView> {
                 ),
               ],
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Enter Amount',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  '(Min amount ₹100)',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.redAccent,
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter an amount';
-                    }
-
-                    double? amount = double.tryParse(value);
-                    if (amount == null) {
-                      return 'Invalid amount';
-                    }
-
-                    if (amount < 100) {
-                      return 'Minimum amount is ₹100';
-                    }
-
-                    return null;
-                  },
-                  controller: _amountController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                  ],
-                  decoration: InputDecoration(
-                    prefixText: '₹ ',
-                    hintText: '0.00',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Enter Amount',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
                   ),
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 25),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  SizedBox(height: 10),
+                  Text(
+                    '(Min amount ₹100)',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter an amount';
+                      }
+
+                      double? amount = double.tryParse(value);
+                      if (amount == null) {
+                        return 'Invalid amount';
+                      }
+
+                      if (amount < 100) {
+                        return 'Minimum amount is ₹100';
+                      }
+
+                      return null;
+                    },
+                    controller: _amountController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                    ],
+                    decoration: InputDecoration(
+                      prefixText: '₹ ',
+                      hintText: '0.00',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 25),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if(_formKey.currentState!.validate()) {
+                          String amountText = _amountController.text.trim();
+                          if (amountText.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Please enter an amount')),
+                            );
+                            return;
+                          }
+
+                          double? amount = double.tryParse(amountText);
+                          if (amount == null || amount < 100) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(
+                                  'Amount must be at least ₹100')),
+                            );
+                            return;
+                          }
+
+                          createRazorpayOrderId(amount: (double.parse(
+                              _amountController.text.trim()) * 100).round());
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: Text(
+                        'Pay Now',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                    onPressed: () {
-                      String amountText = _amountController.text.trim();
-                      if (amountText.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please enter an amount')),
-                        );
-                        return;
-                      }
-
-                      double? amount = double.tryParse(amountText);
-                      if (amount == null || amount < 100) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Amount must be at least ₹100')),
-                        );
-                        return;
-                      }
-
-                      createRazorpayOrderId(amount: (double.parse(_amountController.text.trim()) * 100).round());
-                      Navigator.of(context).pop(); // Close popup
-                    },
-                    child: Text(
-                      'Pay Now',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

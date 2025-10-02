@@ -101,7 +101,7 @@ class AuthRepo{
         "${AppContants.driverDetailsURL}?booking_id=$bookingID");
   }
   Future<Response> getFaqList() async {
-    return await apiClient.getData(AppContants.faqListURL);
+    return await apiClient.getData(AppContants.driverFAQHelpURl);
   }
 
   Future<Response> getCategorySub(String id) async {

@@ -212,12 +212,48 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     return double.parse(totalDistance.toStringAsFixed(2)); // Round 2 decimals
   }
 
+  // Map<String, double> calculateFare({
+  //   required double distanceInKm,
+  //   required Data vehicleData,
+  // }) {
+  //   final double baseFare = double.parse(vehicleData.baseFare.toString());
+  //   final double baseFareUpto = double.parse(vehicleData.baseFareUpto.toString());
+  //
+  //   final rates = [
+  //     double.parse(vehicleData.rate1PerKm.toString()),
+  //     double.parse(vehicleData.rate2PerKm.toString()),
+  //     double.parse(vehicleData.rate3PerKm.toString()),
+  //     double.parse(vehicleData.rate4PerKm.toString()),
+  //   ];
+  //
+  //   if (distanceInKm <= baseFareUpto) {
+  //     return {
+  //       'totalFare': baseFare,
+  //       'randomRate': 0, // no random rate used
+  //     };
+  //   }
+  //
+  //
+  //
+  //   final double extraDistance = distanceInKm - baseFareUpto;
+  //   final double randomRate = rates[Random().nextInt(rates.length)];
+  //   final double extraFare = extraDistance * randomRate;
+  //    totalFare = baseFare + extraFare;
+  //
+  //    print(totalFare);
+  //
+  //   return {
+  //     'totalFare': totalFare,
+  //     'randomRate': randomRate,
+  //   };
+  // }
   Map<String, double> calculateFare({
     required double distanceInKm,
     required Data vehicleData,
   }) {
     final double baseFare = double.parse(vehicleData.baseFare.toString());
     final double baseFareUpto = double.parse(vehicleData.baseFareUpto.toString());
+    final double extraPrice = double.parse(vehicleData.extraPrice.toString());
 
     final rates = [
       double.parse(vehicleData.rate1PerKm.toString()),
@@ -227,26 +263,33 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     ];
 
     if (distanceInKm <= baseFareUpto) {
+      final double extraPercent = (baseFare * extraPrice) / 100;
+      final double finalFare = baseFare + extraPercent;
+
       return {
-        'totalFare': baseFare,
-        'randomRate': 0, // no random rate used
+        'totalFare': finalFare,
+        'randomRate': 0,
       };
     }
-
-
 
     final double extraDistance = distanceInKm - baseFareUpto;
     final double randomRate = rates[Random().nextInt(rates.length)];
     final double extraFare = extraDistance * randomRate;
-     totalFare = baseFare + extraFare;
 
-     print(totalFare);
+    double totalFare = baseFare + extraFare;
+
+    // add percentage
+    final double extraPercent = (totalFare * extraPrice) / 100;
+    totalFare += extraPercent;
+
+    print(totalFare);
 
     return {
       'totalFare': totalFare,
       'randomRate': randomRate,
     };
   }
+
   calculateAndCacheFares(AuthController authController) {
     if (widget.pickLat == null || widget.pickLng == null) return;
 
@@ -946,7 +989,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                       ),
                                     ),
                                     Text(
-                                      "Recommended fare: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(1)}",
+                                      "Recommended fare: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(2)}",
                                       style: TextStyle(fontSize: 15, color: Colors.grey),
                                     ),
                                   ],

@@ -40,6 +40,7 @@ class AppContants
   static String forgetPasswordURL = "User/forgotPasswordOTP";
   static String updatePasswordURL = "User/updatePassword";
   static String driverFAQURl = "Home/getFaq/customer";
+  static String driverFAQHelpURl = "Home/getFaqHelp/customer";
   static String cancelOrderURL = "Booking/orderCancelled";
   static String saveBookingURl = "Booking/saveBooking";
   static String orderPaymentURL = "Booking/orderPayment";

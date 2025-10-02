@@ -24,7 +24,7 @@ class _FrequentlyAskedQuestionsScreenState
       setState(() {});
     });
   }
-
+  int? expandedIndex;
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(builder: (authController) {
@@ -37,28 +37,63 @@ class _FrequentlyAskedQuestionsScreenState
             title: Text(
               "FAQ", style: TextStyle(fontSize: 18, color: Colors.black),),
           ),
-          body: ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
+          body:  ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: authController.faqLIstResponse.length,
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            separatorBuilder: (context, index) => Divider(
+              color: Colors.grey.shade300,
+              thickness: 1,
+            ),
             itemBuilder: (context, index) {
-              final item = authController.faqLIstResponse[index];
-              return  Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 25),
-                    child:  Text(
-                      '${index + 1}.  ${item!.title.toString()}',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600
-                      ),
+              final item =authController.faqLIstResponse[index]!;
+              final isExpanded = expandedIndex == index;
+
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    expandedIndex = isExpanded ? null : index;
+                  });
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${index + 1}.  ${item.title}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          isExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Colors.grey.shade600,
+                        ),
+                      ],
                     ),
-                  )
-                ],
+                    if (isExpanded)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 15),
+                        child: Text(
+                          item.description.toString(),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                  ],
+                ).paddingSymmetric(vertical: 10),
               );
             },
           ));
