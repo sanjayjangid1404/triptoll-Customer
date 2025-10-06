@@ -54,7 +54,7 @@ class _OrderListState extends State<OrderList> {
           centerTitle: false,
           backgroundColor: AppColors.primaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("My Order",style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("My Order".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
           actions: [
             Text(selectedOrderType,style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),),
             PopupMenuButton<String>(
@@ -107,7 +107,7 @@ class _OrderListState extends State<OrderList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Order #: ${authController.bookingListResponse![index]!.orderId}',
+                                '${'Order'.tr} #: ${authController.bookingListResponse![index]!.orderId}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
@@ -125,7 +125,7 @@ class _OrderListState extends State<OrderList> {
                                   color: Colors.grey.shade200,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text("Payment Type is ${authController.bookingListResponse![index]!.paymentType!}", style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300)),
+                                child: Text("${'Payment Type is'.tr} ${authController.bookingListResponse![index]!.paymentType!}", style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300)),
                               ),
                             ],
                           ),

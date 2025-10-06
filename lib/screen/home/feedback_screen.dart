@@ -20,7 +20,7 @@ class _FeedbackBottomSheetState extends State<FeedbackBottomSheet> {
   AuthController authController = Get.find<AuthController>();
   void _submit() {
     if (_rating == 0 || _contactController.text.isEmpty) {
-     Get.snackbar('Rating', 'Please provide rating',);
+     Get.snackbar('Rating'.tr, 'Please provide rating'.tr,);
       return;
     }else {
       authController.feedBackFun(userID: authController.getUserID(),
@@ -47,14 +47,14 @@ class _FeedbackBottomSheetState extends State<FeedbackBottomSheet> {
               alignment: Alignment.topRight,
               child:  TextButton(
                 onPressed: Get.back,
-               child:  Text('Skip',
+               child:  Text('Skip'.tr,
                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
                      color: AppColors.secondaryGradient),
                ),
               ),
             ),
-            const Text(
-              'Rating For Driver',
+             Text(
+              'Rating For Driver'.tr,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
             const SizedBox(
@@ -78,9 +78,9 @@ class _FeedbackBottomSheetState extends State<FeedbackBottomSheet> {
             const SizedBox(height: 30),
             TextField(
               controller: _contactController,
-              decoration: const InputDecoration(
+              decoration:  InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Write review here (Optional)',
+                hintText: 'Write review here (Optional)'.tr,
                 hintStyle: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -101,7 +101,7 @@ class _FeedbackBottomSheetState extends State<FeedbackBottomSheet> {
                 onPressed: () {
                   _submit();
                 },
-                child: Text("Submit", style: TextStyle(fontSize: 18,color: Colors.white)),
+                child: Text("Submit".tr, style: TextStyle(fontSize: 18,color: Colors.white)),
               )
             ),
           ],

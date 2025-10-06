@@ -90,8 +90,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
           isOrder: false,
         );
         Get.snackbar(
-          "Ride Cancelled",
-          "All drivers are busy, please try after some time",
+          "Ride Cancelled".tr,
+          "All drivers are busy, please try after some time".tr,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.orangeAccent,
           colorText: Colors.white,
@@ -730,7 +730,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('Total distance  :-'),
+                                  Text('${'Total distance'.tr}  :-'),
                                   const SizedBox(
                                     width: 20,
                                   ),
@@ -745,7 +745,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('Expected Time :-'),
+                                  Text('${'Expected Time'} :-'),
                                   const SizedBox(
                                     width: 20,
                                   ),
@@ -989,7 +989,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                       ),
                                     ),
                                     Text(
-                                      "Recommended fare: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(2)}",
+                                      "${'Recommended fare'.tr}: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(2)}",
                                       style: TextStyle(fontSize: 15, color: Colors.grey),
                                     ),
                                   ],
@@ -1132,7 +1132,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        borderRadius: BorderRadius.circular(4),
                        color: AppColors.secondaryGradient
                      ),
-                     child:authController!.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("Process With ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 16,color: Colors.white),),
+                     child:authController!.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 16,color: Colors.white),),
                    ),
                  ),
                ),
@@ -1174,7 +1174,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "Additional Information",
+                  "Additional Information".tr,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 12),
@@ -1182,14 +1182,14 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                   controller: _noteController,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    hintText: "Write your information here...",
+                    hintText: "Write your information here...".tr,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return "Note can't be empty";
+                      return "Note can't be empty".tr;
                     }
                     return null;
                   },
@@ -1206,7 +1206,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                     }
                   },
 
-                  label: Text("Submit",style: TextStyle(fontSize: 14,color: Colors.white),),
+                  label: Text("Submit".tr,style: TextStyle(fontSize: 14,color: Colors.white),),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 48),
                     backgroundColor: AppColors.secondaryGradient,
@@ -1251,7 +1251,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Payment Options",
+                    "Payment Options".tr,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 16),
@@ -1298,7 +1298,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ChoiceChip(
-                        label: Text("Cash"),
+                        label: Text("Cash".tr),
                         backgroundColor: Colors.white,
                         selected: selectedPayment == "Cash",
                         onSelected: (_) {
@@ -1309,7 +1309,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                       SizedBox(width: 20,),
                       ChoiceChip(
                         backgroundColor: Colors.white,
-                        label: Text("Online"),
+                        label: Text("Online".tr),
                         selected: selectedPayment == "Online",
                         onSelected: (_) {
                           setState(() => selectedPayment = "Online");
@@ -1318,7 +1318,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                       SizedBox(width: 20,),
                       ChoiceChip(
                         backgroundColor: Colors.white,
-                        label: Text("Wallet"),
+                        label: Text("Wallet".tr),
                         selected: selectedPayment == "Wallet",
                         onSelected: (_) {
                           setState(() => selectedPayment = "Wallet");
@@ -1389,13 +1389,13 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
 
           // Driver info (shown when found)
           if (authController.driver==null || authController.driver!.driverDetails==null) ...[
-            const Text(
-              'Finding you a driver',
+             Text(
+              'Finding you a driver'.tr,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Please wait while we connect you with the nearest available driver',
+             Text(
+              'Please wait while we connect you with the nearest available driver'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey),
             ),
@@ -1492,7 +1492,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                           child: const Icon(Icons.phone),
                         ),
                         const SizedBox(height: 5),
-                        const Text('Call'),
+                         Text('Call'.tr),
                       ],
                     ),
                   ),
@@ -1507,7 +1507,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                         child: const Icon(Icons.message),
                       ),
                       const SizedBox(height: 5),
-                       Text('Message'),
+                       Text('Message'.tr),
                     ],
                   ),
                   Column(
@@ -1535,7 +1535,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                         child: const Icon(Icons.monitor_weight_outlined),
                       ),
                       const SizedBox(height: 5),
-                      Text('${authController.driver!.driverDetails!.weightValue} Kg'),
+                      Text('${authController.driver!.driverDetails!.weightValue} ${'Kg'.tr}'),
                     ],
                   ),
                 ],
@@ -1566,7 +1566,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                 }
               },
               child: authController.isBookingDetails  ? Center(child: CircularProgressIndicator(color: AppColors.primaryGradient,),): Text(
-                authController.driver!=null ? 'Track Order' : 'Cancel Ride',
+                authController.driver!=null ? 'Track Order'.tr : 'Cancel Ride'.tr,
                 style: const TextStyle(fontSize: 16,color: Colors.white),
               ),
             ),

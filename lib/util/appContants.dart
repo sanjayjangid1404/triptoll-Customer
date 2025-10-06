@@ -28,8 +28,8 @@ class AppContants
   static String userPhone = "User Phone";
   static String notification = "Notification ID";
   // static String baseURl = "https://apitest.crossroadhelpline.in/api/"; 
-  // static String baseURl = "https://dev.triptoll.in/api/";
-  static String baseURl = "https://triptoll.in/app-admin/api/";
+  static String baseURl = "https://dev.triptoll.in/api/";
+  // static String baseURl = "https://triptoll.in/app-admin/api/";
   // static String imageURL = "https://dev.triptoll.in/";
   static String imageURL = "https://triptoll.in/app-admin/";
   static String loginUrl = "Customer/login";
@@ -331,7 +331,7 @@ class AppContants
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Reason",
+                "Reason".tr,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 12),
@@ -353,7 +353,7 @@ class AppContants
               // ),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
-                  labelText: 'Select a reason',
+                  labelText: 'Select a reason'.tr,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -372,11 +372,11 @@ class AppContants
                   // });
                 },
                 validator: (value) =>
-                value == null || value.isEmpty ? 'Please select a reason' : null,
+                value == null || value.isEmpty ? 'Please select a reason'.tr : null,
               ),
               SizedBox(height: 16),
               Text(
-                "Additional Information",
+                "Additional Information".tr,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 12),
@@ -384,14 +384,14 @@ class AppContants
                 controller: _noteController,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: "Write your information here...",
+                  hintText: "Write your information here....".tr,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return "Note can't be empty";
+                    return "Note can't be empty".tr;
                   }
                   return null;
                 },
@@ -401,8 +401,8 @@ class AppContants
                 onPressed: () {
                   if(selectedReason == null || selectedReason!.isEmpty) {
                     Get.snackbar(
-                      'Error',
-                      'Please select a reason',
+                      'Error'.tr,
+                      'Please select a reason'.tr,
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: Colors.redAccent,
                       colorText: Colors.white,
@@ -418,7 +418,7 @@ class AppContants
                   }
                 },
 
-                label: Text("Cancel",style: TextStyle(fontSize: 14,color: Colors.white),),
+                label: Text("Cancel".tr,style: TextStyle(fontSize: 14,color: Colors.white),),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 48),
                   backgroundColor: AppColors.secondaryGradient,

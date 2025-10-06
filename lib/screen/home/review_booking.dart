@@ -98,7 +98,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
           centerTitle: false,
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: AppColors.primaryGradient,
-          title: Text("Review Booking",style: TextStyle(color: Colors.white),),
+          title: Text("Review Booking".tr,style: TextStyle(color: Colors.white),),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -130,7 +130,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
 
                             Text(vehicleData.name!,style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w700),),
                            // Text("3 Wheeler",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
-                            Text("${vehicleData.maxLoad!} Kg",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
+                            Text("${vehicleData.maxLoad!} ${'Kg'.tr}",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
 
                            // Text("${AppContants.rupessSystem}400",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.w700),),
                           ],
@@ -144,7 +144,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
 
               SizedBox(height: 20,),
 
-              Text("Amount Details",style: TextStyle(fontSize: 24,color: AppColors.secondaryGradient),),
+              Text("Amount Details".tr,style: TextStyle(fontSize: 24,color: AppColors.secondaryGradient),),
 
               SizedBox(height: 10,),
 
@@ -153,7 +153,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Amount",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                    Text("Amount".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                     Text("${AppContants.rupessSystem}${totalFare.toStringAsFixed(0)}",style: TextStyle(fontSize: 16,color: Colors.black),),
                   ],
                 ),
@@ -163,7 +163,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Discount($discountPercentage%)",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                    Text("${'Discount'.tr}($discountPercentage%)",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                     Text("${AppContants.rupessSystem} ${discountAmount.toStringAsFixed(0)}",style: TextStyle(fontSize: 16,color: Colors.black),),
                   ],
                 ),
@@ -173,7 +173,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Net Fare",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                    Text("Net Fare".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                     Text("${AppContants.rupessSystem} ${netFare.toStringAsFixed(0)}",style: TextStyle(fontSize: 16,color: Colors.black),),
                   ],
                 ),
@@ -194,7 +194,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Total Amount",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                    Text("Total Amount".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                     Text("${AppContants.rupessSystem} ${totalAmount.toStringAsFixed(0)}",style: TextStyle(fontSize: 16,color: Colors.black),),
                   ],
                 ),
@@ -217,7 +217,7 @@ class _ReviewBookingState extends State<ReviewBooking> {
                 borderRadius: BorderRadius.circular(4),
                 color: AppColors.secondaryGradient
             ),
-            child: Text("Book ${vehicleData.name}",style: TextStyle(fontSize: 16,color: Colors.white),),
+            child: Text("${'Book'.tr} ${vehicleData.name}",style: TextStyle(fontSize: 16,color: Colors.white),),
           ),
         ),
 

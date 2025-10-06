@@ -39,7 +39,7 @@ class _ProfileViewState extends State<ProfileView> {
           centerTitle: false,
           backgroundColor: AppColors.primaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("My Profile",style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("My Profile".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -107,7 +107,7 @@ class _ProfileViewState extends State<ProfileView> {
                 padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
 
                 color: AppColors.primaryGradient,
-                child: Text("Edit Profile",style: TextStyle(fontSize: 16,color: Colors.white),),
+                child: Text("Edit Profile".tr,style: TextStyle(fontSize: 16,color: Colors.white),),
               ),
 
               SizedBox(height: 30,),
@@ -142,7 +142,7 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
-                        labelText : "First Name",
+                        labelText : "First Name".tr,
                         labelStyle : TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
@@ -188,7 +188,7 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
-                        labelText : "Last Name",
+                        labelText : "Last Name".tr,
                         labelStyle : TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
@@ -255,7 +255,7 @@ class _ProfileViewState extends State<ProfileView> {
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: DropdownButtonFormField<String>(
               decoration: InputDecoration(
-                labelText: 'Gender',
+                labelText: 'Gender'.tr,
                 border: OutlineInputBorder(),
               ),
               value: selectedGender,
@@ -308,7 +308,7 @@ class _ProfileViewState extends State<ProfileView> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Update'.toUpperCase(),
+                        'Update'.toUpperCase().tr,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,

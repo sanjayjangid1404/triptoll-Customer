@@ -630,8 +630,8 @@ class _BookingInfoState extends State<BookingInfo> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Drop Location',
+                                         Text(
+                                          'Drop Location'.tr,
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -673,7 +673,7 @@ class _BookingInfoState extends State<BookingInfo> {
                                   ),
                                   contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                  labelText: "House/Apartment/shop (Optional)",
+                                  labelText: "House/Apartment/shop (Optional)".tr,
                                   labelStyle: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 12,
@@ -716,7 +716,7 @@ class _BookingInfoState extends State<BookingInfo> {
 
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
                                   // hintText: "House/Apartment/shop (Optional)",
-                                  labelText: "Receiver's Name",
+                                  labelText: "Receiver's Name".tr,
                                   labelStyle: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 12,
@@ -754,7 +754,7 @@ class _BookingInfoState extends State<BookingInfo> {
 
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
                                   // hintText: "House/Apartment/shop (Optional)",
-                                  labelText: "Receiver's Mobile Number",
+                                  labelText: "Receiver's Mobile Number".tr,
                                   labelStyle: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 12,
@@ -853,7 +853,7 @@ class _BookingInfoState extends State<BookingInfo> {
                       });
 
                     },
-                    title: Text("Use My Details",
+                    title: Text("Use My Details".tr,
                       style: TextStyle(fontSize: 13,
                           color: Colors.black,
                           fontFamily: AppFonts.poppinsMedium),),
@@ -917,10 +917,10 @@ class _BookingInfoState extends State<BookingInfo> {
                         ));
                       } catch (e) {
                         print("Error: $e");
-                        showCustomSnackBar("Failed to calculate distance");
+                        showCustomSnackBar("Failed to calculate distance".tr);
                       }
                     } else {
-                      showCustomSnackBar("Enter Receiver details");
+                      showCustomSnackBar("Enter Receiver details".tr);
                     }
                   },
                   child: Container(
@@ -947,7 +947,7 @@ class _BookingInfoState extends State<BookingInfo> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'continue'.toUpperCase(),
+                          'continue'.toUpperCase().tr,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,

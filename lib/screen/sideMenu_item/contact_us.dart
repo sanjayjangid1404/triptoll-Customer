@@ -36,8 +36,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: AppColors.primaryGradient,
-        title: const Text(
-          'Contact Support', style: TextStyle(color: Colors.white),),
+        title:  Text(
+          'Contact Support'.tr, style: TextStyle(color: Colors.white),),
         centerTitle: false,
       ),
       body: SingleChildScrollView(
@@ -46,17 +46,17 @@ class _ContactUsPageState extends State<ContactUsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header Section
-            const Column(
+             Column(
               children: [
                 Icon(Icons.headset_mic, size: 60, color: Colors.blue),
                 SizedBox(height: 15),
                 Text(
-                  'How can we help you?',
+                  'How can we help you?'.tr,
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Our team is always here to assist you with any questions or concerns',
+                  'Our team is always here to assist you with any questions or concerns'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),
@@ -108,7 +108,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       Icon(Icons.language, color: Colors.blue),
                       SizedBox(width: 10),
                       Text(
-                        "Company Website:",
+                        "Company Website:".tr,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          "Triptoll was founded in Aug 2024. we are a trusted and reliable logistics delivery service provider, dedicated to making your relocation experience smooth, efficient, and stress-free. ",
+                          "Triptoll was founded in Aug 2024. we are a trusted and reliable logistics delivery service provider, dedicated to making your relocation experience smooth, efficient, and stress-free. ".tr,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[700],
@@ -160,7 +160,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Triptoll Help Desk",
+                  "Triptoll Help Desk".tr,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -182,7 +182,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       value: selectedFaqId,
                       isExpanded: true,
                       underline: SizedBox(),
-                      hint: Text("Choose a question"),
+                      hint: Text("Choose a question".tr),
                       items: authController.faqDriverResponse.map((
                           FaqDriverResponse item) {
                         return DropdownMenuItem<String>(
@@ -210,8 +210,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
             SizedBox(height: 32),
            Obx(() {
              return  authController.checkTicketLimitModel.value.hasExceededLimit == false ?
-             _buildSubmitButton() :  const Text(
-               'You have used two tickets, which are currently awaiting approval from the Triptoll team.',
+             _buildSubmitButton() :   Text(
+               'You have used two tickets, which are currently awaiting approval from the Triptoll team.'.tr,
                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400,
                    color: Colors.black),
                textAlign: TextAlign.center,
@@ -220,8 +220,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
             const SizedBox(height: 30),
 
             // Additional Information
-            const Text(
-              'Other Information',
+             Text(
+              'Other Information'.tr,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
@@ -346,7 +346,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           elevation: 5,
         ),
         child: Text(
-          "SUBMIT",
+          "SUBMIT".tr,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

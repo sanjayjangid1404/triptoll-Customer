@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TermsAndCondition extends StatefulWidget {
@@ -40,7 +41,7 @@ class _PrivacyPolicyPageState extends State<TermsAndCondition> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
-        title: Text("Terms & Conditions",style: TextStyle(color: Colors.black),),
+        title: Text("Terms & Conditions".tr,style: TextStyle(color: Colors.black),),
 
       ),
       body: htmlContent.isEmpty

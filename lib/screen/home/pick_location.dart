@@ -165,7 +165,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                 textFieldConfiguration: TextFieldConfiguration(
                   //controller: pickController,
                   decoration: InputDecoration(
-                    hintText: 'Enter ${widget.title}',
+                    hintText: '${'Enter'.tr} ${widget.title!.tr}',
                     prefixIcon: Icon(Icons.location_on, color: Colors.blue),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                     filled: true,
@@ -222,7 +222,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
 
                 }
               },
-              child: Text("Confirm ${widget.title}", style: TextStyle(fontSize: 18,color: Colors.white)),
+              child: Text("${'Confirm'.tr} ${widget.title}", style: TextStyle(fontSize: 18,color: Colors.white)),
             ),
           )
         ],

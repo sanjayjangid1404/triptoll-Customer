@@ -484,7 +484,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                         (route) => false, // Remove all previous routes
                   );
                 }, icon: Icon(Icons.arrow_back_ios)),
-                title: Text("Live Tracking"),
+                title: Text("Live Tracking".tr),
                 actions: [
                   IconButton(
                     icon: Icon(Icons.refresh),
@@ -715,7 +715,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          "Wallet Amount",
+                          "Wallet Amount".tr,
                           style: TextStyle(fontSize: 16,fontWeight: ui.FontWeight.w500),
                         ),
                         Text(
@@ -747,7 +747,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                           borderRadius: BorderRadius.circular(4),
                           color: AppColors.secondaryGradient
                       ),
-                      child: Text("Pay ${AppContants.rupessSystem} ${widget.bookingID.totalAmount}",style: TextStyle(fontSize: 16,color: Colors.white),),
+                      child: Text("${'Pay'.tr} ${AppContants.rupessSystem} ${widget.bookingID.totalAmount}",style: TextStyle(fontSize: 16,color: Colors.white),),
                     ),
                   ),
                 ],
@@ -769,7 +769,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       borderRadius: BorderRadius.circular(4),
                       color: AppColors.secondaryGradient
                   ),
-                  child: Text("Track Your Parcel",style: TextStyle(fontSize: 16,color: Colors.white),),
+                  child: Text("Track Your Parcel".tr,style: TextStyle(fontSize: 16,color: Colors.white),),
                 ),
               )
 

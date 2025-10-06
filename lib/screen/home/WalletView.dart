@@ -42,7 +42,7 @@ class _WalletViewState extends State<WalletView> {
     QuickAlert.show(
         context: context,
         type: QuickAlertType.error,
-        text: 'Transaction Fail',
+        text: 'Transaction Fail'.tr,
         onConfirmBtnTap: (){
           Navigator.pushAndRemoveUntil(
             context,
@@ -55,7 +55,7 @@ class _WalletViewState extends State<WalletView> {
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // External wallet logic
-    Get.snackbar('External Wallet', '${response.walletName}');
+    Get.snackbar('External Wallet'.tr, '${response.walletName}');
   }
   @override
   void initState() {
@@ -151,7 +151,7 @@ class _WalletViewState extends State<WalletView> {
             backgroundColor: AppColors.primaryGradient,
             iconTheme: IconThemeData(color: Colors.white),
             title: Text(
-              "Wallet", style: TextStyle(fontSize: 18, color: Colors.white),),
+              "Wallet".tr, style: TextStyle(fontSize: 18, color: Colors.white),),
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -168,7 +168,7 @@ class _WalletViewState extends State<WalletView> {
                 Column(
                   children: [
                     Text(
-                      "Available balance in wallet",
+                      "Available balance in wallet".tr,
                       style: TextStyle(
                         color: Color(0xff7F7F7F),
                         fontSize: 16,
@@ -214,7 +214,7 @@ class _WalletViewState extends State<WalletView> {
                         _showPaymentPopup(context);
                       },
                       child: Text(
-                        "Wallet Recharge",
+                        "Wallet Recharge".tr,
                         style: TextStyle(
                           color: Colors.green,
                           fontSize: 14,
@@ -236,7 +236,7 @@ class _WalletViewState extends State<WalletView> {
                   color: Color(0xffF2F5F7),
                   width: double.maxFinite,
                   child: Text(
-                    "Wallet History",
+                    "Wallet History".tr,
                     style: TextStyle(
                       color: Color(0xff282F39),
                       fontSize: 15,
@@ -294,7 +294,7 @@ class _WalletViewState extends State<WalletView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Enter Amount',
+                    'Enter Amount'.tr,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -303,7 +303,7 @@ class _WalletViewState extends State<WalletView> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    '(Min amount ₹100)',
+                    '(Min amount ₹100)'.tr,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.redAccent,
@@ -313,16 +313,16 @@ class _WalletViewState extends State<WalletView> {
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter an amount';
+                        return 'Please enter an amount'.tr;
                       }
 
                       double? amount = double.tryParse(value);
                       if (amount == null) {
-                        return 'Invalid amount';
+                        return 'Invalid amount'.tr;
                       }
 
                       if (amount < 100) {
-                        return 'Minimum amount is ₹100';
+                        return 'Minimum amount is ₹100'.tr;
                       }
 
                       return null;
@@ -379,7 +379,7 @@ class _WalletViewState extends State<WalletView> {
                         }
                       },
                       child: Text(
-                        'Pay Now',
+                        'Pay Now'.tr,
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),

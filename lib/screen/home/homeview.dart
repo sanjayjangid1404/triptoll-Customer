@@ -7,6 +7,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:google_place/google_place.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
@@ -65,7 +66,17 @@ class _HomePageState extends State<HomePage> {
 
 
   Timer? _timer;
-
+  checkLanguage() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.getString("app_language") == null ||
+        sharedPreferences.getString("app_language") == "English") {
+      Get.updateLocale(const Locale('en', 'US'));
+      authController.selectedLanguage.value = "English";
+    } else {
+      Get.updateLocale(const Locale('ta', 'IN'));
+      authController.selectedLanguage.value = 'தமிழ்';
+    }
+  }
   void startBookingRefresh() {
     _timer?.cancel(); // Cancel previous timer if exists
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,7 +101,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
+      checkLanguage();
       authController.getDriverFAQ();
       authController.checkTicket({
         "driver_id":authController.getUserID().toString(),
@@ -296,8 +307,8 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Pickup Location',
+                             Text(
+                              'Pickup Location'.tr,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -620,7 +631,7 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         Image.asset(AppImage.parcelImage,width: 25,),
                                         SizedBox(width: 4,),
-                                        Text("Delivery",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                        Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
                                       ],
                                     ),
                                   ),
@@ -1035,7 +1046,7 @@ class _HomePageState extends State<HomePage> {
                                          ),
                                          child: Text(
                                            auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
-                                           "Pay ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![0]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                           "${'Pay'.tr} ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![0]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
                                    ),
                                  )
                               :
@@ -1048,7 +1059,7 @@ class _HomePageState extends State<HomePage> {
                                    },
                                    child: Padding(
                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                     child: Text("No Driver Assign",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                                     child: Text("No Driver Assign".tr,style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                                    ),
                                  )
                                ],

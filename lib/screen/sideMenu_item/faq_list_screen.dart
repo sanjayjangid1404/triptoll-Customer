@@ -35,7 +35,7 @@ class _FrequentlyAskedQuestionsScreenState
             backgroundColor: Colors.white,
             iconTheme: IconThemeData(color: Colors.black),
             title: Text(
-              "FAQ", style: TextStyle(fontSize: 18, color: Colors.black),),
+              "FAQ".tr, style: TextStyle(fontSize: 18, color: Colors.black),),
           ),
           body:  ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),

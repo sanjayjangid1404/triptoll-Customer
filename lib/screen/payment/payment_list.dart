@@ -38,7 +38,7 @@ class _PaymentListState extends State<PaymentList> {
             backgroundColor: AppColors.primaryGradient,
             iconTheme: IconThemeData(color: Colors.white),
             title: Text(
-              "Payment", style: TextStyle(fontSize: 18, color: Colors.white),),
+              "Payment".tr, style: TextStyle(fontSize: 18, color: Colors.white),),
 
           ),
           body: Column(
@@ -73,7 +73,7 @@ class _PaymentListState extends State<PaymentList> {
                                     ? AppColors.primaryGradient
                                     : Colors.white
                             ),
-                            child: Text("Wallet", style: TextStyle(fontSize: 16,
+                            child: Text("Wallet".tr, style: TextStyle(fontSize: 16,
                                 color: index == 0 ? Colors.white : Colors
                                     .black),),
                           ),
@@ -98,7 +98,7 @@ class _PaymentListState extends State<PaymentList> {
                                     ? AppColors.primaryGradient
                                     : Colors.white
                             ),
-                            child: Text("Payment", style: TextStyle(
+                            child: Text("Payment".tr, style: TextStyle(
                                 fontSize: 16,
                                 color: index == 1 ? Colors.white : Colors
                                     .black),),

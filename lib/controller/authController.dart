@@ -60,7 +60,7 @@ class AuthController extends GetxController implements GetxService
   int currentIndex = 0;
   bool isVehicle = false;
   String newBookingID = "";
-
+  RxString selectedLanguage = "English".obs;
 
   String _email = '';
   String get verificationCode => _verificationCode;

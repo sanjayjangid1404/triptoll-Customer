@@ -41,7 +41,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           centerTitle: false,
           backgroundColor: AppColors.primaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("Trip Details",style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("Trip Details".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
 
         ),
 
@@ -109,7 +109,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 SizedBox(height: 10,),
                 SizedBox(height: 20,),
 
-                Text("Vehicle Details",style: TextStyle(fontSize: 24,color: AppColors.secondaryGradient),),
+                Text("Vehicle Details".tr,style: TextStyle(fontSize: 24,color: AppColors.secondaryGradient),),
 
                 SizedBox(height: 10,),
 
@@ -137,7 +137,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
                             Text("${authController.bookingDetailsResponse!.categoryName??"EV"}",style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w700),),
                           //  Text("3 Wheeler",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
-                            Text("${authController.bookingDetailsResponse!.weight??"80"} ${authController.bookingDetailsResponse!.weightType??"Kg"}",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
+                            Text("${authController.bookingDetailsResponse!.weight??"80"} ${authController.bookingDetailsResponse!.weightType??'Kg'.tr}",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
 
                             Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.totalAmount!}",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.w700),),
                           ],
@@ -152,7 +152,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 SizedBox(height: 10,),
                 SizedBox(height: 20,),
 
-                Text("Amount Details",style: TextStyle(fontSize: 24,color: AppColors.secondaryGradient),),
+                Text("Amount Details".tr,style: TextStyle(fontSize: 24,color: AppColors.secondaryGradient),),
 
                 SizedBox(height: 10,),
 
@@ -161,7 +161,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Amount",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                      Text("Amount".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.amount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
                     ],
                   ),
@@ -171,7 +171,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Discount(10%)",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                      Text("Discount(10%)".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.discount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
                     ],
                   ),
@@ -192,7 +192,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Stop Charge",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                      Text("Stop Charge".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.stopCharge!}",style: TextStyle(fontSize: 16,color: Colors.black),),
                     ],
                   ),
@@ -202,7 +202,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Total Amount",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                      Text("Total Amount".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
                       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.totalAmount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
                     ],
                   ),
@@ -224,7 +224,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       borderRadius: BorderRadius.circular(8),
                       color: AppColors.secondaryGradient
                     ),
-                    child: Text("Cancel Order",style: TextStyle(fontSize: 16,color: Colors.white,fontWeight: FontWeight.w700),),
+                    child: Text("Cancel Order".tr,style: TextStyle(fontSize: 16,color: Colors.white,fontWeight: FontWeight.w700),),
                   ),
                 ):SizedBox()
 
