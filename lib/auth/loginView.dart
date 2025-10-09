@@ -9,6 +9,7 @@ import 'package:triptoll/auth/SignUp.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/homeview.dart';
 
+import '../screen/widget/nav_bar.dart';
 import '../util/appColors.dart';
 import '../util/appContants.dart';
 import '../util/appImage.dart';
@@ -34,11 +35,37 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController passwordCt = TextEditingController(text: "");
   bool passwordVisible = false;
   bool _obscureText = true;
+  updateLanguage(String gg) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("app_language", gg);
+  }
+  checkLanguage() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? lang = sharedPreferences.getString("app_language");
 
+    if (lang == null || lang == "English") {
+      Get.updateLocale(const Locale('en', 'US'));
+      // authController.selectedLanguage.value = "English";
+    } else if (lang == "தமிழ்" || lang == "Tamil") {
+      Get.updateLocale(const Locale('ta', 'IN'));
+      // authController.selectedLanguage.value = 'தமிழ்';
+    } else if (lang == "తెలుగు" || lang == "Telugu") {
+      Get.updateLocale(const Locale('te', 'IN'));
+      // authController.selectedLanguage.value = 'తెలుగు';
+    } else if (lang == "বাংলা" || lang == "Bengali") {
+      Get.updateLocale(const Locale('bn', 'IN'));
+      // authController.selectedLanguage.value = 'বাংলা';
+    } else {
+      // Default fallback
+      Get.updateLocale(const Locale('en', 'US'));
+      // authController.selectedLanguage.value = "English";
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkLanguage();
     SharedPreferences.getInstance().then((sharedPreferences) {
 
     });
@@ -57,6 +84,186 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(height: 20,),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: InkWell(
+                        onTap: () {
+                          showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return Container(
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                                    child: Obx(() {
+                                      return Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                                            child: Container(
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(color: const Color(0xffDCDCDC)),
+                                                    borderRadius: BorderRadius.circular(15)),
+                                                child: RadioListTile(
+                                                  title: Text('English'.tr),
+                                                  activeColor: const Color(0xff014E70),
+                                                  value: "English",
+                                                  groupValue: authController.selectedLanguage.value,
+                                                  onChanged: (value) {
+                                                    locale = const Locale('en', 'US');
+                                                    authController.selectedLanguage.value = value!;
+                                                    updateLanguage("English");
+                                                    setState(() {});
+                                                  },
+                                                )),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 20),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: const Color(0xffDCDCDC)),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                              child: RadioListTile(
+                                                title: Text('தமிழ்'.tr),
+                                                activeColor: const Color(0xff014E70),
+                                                value: "தமிழ்",
+                                                groupValue: authController.selectedLanguage.value,
+                                                onChanged: (value) {
+                                                  locale = const Locale('ta', 'IN');
+                                                  authController.selectedLanguage.value = value!;
+                                                  updateLanguage("தமிழ்");
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 20),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: const Color(0xffDCDCDC)),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                              child: RadioListTile(
+                                                title: Text('বাংলা'.tr),
+                                                activeColor: const Color(0xff014E70),
+                                                value: "বাংলা",
+                                                groupValue: authController.selectedLanguage.value,
+                                                onChanged: (value) {
+                                                  locale = const Locale('bn', 'BD');
+                                                  authController.selectedLanguage.value = value!;
+                                                  updateLanguage("বাংলা");
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 20),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: const Color(0xffDCDCDC)),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                              child: RadioListTile(
+                                                title: Text('తెలుగు'.tr),
+                                                activeColor: const Color(0xff014E70),
+                                                value: "తెలుగు",
+                                                groupValue: authController.selectedLanguage.value,
+                                                onChanged: (value) {
+                                                  locale = const Locale('te', 'IN');
+                                                  authController.selectedLanguage.value = value!;
+                                                  updateLanguage("తెలుగు");
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                          ),
+
+                                          // const SizedBox(
+                                          //   height: 10,
+                                          // ),
+                                          // Padding(
+                                          //     padding: const EdgeInsets.only(left: 20, right: 20),
+                                          //     child: Container(
+                                          //         decoration: BoxDecoration(
+                                          //             border: Border.all(color: const Color(0xffDCDCDC)),
+                                          //             borderRadius: BorderRadius.circular(15)),
+                                          //         child: RadioListTile(
+                                          //           title: const Text('Several languages'),
+                                          //           activeColor: const Color(0xff014E70),
+                                          //           value: "Several languages",
+                                          //           groupValue: language.value,
+                                          //           onChanged: (value) {
+                                          //             print(selectedLAnguage.value.toString());
+                                          //             setState(() {
+                                          //               language.value = value!;
+                                          //             });
+                                          //           },
+                                          //         ))),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              Get.updateLocale(locale);
+                                              Get.back();
+                                            },
+                                            child: Center(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                                                child: Container(
+                                                  height: 56,
+                                                  width: MediaQuery.sizeOf(context).width,
+                                                  color: Color(0xFFEC6C0C),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Apply'.tr,
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    }));
+                              });
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(Icons.language,),
+                            Text('Language'.tr,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16
+                            ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 80,),
 
                     //logo
@@ -69,7 +276,7 @@ class _LoginViewState extends State<LoginView> {
 
                     Center(
                       child: Text(
-                        'Login Your',
+                        'Login Your'.tr,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: AppColors.primaryGradient,
@@ -82,7 +289,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     Center(
                       child: Text(
-                        'Account',
+                        'Account'.tr,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: AppColors.secondaryGradient,
@@ -138,7 +345,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
-                        hintText: "Mobile Number",
+                        hintText: "Mobile Number".tr,
                         hintStyle: TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
@@ -171,7 +378,7 @@ class _LoginViewState extends State<LoginView> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        hintText: "Password",
+                        hintText: "Password".tr,
                         hintStyle: const TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
@@ -204,7 +411,7 @@ class _LoginViewState extends State<LoginView> {
                           print("Forget Password tapped");
                         },
                         child: Text(
-                          "Forgot Password?",
+                          "Forgot Password?".tr,
                           style: TextStyle(
                               fontSize: 14,
                               fontFamily: 'Roboto',
@@ -226,10 +433,10 @@ class _LoginViewState extends State<LoginView> {
 
                         if(emailCt.text.isEmpty && emailCt.text.length !=10)
                           {
-                            showCustomSnackBar("Invalid mobile no.", getXSnackBar: false,isError: true);
+                            showCustomSnackBar("Invalid mobile no.".tr, getXSnackBar: false,isError: true);
                           }
                         else if(passwordCt.text.isEmpty){
-                          showCustomSnackBar("Enter password");
+                          showCustomSnackBar("Enter password".tr);
                         }
 
                         else
@@ -267,7 +474,7 @@ class _LoginViewState extends State<LoginView> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'Login'.toUpperCase(),
+                              'Login'.toUpperCase().tr,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
@@ -289,8 +496,8 @@ class _LoginViewState extends State<LoginView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Don't have an account? ",
+                         Text(
+                          "Don't have an account? ".tr,
                           style: TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
@@ -303,7 +510,7 @@ class _LoginViewState extends State<LoginView> {
                             Get.to(Signup());
                           },
                           child:  Text(
-                            "Signup",
+                            "Signup".tr,
                             style: TextStyle(
                               fontSize: 14,
                               fontFamily: 'Roboto',

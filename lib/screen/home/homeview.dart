@@ -68,15 +68,27 @@ class _HomePageState extends State<HomePage> {
   Timer? _timer;
   checkLanguage() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    if (sharedPreferences.getString("app_language") == null ||
-        sharedPreferences.getString("app_language") == "English") {
+    String? lang = sharedPreferences.getString("app_language");
+
+    if (lang == null || lang == "English") {
       Get.updateLocale(const Locale('en', 'US'));
       authController.selectedLanguage.value = "English";
-    } else {
+    } else if (lang == "தமிழ்" || lang == "Tamil") {
       Get.updateLocale(const Locale('ta', 'IN'));
       authController.selectedLanguage.value = 'தமிழ்';
+    } else if (lang == "తెలుగు" || lang == "Telugu") {
+      Get.updateLocale(const Locale('te', 'IN'));
+      authController.selectedLanguage.value = 'తెలుగు';
+    } else if (lang == "বাংলা" || lang == "Bengali") {
+      Get.updateLocale(const Locale('bn', 'IN'));
+      authController.selectedLanguage.value = 'বাংলা';
+    } else {
+      // Default fallback
+      Get.updateLocale(const Locale('en', 'US'));
+      authController.selectedLanguage.value = "English";
     }
   }
+
   void startBookingRefresh() {
     _timer?.cancel(); // Cancel previous timer if exists
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -111,8 +123,8 @@ class _HomePageState extends State<HomePage> {
       startBookingRefresh();
       _getCurrentLocation();
       Get.snackbar(
-        "Booking",
-        "Click on Delivery button to proceed booking",
+        "Booking".tr,
+        "Click on Delivery button to proceed booking".tr,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.blue,
         colorText: Colors.white,
@@ -977,7 +989,7 @@ class _HomePageState extends State<HomePage> {
                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                          child: Align(
                              alignment: Alignment.centerLeft,
-                             child: Text("Current Order",style: TextStyle(fontSize: 18,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.start,)),
+                             child: Text("Current Order".tr,style: TextStyle(fontSize: 18,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.start,)),
                        ),
 
                        ListView.builder(

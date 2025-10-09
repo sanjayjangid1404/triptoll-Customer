@@ -42,6 +42,7 @@ class AppContants
   static String driverFAQURl = "Home/getFaq/customer";
   static String driverFAQHelpURl = "Home/getFaqHelp/customer";
   static String cancelOrderURL = "Booking/orderCancelled";
+  static String saveBookingMultiLocation = "Booking/saveBookingMultiLocation";
   static String saveBookingURl = "Booking/saveBooking";
   static String orderPaymentURL = "Booking/orderPayment";
   static String notifyDriverURL = "Booking/notifyDrivers";

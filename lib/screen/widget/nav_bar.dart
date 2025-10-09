@@ -142,6 +142,54 @@ class _NavBarState extends State<NavBar> {
                                     ),
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20, right: 20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: const Color(0xffDCDCDC)),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: RadioListTile(
+                                      title: Text('বাংলা'.tr),
+                                      activeColor: const Color(0xff014E70),
+                                      value: "বাংলা",
+                                      groupValue: authController.selectedLanguage.value,
+                                      onChanged: (value) {
+                                        locale = const Locale('bn', 'BD');
+                                        authController.selectedLanguage.value = value!;
+                                        updateLanguage("বাংলা");
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20, right: 20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: const Color(0xffDCDCDC)),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: RadioListTile(
+                                      title: Text('తెలుగు'.tr),
+                                      activeColor: const Color(0xff014E70),
+                                      value: "తెలుగు",
+                                      groupValue: authController.selectedLanguage.value,
+                                      onChanged: (value) {
+                                        locale = const Locale('te', 'IN');
+                                        authController.selectedLanguage.value = value!;
+                                        updateLanguage("తెలుగు");
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+                                ),
 
                                 // const SizedBox(
                                 //   height: 10,

@@ -91,7 +91,7 @@ class _SignupState extends State<Forgot> {
           centerTitle: false,
           backgroundColor: AppColors.primaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("Forgot",style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("Forgot".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
 
         ),
         body: SingleChildScrollView(
@@ -109,7 +109,7 @@ class _SignupState extends State<Forgot> {
 
               Center(
                 child: Text(
-                  'Forgot Your',
+                  'Forgot Your'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.primaryGradient,
@@ -122,7 +122,7 @@ class _SignupState extends State<Forgot> {
               ),
               Center(
                 child: Text(
-                  'Account Password',
+                  'Account Password'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.secondaryGradient,
@@ -199,11 +199,11 @@ class _SignupState extends State<Forgot> {
                                 });
                               }
                               else{
-                                showCustomSnackBar("Enter valid OTP");
+                                showCustomSnackBar("Enter valid OTP".tr);
                               }
                             },
                             child:  Text(
-                              "Get OTP",
+                              "Get OTP".tr,
                               style: TextStyle(
                                   fontSize: 14,
                                   fontFamily: 'Roboto',
@@ -219,7 +219,7 @@ class _SignupState extends State<Forgot> {
                     ),
 
                     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
-                    hintText: "Mobile Number",
+                    hintText: "Mobile Number".tr,
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
@@ -263,7 +263,7 @@ class _SignupState extends State<Forgot> {
 
 
                     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
-                    hintText: "OTP",
+                    hintText: "OTP".tr,
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
@@ -290,14 +290,14 @@ class _SignupState extends State<Forgot> {
 
                   if(phoneCt.text.isEmpty && phoneCt.text.length !=10)
                   {
-                    showCustomSnackBar("Invalid mobile no.", getXSnackBar: false,isError: true);
+                    showCustomSnackBar("Invalid mobile no.".tr, getXSnackBar: false,isError: true);
                   }
 
                   else if(!isVerify){
-                    showCustomSnackBar("Please verify mobile", getXSnackBar: false,isError: true);
+                    showCustomSnackBar("Please verify mobile".tr, getXSnackBar: false,isError: true);
                   }
                   else if(otpCt.text.isEmpty || otpCt.text.trim() !=OTP){
-                    showCustomSnackBar("Enter valid otp", getXSnackBar: false,isError: true);
+                    showCustomSnackBar("Enter valid otp".tr, getXSnackBar: false,isError: true);
                   }
 
 
@@ -349,7 +349,7 @@ class _SignupState extends State<Forgot> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Continue'.toUpperCase(),
+                        'Continue'.toUpperCase().tr,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -374,8 +374,8 @@ class _SignupState extends State<Forgot> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Back To ",
+                   Text(
+                    "Back To ".tr,
                     style: TextStyle(
                       fontSize: 14,
                       fontFamily: 'Roboto',
@@ -388,7 +388,7 @@ class _SignupState extends State<Forgot> {
                       Get.back();
                     },
                     child:  Text(
-                      "Sign In",
+                      "Sign In".tr,
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Roboto',

@@ -692,7 +692,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                 itemCount: widget.stopLocations.length,
                                 itemBuilder: (context, index) {
                                   final stop = widget.stopLocations[index];
-                                  return Padding(
+
+                                  return   index != 0 ?
+                                    Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -722,7 +724,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
 
                                       ],
                                     ),
-                                  );
+                                  ) :
+                                  SizedBox.shrink();
                                 },
                               ),
                               SizedBox(height: 10,),
@@ -1055,7 +1058,6 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                  child: InkWell(
                    onTap: (){
                      var lastHouseNoValue;
-
                      if (widget.houseNoCt.isNotEmpty) {
                        var lastKey = widget.houseNoCt.keys.last;
                        lastHouseNoValue = widget.houseNoCt[lastKey]?.text;
@@ -1093,8 +1095,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        'vehicleData': authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].toJson():null, // assuming Data has a toJson() method
                        'totalFare': (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0),
                      };
+                     print('kfjdjfkdfjdkfjk${widget.stopLocations.toString()}');
 
-                     authController.bookingNow(
+                     authController.bookingMultipleNow(
                          distance: widget.distance,
                          expectedTime: widget.expectedTime,
                          amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),
@@ -1118,7 +1121,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          pickLng:  widget.pickLng,
                          stops:  widget.stopLocations
                      ).toStringAsFixed(0), vehicleId: authController.vehicleData!.data![selectIndex].id??"", vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
-                         vehicleName: authController.vehicleData!.data![selectIndex].name??"");
+                         vehicleName: authController.vehicleData!.data![selectIndex].name??"",
+                         stopLocations: widget.stopLocations);
                      _startTimer();
                      print(bookingData);
 

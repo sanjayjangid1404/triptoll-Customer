@@ -402,6 +402,93 @@ class AuthController extends GetxController implements GetxService
 
 
   }
+  Future<void>bookingMultipleNow({
+    required String amount,
+    required String categoryId,
+    required String categoryName,
+    required String expectedTime,
+    required String discount,
+    required String discountPercentage,
+    required String dropAddress,
+    required String dropAddressHeading,
+    required String dropLat,
+    required String dropLong,
+    required String paymentType,
+    required String pickupAddress,
+    required String pickupHeading,
+    required String pickupLat,
+    required String pickupLong,
+    required String rate,
+    required String receiverContactNumber,
+    required String receiverName,
+
+    required String stopAddress,
+    required String stopCharge,
+    required String totalAmount,
+    required String totalDistance,
+    required String vehicleId,
+    required String vehicleImg,
+    required String vehicleName,
+    required String distance,
+    required List<Map<String, dynamic>> stopLocations,
+  })
+  async {
+
+    isBookingProcess = true;
+    isShowDriver = false;
+
+    update();
+    print(getUserDeviceID());
+
+
+
+
+
+    Response response = await authRepo.bookMultiple(distance: distance,expectedTime: expectedTime,amount: amount, categoryId: categoryId, categoryName: categoryName, cusId: getUserID()??"", discount: discount, discountPercentage: discountPercentage, dropAddress: dropAddress, dropAddressHeading: dropAddressHeading, dropLat: dropLat, dropLong: dropLong, paymentType: paymentType, pickupAddress: pickupAddress, pickupHeading: pickupHeading, pickupLat: pickupLat, pickupLong: pickupLong, rate: rate, receiverContactNumber: receiverContactNumber, receiverName: receiverName, senderContactNumber: getUserPhone()??"", senderName: getUserName()??"", stopAddress: stopAddress, stopCharge: stopCharge, totalAmount: totalAmount, totalDistance: totalDistance, vehicleId: vehicleId, vehicleImg: vehicleImg, vehicleName: vehicleName,
+        stopLocations: stopLocations);
+
+  //  LoginResponse? loginResponse;
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+      isShowDriver = true;
+
+      showCustomSnackBar("Booking Process", isError: false);
+
+      String newId = response.body["id"].toString();
+
+      // सिर्फ तब update करना है जब नई ID आए
+      if (activeBookingID != newId) {
+        activeBookingID = newId;
+        newBookingID = newId;
+        notifyDriver(newBookingID);
+      }
+
+      // सिर्फ activeBookingID वाली call ही चलानी है
+      getBookingDriver(bookingID: activeBookingID);
+
+
+
+      update();
+    }
+    else {
+
+
+      // dynamic data = jsonDecode(response.body);
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    isBookingProcess = false;
+    update();
+
+
+
+  }
 
   List<WalletResponse>walletResponseList = [];
   Future<void> getWalletHistory() async {

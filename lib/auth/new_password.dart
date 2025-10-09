@@ -53,7 +53,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
           centerTitle: false,
           backgroundColor: AppColors.primaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("New Password",style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("New Password".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
 
         ),
         body: Padding(
@@ -75,15 +75,15 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
 
                   SizedBox(height: 25,),
                   Center(
-                    child: const Text(
-                      'Create New Password',
+                    child: Text(
+                      'Create New Password'.tr,
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 10),
                   Center(
-                    child: const Text(
-                      'Your new password must be different from previous used passwords',
+                    child: Text(
+                      'Your new password must be different from previous used passwords'.tr,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey),
                     ),
@@ -95,7 +95,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'New Password',
+                      labelText: 'New Password'.tr,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -111,10 +111,10 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
+                        return 'Please enter a password'.tr;
                       }
                       if (value.length < 8) {
-                        return 'Password must be at least 8 characters';
+                        return 'Password must be at least 8 characters'.tr;
                       }
 
                       return null;
@@ -127,7 +127,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                     controller: _confirmPasswordController,
                     obscureText: _obscureConfirmPassword,
                     decoration: InputDecoration(
-                      labelText: 'Confirm Password',
+                      labelText: 'Confirm Password'.tr,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -143,7 +143,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                     ),
                     validator: (value) {
                       if (value != _passwordController.text) {
-                        return 'Passwords do not match';
+                        return 'Passwords do not match'.tr;
                       }
                       return null;
                     },
@@ -166,7 +166,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('RESET PASSWORD',style: TextStyle(color: Colors.white),),
+                          :  Text('RESET PASSWORD'.tr,style: TextStyle(color: Colors.white),),
                     ),
                   ),
                 ],

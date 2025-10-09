@@ -212,8 +212,10 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   'lng': pickupLng,
                   'address': pickController.text,
                 });
+                  print('qwertyui${widget.pickLat.toString()}');
                 }
                 else {
+                  print('qwertyui${widget.pickLat.toString()}');
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => BookingInfo(dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
@@ -222,7 +224,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
 
                 }
               },
-              child: Text("${'Confirm'.tr} ${widget.title}", style: TextStyle(fontSize: 18,color: Colors.white)),
+              child: Text("${'Confirm'.tr} ${widget.title!.tr}", style: TextStyle(fontSize: 18,color: Colors.white)),
             ),
           )
         ],

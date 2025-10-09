@@ -210,15 +210,65 @@ class AuthRepo{
       "stop_address": stopAddress,
       "stop_charge": stopCharge,
       "total_amount": totalAmount,
-      'distance' : distance,
       "total_distance": totalDistance,
       "vehicle_id": vehicleId,
       "vehicle_img": vehicleImg,
       "vehicle_name": vehicleName,
+      'distance' : distance,
       "expected_time": expectedTime,
     };
 
     return await apiClient.postData(AppContants.saveBookingURl, body);
+  }
+
+  Future<Response> bookMultiple({
+    required String amount,
+    required String categoryId,
+    required String categoryName,
+    required String cusId,
+    required String discount,
+    required String discountPercentage,
+    required String dropAddress,
+    required String dropAddressHeading,
+    required String dropLat,
+    required String dropLong,
+    required String paymentType,
+    required String pickupAddress,
+    required String pickupHeading,
+    required String pickupLat,
+    required String pickupLong,
+    required String rate,
+    required String receiverContactNumber,
+    required String receiverName,
+    required String senderContactNumber,
+    required String senderName,
+    required String stopAddress,
+    required String stopCharge,
+    required String totalAmount,
+    required String totalDistance,
+    required String distance,
+    required String vehicleId,
+    required String vehicleImg,
+    required String vehicleName,
+    required String expectedTime,
+    required List<Map<String, dynamic>> stopLocations,
+  }) async {
+    final body = {
+      "amount": amount,
+      "category_id": vehicleId,
+      "category_name": categoryName,
+      "cus_id": cusId,
+      "total_amount": totalAmount,
+      "rate": rate,
+      "discount": discount,
+      "discount_percentage": discountPercentage,
+      "payment_type": paymentType,
+      'distance' : distance,
+      "expected_time": expectedTime,
+      "locations": stopLocations,
+    };
+
+    return await apiClient.postData(AppContants.saveBookingMultiLocation, body);
   }
 
 
