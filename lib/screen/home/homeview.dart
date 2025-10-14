@@ -85,6 +85,35 @@ class _HomePageState extends State<HomePage> {
     _timer?.cancel();
     _timer = null;
   }
+  void checkAndCancelBooking() {
+
+    if (authController.latestBookingListResponse == null && authController.latestBookingListResponse.isEmpty) {
+      print("No booking data available. Cannot schedule auto-cancel.");
+      return; // function yahan exit
+    }
+
+    final bookingDateString = authController.latestBookingListResponse[0]!.bookingDate.toString();
+    final bookingDateTime = DateTime.parse(bookingDateString);
+    final now = DateTime.now();
+    final difference = bookingDateTime.add(Duration(minutes: 10)).difference(now);
+    print("difference${difference.toString()}");
+    Duration delay = difference.isNegative ? Duration(seconds: 0) : difference;
+    print("delay${delay.toString()}");
+    print("difference${authController.driver!.toJson()}");
+
+    Timer(delay, () {
+      if (authController.driver!.status == null) {
+        print('csdasdsadsad');
+        authController.cancelOrder(
+          bookingID: authController.latestBookingListResponse[0]!.id.toString(),
+          reason: "No driver found in 10 minutes",
+          comment: "Auto-cancelled",
+          isOrder: false,
+        );
+        Get.find<AuthController>().latestBooking(status: "all",limit: "1",offset: "10");
+      }
+    });
+  }
   @override
   void initState() {
     super.initState();
@@ -111,7 +140,9 @@ class _HomePageState extends State<HomePage> {
       setState(() {
 
       });
-
+      Future.delayed(Duration(seconds: 5),() {
+        checkAndCancelBooking();
+      },);
     });
   }
 
