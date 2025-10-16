@@ -1169,6 +1169,53 @@ class AuthController extends GetxController implements GetxService
 
   }
 
+  Future<void>cancelOrderHome({String? bookingID,String? reason,String? comment,bool? isOrder})
+  async {
+
+
+    update();
+    print(getUserDeviceID());
+
+   // vehicleData = null;
+    Response response = await authRepo.cancelOrder(bookingID: bookingID,userID: getUserDeviceID(),comment: comment,reason: reason);
+
+
+
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+     // getAllBookingLoading = false;
+
+      if(isOrder!){
+        getAllBooking(status: "all",limit: "10");
+        // Get.back();
+      }
+      else {
+        // Get.offAll(HomePage());
+      }
+
+      update();
+    }
+    else {
+
+
+      // dynamic data = jsonDecode(response.body);
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    getAllBookingLoading = false;
+    update();
+
+
+
+  }
+
   bool isBookingDetails = false;
   Future<void>getBookingDetails({String? bookingID,String? driverLat,String? driverLng,Driver? driver})
   async {
