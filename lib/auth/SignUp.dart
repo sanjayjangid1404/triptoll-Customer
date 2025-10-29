@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:triptoll/controller/authController.dart';
 
+import '../model/city_responce.dart';
 import '../util/appColors.dart';
 import '../util/appContants.dart';
 import '../util/appImage.dart';
@@ -30,9 +32,33 @@ class _SignupState extends State<Signup> {
   bool isVerify = false;
   bool verificationCompeted = false;
   String OTP = "";
-
+  CityResponse? selectedCategory;
   bool isLoading = false;
   String apiResponse = "";
+  bool isOtpButtonEnabled = true; // by default enabled
+  int secondsRemaining = 0;
+  Timer? _timer;
+
+  void startTimer() {
+    setState(() {
+      isOtpButtonEnabled = false;
+      secondsRemaining = 30;
+    });
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (secondsRemaining > 1) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        timer.cancel();
+        setState(() {
+          isOtpButtonEnabled = true;
+          secondsRemaining = 0;
+        });
+      }
+    });
+  }
   Future<void> sendOtp() async {
     setState(() {
       isLoading = true;
@@ -56,6 +82,7 @@ class _SignupState extends State<Signup> {
       print(response.body);
 
       if (response.statusCode == 200) {
+        startTimer();
         final data = jsonDecode(response.body);
 
 
@@ -82,6 +109,24 @@ class _SignupState extends State<Signup> {
     });
   }
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      Get.find<AuthController>().getCity();
+      setState(() {
+
+      });
+
+
+    });
+  }
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
       builder: (authController) =>
@@ -89,9 +134,9 @@ class _SignupState extends State<Signup> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: false,
-          backgroundColor: AppColors.primaryGradient,
+          backgroundColor: AppColors.secondaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("Sign Up".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("Sign Up".tr,style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.w500),),
 
         ),
         body: SingleChildScrollView(
@@ -140,7 +185,7 @@ class _SignupState extends State<Signup> {
 
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: TextField(
                   controller: fNameCt,
                   style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
@@ -149,18 +194,18 @@ class _SignupState extends State<Signup> {
                   decoration: InputDecoration(
                     counter: SizedBox(),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
 
 
@@ -170,7 +215,6 @@ class _SignupState extends State<Signup> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -181,7 +225,7 @@ class _SignupState extends State<Signup> {
               SizedBox(height: 10,),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: TextField(
                   controller: lNameCt,
                   style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
@@ -190,18 +234,18 @@ class _SignupState extends State<Signup> {
                   decoration: InputDecoration(
                     counter: SizedBox(),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
 
 
@@ -211,7 +255,6 @@ class _SignupState extends State<Signup> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -222,7 +265,7 @@ class _SignupState extends State<Signup> {
               SizedBox(height: 10,),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: TextField(
                   controller: phoneCt,
                   style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
@@ -234,18 +277,18 @@ class _SignupState extends State<Signup> {
 
 
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
 
                     suffixIcon: Column(
@@ -254,7 +297,8 @@ class _SignupState extends State<Signup> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: GestureDetector(
-                            onTap: () {
+                            onTap:isOtpButtonEnabled
+                                ?  () {
                               // TODO: Navigate to signup screen
 
                               if(phoneCt.text.isNotEmpty && phoneCt.text.length ==10) {
@@ -263,12 +307,13 @@ class _SignupState extends State<Signup> {
                               else{
                                 showCustomSnackBar("Enter valid OTP".tr);
                               }
-                            },
+                            } : null,
                             child:  Text(
-                              "Get OTP".tr,
+                              isOtpButtonEnabled
+                                  ? "GET OTP".tr
+                                  : "${'Retry in'.tr} $secondsRemaining s",
                               style: TextStyle(
                                   fontSize: 14,
-                                  fontFamily: 'Roboto',
                                   color: AppColors.secondaryGradient,
                                   decoration: TextDecoration.underline,
                                   fontWeight: FontWeight.bold,
@@ -285,7 +330,6 @@ class _SignupState extends State<Signup> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -296,7 +340,7 @@ class _SignupState extends State<Signup> {
              isVerify ?  SizedBox(height: 10,):SizedBox(),
 
               isVerify ?  Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: TextField(
                   controller: otpCt,
                   style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
@@ -308,18 +352,18 @@ class _SignupState extends State<Signup> {
 
 
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
 
 
@@ -329,7 +373,6 @@ class _SignupState extends State<Signup> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -339,7 +382,7 @@ class _SignupState extends State<Signup> {
               SizedBox(height: 10,),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: TextField(
                   controller: emailCt,
                   style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
@@ -351,18 +394,18 @@ class _SignupState extends State<Signup> {
 
 
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
 
 
@@ -372,7 +415,6 @@ class _SignupState extends State<Signup> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -382,7 +424,7 @@ class _SignupState extends State<Signup> {
               SizedBox(height: 10,),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: TextField(
                   controller: passwordCt,
                   obscureText: _obscureText,
@@ -393,16 +435,16 @@ class _SignupState extends State<Signup> {
                   decoration: InputDecoration(
                     counter: SizedBox(),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 15,
@@ -412,7 +454,6 @@ class _SignupState extends State<Signup> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -431,7 +472,66 @@ class _SignupState extends State<Signup> {
                 ),
               ),
 
+              const SizedBox(
+                height: 8,
+              ),
 
+              authController.cityResponse.isNotEmpty ?
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<CityResponse>(
+                      value: selectedCategory,
+                      hint: Text("City".tr,
+                      style: TextStyle(
+                        color: Color(0xFF868686),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                      ),),
+                      items: authController.cityResponse!.map((category) {
+                        return DropdownMenuItem<CityResponse>(
+                          value: category,
+                          child: Text(category.name!,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            height: 0,
+                          ),),
+                        );
+                      }).toList(),
+                      onChanged: (value){
+
+                        selectedCategory = value;
+
+                        setState(() {
+
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey)
+                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      ),
+                      isExpanded: true,
+                      dropdownColor: Colors.white,
+                    ),
+                    Container(
+                      color: Colors.grey,
+                      height: 0.5,
+                      width: double.maxFinite,
+                    ),
+                  ],
+                ),
+              ):SizedBox(),
+              const SizedBox(
+                height: 8,
+              ),
 
               SizedBox(height: 30,),
 
@@ -457,6 +557,9 @@ class _SignupState extends State<Signup> {
                   else if(!isVerify){
                     showCustomSnackBar("Please verify mobile".tr, getXSnackBar: false,isError: true);
                   }
+                  else if(selectedCategory==null){
+                    showCustomSnackBar("Select city".tr);
+                  }
                   else if(otpCt.text.isEmpty || otpCt.text.trim() !=OTP){
                     showCustomSnackBar("Enter valid otp".tr, getXSnackBar: false,isError: true);
                   }
@@ -472,6 +575,7 @@ class _SignupState extends State<Signup> {
                       "email":emailCt.text,
                       "contact_number":phoneCt.text,
                       "password":passwordCt.text,
+                      "city_id":selectedCategory!.id.toString(),
                     });
 
                     //authController.loginFunction(emailCt.text, passwordCt.text);
@@ -488,7 +592,7 @@ class _SignupState extends State<Signup> {
                   //padding: const EdgeInsets.symmetric(vertical: 17),
                   clipBehavior: Clip.antiAlias,
                   decoration: ShapeDecoration(
-                    color: AppColors.primaryGradient,
+                    color: AppColors.secondaryGradient,
                     /*gradient: LinearGradient(
                               begin: Alignment(1.00, 0.00),
                               end: Alignment(-1, 0),
@@ -509,7 +613,6 @@ class _SignupState extends State<Signup> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.60,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w600,
                           height: 0,
                           letterSpacing: 1.33,
@@ -533,7 +636,6 @@ class _SignupState extends State<Signup> {
                     "Back To ".tr,
                     style: TextStyle(
                       fontSize: 14,
-                      fontFamily: 'Roboto',
                       color: Colors.black87,
                     ),
                   ),
@@ -545,8 +647,7 @@ class _SignupState extends State<Signup> {
                     child:  Text(
                         "Sign In".tr,
                       style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Roboto',
+                          fontSize: 13,
                           color: AppColors.secondaryGradient,
                           decoration: TextDecoration.underline,
                           fontWeight: FontWeight.bold,

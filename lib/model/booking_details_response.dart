@@ -1,153 +1,148 @@
-/// id : "651"
-/// order_id : "794374654217"
-/// cus_id : "309"
-/// driver_id : "338"
-/// asigned_driver : null
-/// category_id : "114"
-/// vehicle_id : "114"
-/// rate : "6"
-/// amount : "88"
-/// total_amount : "88"
-/// stop_charge : "0"
-/// booking_date : "2025-08-10 17:32:04"
-/// order_status : "delivered"
-/// read_status : "new"
-/// accept_time : "2025-08-10 18:22:44"
+/// id : "1499"
+/// order_id : "122833527249"
+/// cus_id : "803"
+/// driver_id : null
+/// category_id : "112"
+/// city_id : null
+/// rate : "39.00"
+/// amount : "669.00"
+/// total_amount : "669.40"
+/// booking_date : "2025-10-28 13:43:23"
+/// order_status : "cancelled"
+/// accept_time : "2025-10-28 13:43:37"
 /// close_time : null
-/// discount : "0"
-/// discount_percentage : "0"
 /// payment_type : "Online"
+/// payment_status : "pending"
 /// trn_id : null
-/// pickup_lat : "26.8892941636895"
-/// pickup_long : "75.91173570603132"
-/// pickup_address : "A68, Sumel, Jaipur, India"
-/// sender_name : "Mohan S"
-/// sender_contact_number : "9266809133"
-/// apartment_type : ""
-/// drop_lat : "26.906233955536404"
-/// drop_long : "75.81631477922201"
-/// drop_address : "SMS HOSPITAL, Ashok Nagar, Jaipur, India"
-/// receiver_name : "ff"
-/// receiver_contact_number : "5699658888"
-/// reason : null
+/// pickup_lat : null
+/// pickup_long : null
+/// pickup_address : ""
+/// sender_name : null
+/// sender_contact_number : null
+/// drop_lat : null
+/// drop_long : null
+/// drop_address : ""
+/// distance : "10.18"
+/// expected_time : "25m"
+/// receiver_name : null
+/// receiver_contact_number : null
+/// reason : "No driver found in 10 minutes"
 /// additional_comment : null
-/// picked_time : "2025-08-10 18:55:33"
-/// delivery_time : "2025-08-10 18:55:40"
-/// cancelled_time : null
-/// start_trip : "yes"
-/// add_date : "2025-08-10 17:32:04"
-/// contact_number : "9266809133"
-/// lat : "26.8892871"
-/// long : "75.911688"
-/// first_name : "Mohan"
-/// last_name : "K"
-/// gender : "male"
-/// vehicle_name : "Diesel"
-/// model : "2023"
-/// rc_no : "gagahash"
-/// weight : "500"
-/// weight_type : "kgs"
-/// category_name : "Two wheelers"
-/// vehicle_img : "670bc024681b7-1728823328734.jpg"
-/// id_proof_img : "6708b6dcc651e-1728624333430.jpg"
-/// id_proof_back_img : "6708b6dd82bf5-1728624343954.jpg"
-/// category_img : "66fe2c012aa80-bb.png"
-/// driver_img : null
-/// review : null
-/// rating : null
-/// all_drop_address : []
+/// picked_time : null
+/// delivery_time : null
+/// cancelled_time : "2025-10-28 15:35:04"
+/// payment_time : null
+/// current_lat : null
+/// current_lng : null
+/// total_distance_travelled : null
+/// start_trip : "no"
+/// loading_duration : null
+/// loading_time : null
+/// loading_charge : null
+/// unloading_duration : null
+/// unloading_time : null
+/// unloading_charge : null
+/// add_date : "2025-10-28 13:43:23"
+/// is_fake : false
+/// status : null
+/// customer_first_name : "Himpreet"
+/// customer_last_name : "Singh"
+/// customer_contact_number : "8619394870"
+/// driver_first_name : null
+/// driver_last_name : null
+/// driver_contact_number : null
+/// name : "Tata Ace"
+/// pickup : {"location_id":"1936","lat":"26.837063657425","lng":"75.833927504718","address":"538, Durgapura, Jaipur, India","name":"Himpreet Singh","contact_number":"8619394870","status":"loaded","loading_time":"2025-10-28 13:43:50","loading_duration":"3","loading_charge":"0.00"}
+/// dropoffs : [{"location_id":"1937","lat":"26.894843665034","lng":"75.786504372954","address":"68, Malviya Nagar, Jaipur, India","name":"Himpreet Singh","contact_number":"8619394875","sequence":"2","status":"completed","unloading_time":"2025-10-28 13:47:26","unloading_duration":"1","unloading_charge":"0.00"}]
 
 class BookingDetailsResponse {
   BookingDetailsResponse({
-      String? id, 
-      String? orderId, 
-      String? cusId, 
-      String? driverId, 
-      dynamic asignedDriver, 
-      String? categoryId, 
-      String? vehicleId, 
-      String? rate, 
-      String? amount, 
-      String? totalAmount, 
-      String? stopCharge, 
-      String? bookingDate, 
-      String? orderStatus, 
-      String? readStatus, 
-      String? acceptTime, 
-      dynamic closeTime, 
-      String? discount, 
-      String? paymentStatus,
-      String? discountPercentage,
-      String? paymentType, 
+      dynamic id, 
+      dynamic orderId, 
+      dynamic cusId, 
+      dynamic driverId, 
+      dynamic categoryId, 
+      dynamic cityId, 
+      dynamic rate, 
+      dynamic amount, 
+      dynamic totalAmount, 
+      dynamic bookingDate, 
+      dynamic orderStatus, 
+      dynamic acceptTime, 
+      dynamic closeTime,
+      dynamic weight,
+      dynamic weightType,
+      dynamic paymentType,
+      dynamic paymentStatus, 
       dynamic trnId, 
-      String? pickupLat, 
-      String? pickupLong, 
-      String? pickupAddress, 
-      String? senderName, 
-      String? senderContactNumber, 
-      String? apartmentType, 
-      String? dropLat, 
-      String? dropLong, 
-      String? dropAddress, 
-      String? receiverName, 
-      String? receiverContactNumber, 
+      dynamic pickupLat, 
+      dynamic pickupLong, 
+      dynamic pickupAddress, 
+      dynamic senderName, 
+      dynamic senderContactNumber, 
+      dynamic dropLat, 
+      dynamic dropLong, 
+      dynamic dropAddress, 
+      dynamic distance, 
+      dynamic expectedTime, 
+      dynamic receiverName, 
+      dynamic receiverContactNumber, 
       dynamic reason, 
       dynamic additionalComment, 
-      String? pickedTime, 
-      String? deliveryTime, 
+      dynamic pickedTime, 
+      dynamic deliveryTime, 
       dynamic cancelledTime, 
-      String? startTrip, 
-      String? addDate, 
-      String? contactNumber, 
-      String? lat, 
-      String? long, 
-      String? firstName, 
-      String? lastName, 
-      String? gender, 
-      String? vehicleName, 
-      String? model, 
-      String? rcNo, 
-      String? weight, 
-      String? weightType, 
-      String? categoryName, 
-      String? vehicleImg, 
-      String? idProofImg, 
-      String? idProofBackImg, 
-      String? categoryImg, 
-      dynamic driverImg, 
-      dynamic review, 
-      dynamic rating, 
-      List<dynamic>? allDropAddress,}){
+      dynamic paymentTime, 
+      dynamic currentLat, 
+      dynamic currentLng, 
+      dynamic totalDistanceTravelled, 
+      dynamic startTrip, 
+      dynamic loadingDuration, 
+      dynamic loadingTime, 
+      dynamic loadingCharge, 
+      dynamic unloadingDuration, 
+      dynamic unloadingTime, 
+      dynamic unloadingCharge, 
+      dynamic addDate, 
+      bool? isFake, 
+      dynamic status, 
+      dynamic customerFirstName, 
+      dynamic customerLastName, 
+      dynamic customerContactNumber, 
+      dynamic driverFirstName, 
+      dynamic driverLastName, 
+      dynamic driverContactNumber, 
+      dynamic name, 
+      Pickup? pickup, 
+      List<Dropoffs>? dropoffs,}){
     _id = id;
     _orderId = orderId;
     _cusId = cusId;
     _driverId = driverId;
-    _asignedDriver = asignedDriver;
     _categoryId = categoryId;
-    _vehicleId = vehicleId;
+    _cityId = cityId;
     _rate = rate;
     _amount = amount;
+    _weight = weight;
+    _weightType = weightType;
     _totalAmount = totalAmount;
-    _stopCharge = stopCharge;
     _bookingDate = bookingDate;
-    _paymentStatus = paymentStatus;
     _orderStatus = orderStatus;
-    _readStatus = readStatus;
     _acceptTime = acceptTime;
     _closeTime = closeTime;
-    _discount = discount;
-    _discountPercentage = discountPercentage;
     _paymentType = paymentType;
+    _paymentStatus = paymentStatus;
     _trnId = trnId;
     _pickupLat = pickupLat;
     _pickupLong = pickupLong;
     _pickupAddress = pickupAddress;
     _senderName = senderName;
     _senderContactNumber = senderContactNumber;
-    _apartmentType = apartmentType;
     _dropLat = dropLat;
     _dropLong = dropLong;
     _dropAddress = dropAddress;
+    _distance = distance;
+    _expectedTime = expectedTime;
     _receiverName = receiverName;
     _receiverContactNumber = receiverContactNumber;
     _reason = reason;
@@ -155,28 +150,29 @@ class BookingDetailsResponse {
     _pickedTime = pickedTime;
     _deliveryTime = deliveryTime;
     _cancelledTime = cancelledTime;
+    _paymentTime = paymentTime;
+    _currentLat = currentLat;
+    _currentLng = currentLng;
+    _totalDistanceTravelled = totalDistanceTravelled;
     _startTrip = startTrip;
+    _loadingDuration = loadingDuration;
+    _loadingTime = loadingTime;
+    _loadingCharge = loadingCharge;
+    _unloadingDuration = unloadingDuration;
+    _unloadingTime = unloadingTime;
+    _unloadingCharge = unloadingCharge;
     _addDate = addDate;
-    _contactNumber = contactNumber;
-    _lat = lat;
-    _long = long;
-    _firstName = firstName;
-    _lastName = lastName;
-    _gender = gender;
-    _vehicleName = vehicleName;
-    _model = model;
-    _rcNo = rcNo;
-    _weight = weight;
-    _weightType = weightType;
-    _categoryName = categoryName;
-    _vehicleImg = vehicleImg;
-    _idProofImg = idProofImg;
-    _idProofBackImg = idProofBackImg;
-    _categoryImg = categoryImg;
-    _driverImg = driverImg;
-    _review = review;
-    _rating = rating;
-    _allDropAddress = allDropAddress;
+    _isFake = isFake;
+    _status = status;
+    _customerFirstName = customerFirstName;
+    _customerLastName = customerLastName;
+    _customerContactNumber = customerContactNumber;
+    _driverFirstName = driverFirstName;
+    _driverLastName = driverLastName;
+    _driverContactNumber = driverContactNumber;
+    _name = name;
+    _pickup = pickup;
+    _dropoffs = dropoffs;
 }
 
   BookingDetailsResponse.fromJson(dynamic json) {
@@ -184,215 +180,210 @@ class BookingDetailsResponse {
     _orderId = json['order_id'];
     _cusId = json['cus_id'];
     _driverId = json['driver_id'];
-    _asignedDriver = json['asigned_driver'];
     _categoryId = json['category_id'];
-    _vehicleId = json['vehicle_id'];
+    _cityId = json['city_id'];
     _rate = json['rate'];
     _amount = json['amount'];
     _totalAmount = json['total_amount'];
-    _stopCharge = json['stop_charge'];
     _bookingDate = json['booking_date'];
-    _paymentStatus = json['payment_status'];
-    _orderStatus = json['order_status']??"";
-    _readStatus = json['read_status'];
+    _orderStatus = json['order_status'];
     _acceptTime = json['accept_time'];
     _closeTime = json['close_time'];
-    _discount = json['discount'];
-    _discountPercentage = json['discount_percentage'];
     _paymentType = json['payment_type'];
+    _paymentStatus = json['payment_status'];
     _trnId = json['trn_id'];
     _pickupLat = json['pickup_lat'];
     _pickupLong = json['pickup_long'];
     _pickupAddress = json['pickup_address'];
     _senderName = json['sender_name'];
     _senderContactNumber = json['sender_contact_number'];
-    _apartmentType = json['apartment_type'];
     _dropLat = json['drop_lat'];
     _dropLong = json['drop_long'];
     _dropAddress = json['drop_address'];
+    _distance = json['distance'];
+    _expectedTime = json['expected_time'];
     _receiverName = json['receiver_name'];
     _receiverContactNumber = json['receiver_contact_number'];
     _reason = json['reason'];
     _additionalComment = json['additional_comment'];
     _pickedTime = json['picked_time'];
-    _deliveryTime = json['delivery_time'];
-    _cancelledTime = json['cancelled_time'];
-    _startTrip = json['start_trip'];
-    _addDate = json['add_date'];
-    _contactNumber = json['contact_number'];
-    _lat = json['lat'];
-    _long = json['long'];
-    _firstName = json['first_name'];
-    _lastName = json['last_name'];
-    _gender = json['gender'];
-    _vehicleName = json['vehicle_name'];
-    _model = json['model'];
-    _rcNo = json['rc_no'];
     _weight = json['weight'];
     _weightType = json['weight_type'];
-    _categoryName = json['category_name'];
-    _vehicleImg = json['vehicle_img'];
-    _idProofImg = json['id_proof_img'];
-    _idProofBackImg = json['id_proof_back_img'];
-    _categoryImg = json['category_img'];
-    _driverImg = json['driver_img'];
-    _review = json['review'];
-    _rating = json['rating'];
-    // if (json['all_drop_address'] != null) {
-    //   _allDropAddress = [];
-    //   json['all_drop_address'].forEach((v) {
-    //     _allDropAddress?.add(Dynamic.fromJson(v));
-    //   });
-    // }
+    _deliveryTime = json['delivery_time'];
+    _cancelledTime = json['cancelled_time'];
+    _paymentTime = json['payment_time'];
+    _currentLat = json['current_lat'];
+    _currentLng = json['current_lng'];
+    _totalDistanceTravelled = json['total_distance_travelled'];
+    _startTrip = json['start_trip'];
+    _loadingDuration = json['loading_duration'];
+    _loadingTime = json['loading_time'];
+    _loadingCharge = json['loading_charge'];
+    _unloadingDuration = json['unloading_duration'];
+    _unloadingTime = json['unloading_time'];
+    _unloadingCharge = json['unloading_charge'];
+    _addDate = json['add_date'];
+    _isFake = json['is_fake'];
+    _status = json['status'];
+    _customerFirstName = json['customer_first_name'];
+    _customerLastName = json['customer_last_name'];
+    _customerContactNumber = json['customer_contact_number'];
+    _driverFirstName = json['driver_first_name'];
+    _driverLastName = json['driver_last_name'];
+    _driverContactNumber = json['driver_contact_number'];
+    _name = json['name'];
+    _pickup = json['pickup'] != null ? Pickup.fromJson(json['pickup']) : null;
+    if (json['dropoffs'] != null) {
+      _dropoffs = [];
+      json['dropoffs'].forEach((v) {
+        _dropoffs?.add(Dropoffs.fromJson(v));
+      });
+    }
   }
-  String? _id;
-  String? _orderId;
-  String? _cusId;
-  String? _driverId;
-  dynamic _asignedDriver;
-  String? _categoryId;
-  String? _vehicleId;
-  String? _rate;
-  String? _amount;
-  String? _totalAmount;
-  String? _stopCharge;
-  String? _bookingDate;
-  String? _paymentStatus;
-  String? _orderStatus;
-  String? _readStatus;
-  String? _acceptTime;
+  dynamic _id;
+  dynamic _orderId;
+  dynamic _cusId;
+  dynamic _driverId;
+  dynamic _categoryId;
+  dynamic _cityId;
+  dynamic _rate;
+  dynamic _amount;
+  dynamic _totalAmount;
+  dynamic _bookingDate;
+  dynamic _orderStatus;
+  dynamic _acceptTime;
   dynamic _closeTime;
-  String? _discount;
-  String? _discountPercentage;
-  String? _paymentType;
+  dynamic _paymentType;
+  dynamic _paymentStatus;
   dynamic _trnId;
-  String? _pickupLat;
-  String? _pickupLong;
-  String? _pickupAddress;
-  String? _senderName;
-  String? _senderContactNumber;
-  String? _apartmentType;
-  String? _dropLat;
-  String? _dropLong;
-  String? _dropAddress;
-  String? _receiverName;
-  String? _receiverContactNumber;
+  dynamic _pickupLat;
+  dynamic _pickupLong;
+  dynamic _pickupAddress;
+  dynamic _senderName;
+  dynamic _senderContactNumber;
+  dynamic _dropLat;
+  dynamic _dropLong;
+  dynamic _dropAddress;
+  dynamic _distance;
+  dynamic _expectedTime;
+  dynamic _receiverName;
+  dynamic _weight;
+  dynamic _weightType;
+  dynamic _receiverContactNumber;
   dynamic _reason;
   dynamic _additionalComment;
-  String? _pickedTime;
-  String? _deliveryTime;
+  dynamic _pickedTime;
+  dynamic _deliveryTime;
   dynamic _cancelledTime;
-  String? _startTrip;
-  String? _addDate;
-  String? _contactNumber;
-  String? _lat;
-  String? _long;
-  String? _firstName;
-  String? _lastName;
-  String? _gender;
-  String? _vehicleName;
-  String? _model;
-  String? _rcNo;
-  String? _weight;
-  String? _weightType;
-  String? _categoryName;
-  String? _vehicleImg;
-  String? _idProofImg;
-  String? _idProofBackImg;
-  String? _categoryImg;
-  dynamic _driverImg;
-  dynamic _review;
-  dynamic _rating;
-  List<dynamic>? _allDropAddress;
-BookingDetailsResponse copyWith({  String? id,
-  String? orderId,
-  String? cusId,
-  String? driverId,
-  dynamic asignedDriver,
-  String? categoryId,
-  String? vehicleId,
-  String? rate,
-  String? amount,
-  String? totalAmount,
-  String? stopCharge,
-  String? bookingDate,
-  String? paymentStatus,
-  String? orderStatus,
-  String? readStatus,
-  String? acceptTime,
+  dynamic _paymentTime;
+  dynamic _currentLat;
+  dynamic _currentLng;
+  dynamic _totalDistanceTravelled;
+  dynamic _startTrip;
+  dynamic _loadingDuration;
+  dynamic _loadingTime;
+  dynamic _loadingCharge;
+  dynamic _unloadingDuration;
+  dynamic _unloadingTime;
+  dynamic _unloadingCharge;
+  dynamic _addDate;
+  bool? _isFake;
+  dynamic _status;
+  dynamic _customerFirstName;
+  dynamic _customerLastName;
+  dynamic _customerContactNumber;
+  dynamic _driverFirstName;
+  dynamic _driverLastName;
+  dynamic _driverContactNumber;
+  dynamic _name;
+  Pickup? _pickup;
+  List<Dropoffs>? _dropoffs;
+BookingDetailsResponse copyWith({  dynamic id,
+  dynamic orderId,
+  dynamic cusId,
+  dynamic driverId,
+  dynamic categoryId,
+  dynamic cityId,
+  dynamic rate,
+  dynamic amount,
+  dynamic weight,
+  dynamic weightType,
+  dynamic totalAmount,
+  dynamic bookingDate,
+  dynamic orderStatus,
+  dynamic acceptTime,
   dynamic closeTime,
-  String? discount,
-  String? discountPercentage,
-  String? paymentType,
+  dynamic paymentType,
+  dynamic paymentStatus,
   dynamic trnId,
-  String? pickupLat,
-  String? pickupLong,
-  String? pickupAddress,
-  String? senderName,
-  String? senderContactNumber,
-  String? apartmentType,
-  String? dropLat,
-  String? dropLong,
-  String? dropAddress,
-  String? receiverName,
-  String? receiverContactNumber,
+  dynamic pickupLat,
+  dynamic pickupLong,
+  dynamic pickupAddress,
+  dynamic senderName,
+  dynamic senderContactNumber,
+  dynamic dropLat,
+  dynamic dropLong,
+  dynamic dropAddress,
+  dynamic distance,
+  dynamic expectedTime,
+  dynamic receiverName,
+  dynamic receiverContactNumber,
   dynamic reason,
   dynamic additionalComment,
-  String? pickedTime,
-  String? deliveryTime,
+  dynamic pickedTime,
+  dynamic deliveryTime,
   dynamic cancelledTime,
-  String? startTrip,
-  String? addDate,
-  String? contactNumber,
-  String? lat,
-  String? long,
-  String? firstName,
-  String? lastName,
-  String? gender,
-  String? vehicleName,
-  String? model,
-  String? rcNo,
-  String? weight,
-  String? weightType,
-  String? categoryName,
-  String? vehicleImg,
-  String? idProofImg,
-  String? idProofBackImg,
-  String? categoryImg,
-  dynamic driverImg,
-  dynamic review,
-  dynamic rating,
-  List<dynamic>? allDropAddress,
+  dynamic paymentTime,
+  dynamic currentLat,
+  dynamic currentLng,
+  dynamic totalDistanceTravelled,
+  dynamic startTrip,
+  dynamic loadingDuration,
+  dynamic loadingTime,
+  dynamic loadingCharge,
+  dynamic unloadingDuration,
+  dynamic unloadingTime,
+  dynamic unloadingCharge,
+  dynamic addDate,
+  bool? isFake,
+  dynamic status,
+  dynamic customerFirstName,
+  dynamic customerLastName,
+  dynamic customerContactNumber,
+  dynamic driverFirstName,
+  dynamic driverLastName,
+  dynamic driverContactNumber,
+  dynamic name,
+  Pickup? pickup,
+  List<Dropoffs>? dropoffs,
 }) => BookingDetailsResponse(  id: id ?? _id,
   orderId: orderId ?? _orderId,
   cusId: cusId ?? _cusId,
   driverId: driverId ?? _driverId,
-  asignedDriver: asignedDriver ?? _asignedDriver,
   categoryId: categoryId ?? _categoryId,
-  vehicleId: vehicleId ?? _vehicleId,
+  cityId: cityId ?? _cityId,
   rate: rate ?? _rate,
   amount: amount ?? _amount,
   totalAmount: totalAmount ?? _totalAmount,
-  stopCharge: stopCharge ?? _stopCharge,
   bookingDate: bookingDate ?? _bookingDate,
-  paymentStatus: paymentStatus ?? _paymentStatus,
   orderStatus: orderStatus ?? _orderStatus,
-  readStatus: readStatus ?? _readStatus,
   acceptTime: acceptTime ?? _acceptTime,
   closeTime: closeTime ?? _closeTime,
-  discount: discount ?? _discount,
-  discountPercentage: discountPercentage ?? _discountPercentage,
   paymentType: paymentType ?? _paymentType,
+  paymentStatus: paymentStatus ?? _paymentStatus,
   trnId: trnId ?? _trnId,
   pickupLat: pickupLat ?? _pickupLat,
   pickupLong: pickupLong ?? _pickupLong,
+  weight: weight ?? _weight,
+  weightType: weightType ?? _weightType,
   pickupAddress: pickupAddress ?? _pickupAddress,
   senderName: senderName ?? _senderName,
   senderContactNumber: senderContactNumber ?? _senderContactNumber,
-  apartmentType: apartmentType ?? _apartmentType,
   dropLat: dropLat ?? _dropLat,
   dropLong: dropLong ?? _dropLong,
   dropAddress: dropAddress ?? _dropAddress,
+  distance: distance ?? _distance,
+  expectedTime: expectedTime ?? _expectedTime,
   receiverName: receiverName ?? _receiverName,
   receiverContactNumber: receiverContactNumber ?? _receiverContactNumber,
   reason: reason ?? _reason,
@@ -400,88 +391,88 @@ BookingDetailsResponse copyWith({  String? id,
   pickedTime: pickedTime ?? _pickedTime,
   deliveryTime: deliveryTime ?? _deliveryTime,
   cancelledTime: cancelledTime ?? _cancelledTime,
+  paymentTime: paymentTime ?? _paymentTime,
+  currentLat: currentLat ?? _currentLat,
+  currentLng: currentLng ?? _currentLng,
+  totalDistanceTravelled: totalDistanceTravelled ?? _totalDistanceTravelled,
   startTrip: startTrip ?? _startTrip,
+  loadingDuration: loadingDuration ?? _loadingDuration,
+  loadingTime: loadingTime ?? _loadingTime,
+  loadingCharge: loadingCharge ?? _loadingCharge,
+  unloadingDuration: unloadingDuration ?? _unloadingDuration,
+  unloadingTime: unloadingTime ?? _unloadingTime,
+  unloadingCharge: unloadingCharge ?? _unloadingCharge,
   addDate: addDate ?? _addDate,
-  contactNumber: contactNumber ?? _contactNumber,
-  lat: lat ?? _lat,
-  long: long ?? _long,
-  firstName: firstName ?? _firstName,
-  lastName: lastName ?? _lastName,
-  gender: gender ?? _gender,
-  vehicleName: vehicleName ?? _vehicleName,
-  model: model ?? _model,
-  rcNo: rcNo ?? _rcNo,
-  weight: weight ?? _weight,
-  weightType: weightType ?? _weightType,
-  categoryName: categoryName ?? _categoryName,
-  vehicleImg: vehicleImg ?? _vehicleImg,
-  idProofImg: idProofImg ?? _idProofImg,
-  idProofBackImg: idProofBackImg ?? _idProofBackImg,
-  categoryImg: categoryImg ?? _categoryImg,
-  driverImg: driverImg ?? _driverImg,
-  review: review ?? _review,
-  rating: rating ?? _rating,
-  allDropAddress: allDropAddress ?? _allDropAddress,
+  isFake: isFake ?? _isFake,
+  status: status ?? _status,
+  customerFirstName: customerFirstName ?? _customerFirstName,
+  customerLastName: customerLastName ?? _customerLastName,
+  customerContactNumber: customerContactNumber ?? _customerContactNumber,
+  driverFirstName: driverFirstName ?? _driverFirstName,
+  driverLastName: driverLastName ?? _driverLastName,
+  driverContactNumber: driverContactNumber ?? _driverContactNumber,
+  name: name ?? _name,
+  pickup: pickup ?? _pickup,
+  dropoffs: dropoffs ?? _dropoffs,
 );
-  String? get id => _id;
-  String? get orderId => _orderId;
-  String? get cusId => _cusId;
-  String? get driverId => _driverId;
-  dynamic get asignedDriver => _asignedDriver;
-  String? get categoryId => _categoryId;
-  String? get vehicleId => _vehicleId;
-  String? get rate => _rate;
-  String? get amount => _amount;
-  String? get totalAmount => _totalAmount;
-  String? get stopCharge => _stopCharge;
-  String? get bookingDate => _bookingDate;
-  String? get paymentStatus => _paymentStatus;
-  String? get orderStatus => _orderStatus;
-  String? get readStatus => _readStatus;
-  String? get acceptTime => _acceptTime;
+  dynamic get id => _id;
+  dynamic get orderId => _orderId;
+  dynamic get cusId => _cusId;
+  dynamic get driverId => _driverId;
+  dynamic get categoryId => _categoryId;
+  dynamic get cityId => _cityId;
+  dynamic get rate => _rate;
+  dynamic get amount => _amount;
+  dynamic get totalAmount => _totalAmount;
+  dynamic get bookingDate => _bookingDate;
+  dynamic get orderStatus => _orderStatus;
+  dynamic get weight => _weight;
+  dynamic get weightType => _weightType;
+  dynamic get acceptTime => _acceptTime;
   dynamic get closeTime => _closeTime;
-  String? get discount => _discount;
-  String? get discountPercentage => _discountPercentage;
-  String? get paymentType => _paymentType;
+  dynamic get paymentType => _paymentType;
+  dynamic get paymentStatus => _paymentStatus;
   dynamic get trnId => _trnId;
   dynamic get pickupLat => _pickupLat;
   dynamic get pickupLong => _pickupLong;
   dynamic get pickupAddress => _pickupAddress;
-  String? get senderName => _senderName;
-  String? get senderContactNumber => _senderContactNumber;
-  String? get apartmentType => _apartmentType;
-  String? get dropLat => _dropLat;
-  String? get dropLong => _dropLong;
-  String? get dropAddress => _dropAddress;
-  String? get receiverName => _receiverName;
-  String? get receiverContactNumber => _receiverContactNumber;
+  dynamic get senderName => _senderName;
+  dynamic get senderContactNumber => _senderContactNumber;
+  dynamic get dropLat => _dropLat;
+  dynamic get dropLong => _dropLong;
+  dynamic get dropAddress => _dropAddress;
+  dynamic get distance => _distance;
+  dynamic get expectedTime => _expectedTime;
+  dynamic get receiverName => _receiverName;
+  dynamic get receiverContactNumber => _receiverContactNumber;
   dynamic get reason => _reason;
   dynamic get additionalComment => _additionalComment;
-  String? get pickedTime => _pickedTime;
-  String? get deliveryTime => _deliveryTime;
+  dynamic get pickedTime => _pickedTime;
+  dynamic get deliveryTime => _deliveryTime;
   dynamic get cancelledTime => _cancelledTime;
-  String? get startTrip => _startTrip;
-  String? get addDate => _addDate;
-  String? get contactNumber => _contactNumber;
-  String? get lat => _lat;
-  String? get long => _long;
-  String? get firstName => _firstName;
-  String? get lastName => _lastName;
-  String? get gender => _gender;
-  String? get vehicleName => _vehicleName;
-  String? get model => _model;
-  String? get rcNo => _rcNo;
-  String? get weight => _weight;
-  String? get weightType => _weightType;
-  String? get categoryName => _categoryName;
-  String? get vehicleImg => _vehicleImg;
-  String? get idProofImg => _idProofImg;
-  String? get idProofBackImg => _idProofBackImg;
-  String? get categoryImg => _categoryImg;
-  dynamic get driverImg => _driverImg;
-  dynamic get review => _review;
-  dynamic get rating => _rating;
-  List<dynamic>? get allDropAddress => _allDropAddress;
+  dynamic get paymentTime => _paymentTime;
+  dynamic get currentLat => _currentLat;
+  dynamic get currentLng => _currentLng;
+  dynamic get totalDistanceTravelled => _totalDistanceTravelled;
+  dynamic get startTrip => _startTrip;
+  dynamic get loadingDuration => _loadingDuration;
+  dynamic get loadingTime => _loadingTime;
+  dynamic get loadingCharge => _loadingCharge;
+  dynamic get unloadingDuration => _unloadingDuration;
+  dynamic get unloadingTime => _unloadingTime;
+  dynamic get unloadingCharge => _unloadingCharge;
+  dynamic get addDate => _addDate;
+  bool? get isFake => _isFake;
+  dynamic get status => _status;
+  dynamic get customerFirstName => _customerFirstName;
+  dynamic get customerLastName => _customerLastName;
+  dynamic get customerContactNumber => _customerContactNumber;
+  dynamic get driverFirstName => _driverFirstName;
+  dynamic get driverLastName => _driverLastName;
+  dynamic get driverContactNumber => _driverContactNumber;
+  dynamic get name => _name;
+  Pickup? get pickup => _pickup;
+  List<Dropoffs>? get dropoffs => _dropoffs;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -489,32 +480,30 @@ BookingDetailsResponse copyWith({  String? id,
     map['order_id'] = _orderId;
     map['cus_id'] = _cusId;
     map['driver_id'] = _driverId;
-    map['asigned_driver'] = _asignedDriver;
     map['category_id'] = _categoryId;
-    map['vehicle_id'] = _vehicleId;
+    map['city_id'] = _cityId;
     map['rate'] = _rate;
     map['amount'] = _amount;
     map['total_amount'] = _totalAmount;
-    map['stop_charge'] = _stopCharge;
     map['booking_date'] = _bookingDate;
-    map['payment_status'] = _paymentStatus;
     map['order_status'] = _orderStatus;
-    map['read_status'] = _readStatus;
+    map['weight'] = _weight;
+    map['weight_type'] = _weightType;
     map['accept_time'] = _acceptTime;
     map['close_time'] = _closeTime;
-    map['discount'] = _discount;
-    map['discount_percentage'] = _discountPercentage;
     map['payment_type'] = _paymentType;
+    map['payment_status'] = _paymentStatus;
     map['trn_id'] = _trnId;
     map['pickup_lat'] = _pickupLat;
     map['pickup_long'] = _pickupLong;
     map['pickup_address'] = _pickupAddress;
     map['sender_name'] = _senderName;
     map['sender_contact_number'] = _senderContactNumber;
-    map['apartment_type'] = _apartmentType;
     map['drop_lat'] = _dropLat;
     map['drop_long'] = _dropLong;
     map['drop_address'] = _dropAddress;
+    map['distance'] = _distance;
+    map['expected_time'] = _expectedTime;
     map['receiver_name'] = _receiverName;
     map['receiver_contact_number'] = _receiverContactNumber;
     map['reason'] = _reason;
@@ -522,30 +511,230 @@ BookingDetailsResponse copyWith({  String? id,
     map['picked_time'] = _pickedTime;
     map['delivery_time'] = _deliveryTime;
     map['cancelled_time'] = _cancelledTime;
+    map['payment_time'] = _paymentTime;
+    map['current_lat'] = _currentLat;
+    map['current_lng'] = _currentLng;
+    map['total_distance_travelled'] = _totalDistanceTravelled;
     map['start_trip'] = _startTrip;
+    map['loading_duration'] = _loadingDuration;
+    map['loading_time'] = _loadingTime;
+    map['loading_charge'] = _loadingCharge;
+    map['unloading_duration'] = _unloadingDuration;
+    map['unloading_time'] = _unloadingTime;
+    map['unloading_charge'] = _unloadingCharge;
     map['add_date'] = _addDate;
-    map['contact_number'] = _contactNumber;
-    map['lat'] = _lat;
-    map['long'] = _long;
-    map['first_name'] = _firstName;
-    map['last_name'] = _lastName;
-    map['gender'] = _gender;
-    map['vehicle_name'] = _vehicleName;
-    map['model'] = _model;
-    map['rc_no'] = _rcNo;
-    map['weight'] = _weight;
-    map['weight_type'] = _weightType;
-    map['category_name'] = _categoryName;
-    map['vehicle_img'] = _vehicleImg;
-    map['id_proof_img'] = _idProofImg;
-    map['id_proof_back_img'] = _idProofBackImg;
-    map['category_img'] = _categoryImg;
-    map['driver_img'] = _driverImg;
-    map['review'] = _review;
-    map['rating'] = _rating;
-    if (_allDropAddress != null) {
-      map['all_drop_address'] = _allDropAddress?.map((v) => v.toJson()).toList();
+    map['is_fake'] = _isFake;
+    map['status'] = _status;
+    map['customer_first_name'] = _customerFirstName;
+    map['customer_last_name'] = _customerLastName;
+    map['customer_contact_number'] = _customerContactNumber;
+    map['driver_first_name'] = _driverFirstName;
+    map['driver_last_name'] = _driverLastName;
+    map['driver_contact_number'] = _driverContactNumber;
+    map['name'] = _name;
+    if (_pickup != null) {
+      map['pickup'] = _pickup?.toJson();
     }
+    if (_dropoffs != null) {
+      map['dropoffs'] = _dropoffs?.map((v) => v.toJson()).toList();
+    }
+    return map;
+  }
+
+}
+
+class Dropoffs {
+  Dropoffs({
+      dynamic locationId, 
+      dynamic lat, 
+      dynamic lng, 
+      dynamic address, 
+      dynamic name, 
+      dynamic contactNumber, 
+      dynamic sequence, 
+      dynamic status, 
+      dynamic unloadingTime, 
+      dynamic unloadingDuration, 
+      dynamic unloadingCharge,}){
+    _locationId = locationId;
+    _lat = lat;
+    _lng = lng;
+    _address = address;
+    _name = name;
+    _contactNumber = contactNumber;
+    _sequence = sequence;
+    _status = status;
+    _unloadingTime = unloadingTime;
+    _unloadingDuration = unloadingDuration;
+    _unloadingCharge = unloadingCharge;
+}
+
+  Dropoffs.fromJson(dynamic json) {
+    _locationId = json['location_id'];
+    _lat = json['lat'];
+    _lng = json['lng'];
+    _address = json['address'];
+    _name = json['name'];
+    _contactNumber = json['contact_number'];
+    _sequence = json['sequence'];
+    _status = json['status'];
+    _unloadingTime = json['unloading_time'];
+    _unloadingDuration = json['unloading_duration'];
+    _unloadingCharge = json['unloading_charge'];
+  }
+  dynamic _locationId;
+  dynamic _lat;
+  dynamic _lng;
+  dynamic _address;
+  dynamic _name;
+  dynamic _contactNumber;
+  dynamic _sequence;
+  dynamic _status;
+  dynamic _unloadingTime;
+  dynamic _unloadingDuration;
+  dynamic _unloadingCharge;
+Dropoffs copyWith({  dynamic locationId,
+  dynamic lat,
+  dynamic lng,
+  dynamic address,
+  dynamic name,
+  dynamic contactNumber,
+  dynamic sequence,
+  dynamic status,
+  dynamic unloadingTime,
+  dynamic unloadingDuration,
+  dynamic unloadingCharge,
+}) => Dropoffs(  locationId: locationId ?? _locationId,
+  lat: lat ?? _lat,
+  lng: lng ?? _lng,
+  address: address ?? _address,
+  name: name ?? _name,
+  contactNumber: contactNumber ?? _contactNumber,
+  sequence: sequence ?? _sequence,
+  status: status ?? _status,
+  unloadingTime: unloadingTime ?? _unloadingTime,
+  unloadingDuration: unloadingDuration ?? _unloadingDuration,
+  unloadingCharge: unloadingCharge ?? _unloadingCharge,
+);
+  dynamic get locationId => _locationId;
+  dynamic get lat => _lat;
+  dynamic get lng => _lng;
+  dynamic get address => _address;
+  dynamic get name => _name;
+  dynamic get contactNumber => _contactNumber;
+  dynamic get sequence => _sequence;
+  dynamic get status => _status;
+  dynamic get unloadingTime => _unloadingTime;
+  dynamic get unloadingDuration => _unloadingDuration;
+  dynamic get unloadingCharge => _unloadingCharge;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['location_id'] = _locationId;
+    map['lat'] = _lat;
+    map['lng'] = _lng;
+    map['address'] = _address;
+    map['name'] = _name;
+    map['contact_number'] = _contactNumber;
+    map['sequence'] = _sequence;
+    map['status'] = _status;
+    map['unloading_time'] = _unloadingTime;
+    map['unloading_duration'] = _unloadingDuration;
+    map['unloading_charge'] = _unloadingCharge;
+    return map;
+  }
+
+}
+class Pickup {
+  Pickup({
+      dynamic locationId, 
+      dynamic lat, 
+      dynamic lng, 
+      dynamic address, 
+      dynamic name, 
+      dynamic contactNumber, 
+      dynamic status, 
+      dynamic loadingTime, 
+      dynamic loadingDuration, 
+      dynamic loadingCharge,}){
+    _locationId = locationId;
+    _lat = lat;
+    _lng = lng;
+    _address = address;
+    _name = name;
+    _contactNumber = contactNumber;
+    _status = status;
+    _loadingTime = loadingTime;
+    _loadingDuration = loadingDuration;
+    _loadingCharge = loadingCharge;
+}
+
+  Pickup.fromJson(dynamic json) {
+    _locationId = json['location_id'];
+    _lat = json['lat'];
+    _lng = json['lng'];
+    _address = json['address'];
+    _name = json['name'];
+    _contactNumber = json['contact_number'];
+    _status = json['status'];
+    _loadingTime = json['loading_time'];
+    _loadingDuration = json['loading_duration'];
+    _loadingCharge = json['loading_charge'];
+  }
+  dynamic _locationId;
+  dynamic _lat;
+  dynamic _lng;
+  dynamic _address;
+  dynamic _name;
+  dynamic _contactNumber;
+  dynamic _status;
+  dynamic _loadingTime;
+  dynamic _loadingDuration;
+  dynamic _loadingCharge;
+Pickup copyWith({  dynamic locationId,
+  dynamic lat,
+  dynamic lng,
+  dynamic address,
+  dynamic name,
+  dynamic contactNumber,
+  dynamic status,
+  dynamic loadingTime,
+  dynamic loadingDuration,
+  dynamic loadingCharge,
+}) => Pickup(  locationId: locationId ?? _locationId,
+  lat: lat ?? _lat,
+  lng: lng ?? _lng,
+  address: address ?? _address,
+  name: name ?? _name,
+  contactNumber: contactNumber ?? _contactNumber,
+  status: status ?? _status,
+  loadingTime: loadingTime ?? _loadingTime,
+  loadingDuration: loadingDuration ?? _loadingDuration,
+  loadingCharge: loadingCharge ?? _loadingCharge,
+);
+  dynamic get locationId => _locationId;
+  dynamic get lat => _lat;
+  dynamic get lng => _lng;
+  dynamic get address => _address;
+  dynamic get name => _name;
+  dynamic get contactNumber => _contactNumber;
+  dynamic get status => _status;
+  dynamic get loadingTime => _loadingTime;
+  dynamic get loadingDuration => _loadingDuration;
+  dynamic get loadingCharge => _loadingCharge;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['location_id'] = _locationId;
+    map['lat'] = _lat;
+    map['lng'] = _lng;
+    map['address'] = _address;
+    map['name'] = _name;
+    map['contact_number'] = _contactNumber;
+    map['status'] = _status;
+    map['loading_time'] = _loadingTime;
+    map['loading_duration'] = _loadingDuration;
+    map['loading_charge'] = _loadingCharge;
     return map;
   }
 

@@ -13,6 +13,7 @@ import 'package:triptoll/model/vehicle_data.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/screen/home/review_booking.dart';
 import 'package:http/http.dart' as http;
+import 'package:triptoll/screen/home/toll_message.dart';
 import 'package:triptoll/screen/home/userTraking_view.dart';
 
 import '../../util/appColors.dart';
@@ -27,6 +28,7 @@ class CategoryList extends StatefulWidget {
   double pickLat;
   double pickLng;
   String distance;
+  double eLoader;
   String expectedTime;
   int? selectedIndex12;
   Map<int, TextEditingController> houseNoCt = {};
@@ -34,7 +36,9 @@ class CategoryList extends StatefulWidget {
   Map<int, TextEditingController> sendMobile = {};
   List<Map<String, dynamic>> stopLocations = [];
   CategoryList({super.key,required this.distance,required this.expectedTime,required this.pickAddress,required this.pickLat,required this.pickLng
-    ,required this.dropAddress,required this.senderName,required this.sendMobile,required this.houseNoCt,required this.stopLocations});
+    ,required this.dropAddress,required this.senderName,required this.sendMobile,required this.houseNoCt,required this.stopLocations,
+    required this.eLoader
+  });
 
 
 
@@ -594,233 +598,238 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                         bottom: 0, // distance from bottom
                         left: 0,
                         right: 0,
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 15,vertical: 0),
-                          padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.35),
-                                blurRadius: 1,
-                                spreadRadius: 1,
-                                // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                        child: Column(
+                          children: [
+                            TollInfoBanner(),
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 15,vertical: 0),
+                              padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.35),
+                                    blurRadius: 1,
+                                    spreadRadius: 1,
+                                    // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white.withOpacity(0.8),
+                                    blurRadius: 1,
+                                    spreadRadius: 1,
+                                    // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                                  ),
+                                ],
                               ),
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.8),
-                                blurRadius: 1,
-                                spreadRadius: 1,
-                                // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    // TODO: Navigate to forget password screen
-                                    // final result = await Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
-                                    // );
-                                    //
-                                    // if (result != null) {
-                                    //
-                                    //
-                                    //   print("Selected Lat: ${result['lat']}");
-                                    //   print("Selected Lng: ${result['lng']}");
-                                    //   print("Selected Address: ${result['address']}");
-                                    //
-                                    //   setState(() {
-                                    //     widget.pickLng = result['lng'];
-                                    //     widget.pickLat = result['lat'];
-                                    //     widget.pickAddress = result['address'];
-                                    //
-                                    //     // _addMarkers();
-                                    //     // _getRouteBetweenPoints(dropLat: widget.dropLat,dropLng: widget.dropLng,pickLat: result['lat'],pickLng: result['lng']);
-                                    //   });
-                                    // }
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        // TODO: Navigate to forget password screen
+                                        // final result = await Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
+                                        // );
+                                        //
+                                        // if (result != null) {
+                                        //
+                                        //
+                                        //   print("Selected Lat: ${result['lat']}");
+                                        //   print("Selected Lng: ${result['lng']}");
+                                        //   print("Selected Address: ${result['address']}");
+                                        //
+                                        //   setState(() {
+                                        //     widget.pickLng = result['lng'];
+                                        //     widget.pickLat = result['lat'];
+                                        //     widget.pickAddress = result['address'];
+                                        //
+                                        //     // _addMarkers();
+                                        //     // _getRouteBetweenPoints(dropLat: widget.dropLat,dropLng: widget.dropLng,pickLat: result['lat'],pickLng: result['lng']);
+                                        //   });
+                                        // }
 
-                                  },
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.location_on_outlined,color: Colors.green,size: 30,),
-                                      SizedBox(width: 5,),
-                                      Expanded(child: Column(
+                                      },
+                                      child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          Icon(Icons.location_on_outlined,color: Colors.green,size: 30,),
+                                          SizedBox(width: 5,),
+                                          Expanded(child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                (authController.getUserName()??"")+"  ,  "+(authController.getUserPhone()??""),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black.withOpacity(0.6)
-                                                ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    (authController.getUserName()??"")+"  ,  "+(authController.getUserPhone()??""),
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black.withOpacity(0.6)
+                                                    ),
+                                                  ),
+                                                 // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                ],
                                               ),
-                                             // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                              Text(widget.pickAddress,maxLines: 2,),
                                             ],
-                                          ),
-                                          Text(widget.pickAddress,maxLines: 2,),
+                                          ))
+
                                         ],
-                                      ))
-
-                                    ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              SizedBox(height: 10,),
+                                  SizedBox(height: 10,),
 
-                              //   const SizedBox(height: 24),
+                                  //   const SizedBox(height: 24),
 
-                              // Drop Location
+                                  // Drop Location
 
-                              const SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
-                              ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(), // अगर ScrollView के अंदर है
-                                itemCount: widget.stopLocations.length,
-                                itemBuilder: (context, index) {
-                                  final stop = widget.stopLocations[index];
+                                  ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(), // अगर ScrollView के अंदर है
+                                    itemCount: widget.stopLocations.length,
+                                    itemBuilder: (context, index) {
+                                      final stop = widget.stopLocations[index];
 
-                                  return   index != 0 ?
-                                    Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
-                                        SizedBox(width: 5,),
-                                        Expanded(child: Column(
+                                      return   index != 0 ?
+                                        Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
+                                            SizedBox(width: 5,),
+                                            Expanded(child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  (widget.senderName[index]!.value.text??"")+"  ,  "+(widget.sendMobile[index]!.value.text??""),
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black.withOpacity(0.6)
-                                                  ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      (widget.senderName[index]!.value.text??"")+"  ,  "+(widget.sendMobile[index]!.value.text??""),
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.black.withOpacity(0.6)
+                                                      ),
+                                                    ),
+                                                    //  Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                  ],
                                                 ),
-                                                //  Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                Text(stop["address"]??"Unknow",maxLines: 2,),
                                               ],
-                                            ),
-                                            Text(stop["address"]??"Unknow",maxLines: 2,),
+                                            ))
+
                                           ],
-                                        ))
-
-                                      ],
-                                    ),
-                                  ) :
-                                  SizedBox.shrink();
-                                },
-                              ),
-                              SizedBox(height: 10,),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text('${'Total distance'.tr}  :-'),
-                                  const SizedBox(
-                                    width: 20,
+                                        ),
+                                      ) :
+                                      SizedBox.shrink();
+                                    },
                                   ),
-                                  Text(widget.distance,maxLines: 2,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14
-                                    ),),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text('${'Expected Time'} :-'),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(widget.expectedTime,maxLines: 2,style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14
-                                  ),),
-                                ],
-                              ),
-                             SizedBox(
-                               height: 40,
-                             )
-                             /* Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    // TODO: Navigate to forget password screen
-                                    // final result = await Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
-                                    // );
-                                    //
-                                    // if (result != null) {
-                                    //
-                                    //
-                                    //   print("Selected Lat: ${result['lat']}");
-                                    //   print("Selected Lng: ${result['lng']}");
-                                    //   print("Selected Address: ${result['address']}");
-                                    //
-                                    //   setState(() {
-                                    //     widget.dropLng = result['lng'];
-                                    //     widget.dropLat = result['lat'];
-                                    //     widget.dropAddress = result['address'];
-                                    //
-                                    //     // _addMarkers();
-                                    //     // _getRouteBetweenPoints(dropLat: result['lat'],dropLng: result['lng'],pickLat: widget.pickLat,pickLng: widget.pickLng);
-                                    //   });
-                                    // }
-
-                                  },
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  SizedBox(height: 10,),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
-                                      SizedBox(width: 5,),
-                                      Expanded(child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                (widget.senderName??"")+"  ,  "+(widget.sendMobile??""),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black.withOpacity(0.6)
-                                                ),
-                                              ),
-                                            //  Icon(Icons.expand_more,color: AppColors.primaryGradient,)
-                                            ],
-                                          ),
-                                          Text(widget.dropAddress,maxLines: 2,),
-                                        ],
-                                      ))
-
+                                      Text('${'Total distance'.tr}  :-'),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(widget.distance,maxLines: 2,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14
+                                        ),),
                                     ],
                                   ),
-                                ),
-                              ),*/
-                            ],
-                          ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text('${'Expected Time'} :-'),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(widget.expectedTime,maxLines: 2,style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14
+                                      ),),
+                                    ],
+                                  ),
+                                 SizedBox(
+                                   height: 40,
+                                 )
+                                 /* Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        // TODO: Navigate to forget password screen
+                                        // final result = await Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
+                                        // );
+                                        //
+                                        // if (result != null) {
+                                        //
+                                        //
+                                        //   print("Selected Lat: ${result['lat']}");
+                                        //   print("Selected Lng: ${result['lng']}");
+                                        //   print("Selected Address: ${result['address']}");
+                                        //
+                                        //   setState(() {
+                                        //     widget.dropLng = result['lng'];
+                                        //     widget.dropLat = result['lat'];
+                                        //     widget.dropAddress = result['address'];
+                                        //
+                                        //     // _addMarkers();
+                                        //     // _getRouteBetweenPoints(dropLat: result['lat'],dropLng: result['lng'],pickLat: widget.pickLat,pickLng: widget.pickLng);
+                                        //   });
+                                        // }
+
+                                      },
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
+                                          SizedBox(width: 5,),
+                                          Expanded(child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    (widget.senderName??"")+"  ,  "+(widget.sendMobile??""),
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black.withOpacity(0.6)
+                                                    ),
+                                                  ),
+                                                //  Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                ],
+                                              ),
+                                              Text(widget.dropAddress,maxLines: 2,),
+                                            ],
+                                          ))
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),*/
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -879,6 +888,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                 shrinkWrap: true,
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 itemBuilder: (context, index) {
+
+
                   final double baseFare =
                       cachedFaresAndRates?[index]['totalFare']?.toDouble() ?? 0.0;
                   if (index >= updatedFares.length) {
@@ -889,6 +900,10 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                   }
                   if (index >= hasIncreased.length) {
                     hasIncreased.add(false);
+                  }
+                    print('DDDDDDDDDD${widget.eLoader}');
+                  if (widget.eLoader > 30 && authController.vehicleData!.data![index].name == "E Loader") {
+                    return const SizedBox.shrink(); // hide this vehicle
                   }
                   return authController.isShowDriver ? SizedBox()
                   : InkWell(
@@ -927,6 +942,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+
                                     Text(
                                       "${authController.vehicleData!.data![index].name ?? ""}",
                                       style: TextStyle(

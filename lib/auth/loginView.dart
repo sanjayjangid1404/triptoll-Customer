@@ -330,18 +330,18 @@ class _LoginViewState extends State<LoginView> {
 
 
 
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         fillColor: Color(0xFFC11F1F),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
 
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(8),
                       ),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
 
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(8),
                         ),
 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
@@ -349,7 +349,6 @@ class _LoginViewState extends State<LoginView> {
                         hintStyle: TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w500,
                           height: 0,
                         ),
@@ -367,22 +366,21 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                         hintText: "Password".tr,
                         hintStyle: const TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w500,
                           height: 0,
                         ),
@@ -414,7 +412,7 @@ class _LoginViewState extends State<LoginView> {
                           "Forgot Password?".tr,
                           style: TextStyle(
                               fontSize: 14,
-                              fontFamily: 'Roboto',
+                              fontFamily: 'Poppins',
                               color: AppColors.secondaryGradient,
                               // decoration: TextDecoration.underline,
                               // decorationColor: AppColors.primaryGradient
@@ -458,7 +456,7 @@ class _LoginViewState extends State<LoginView> {
                         //padding: const EdgeInsets.symmetric(vertical: 17),
                         clipBehavior: Clip.antiAlias,
                         decoration: ShapeDecoration(
-                          color: AppColors.primaryGradient,
+                          color: AppColors.secondaryGradient,
                           /*gradient: LinearGradient(
                             begin: Alignment(1.00, 0.00),
                             end: Alignment(-1, 0),
@@ -479,7 +477,7 @@ class _LoginViewState extends State<LoginView> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.60,
-                                fontFamily: 'Roboto',
+                                fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
                                 height: 0,
                                 letterSpacing: 1.33,
@@ -499,9 +497,9 @@ class _LoginViewState extends State<LoginView> {
                          Text(
                           "Don't have an account? ".tr,
                           style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Roboto',
+                            fontSize: 15,
                             color: Colors.black87,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                         GestureDetector(
@@ -513,10 +511,10 @@ class _LoginViewState extends State<LoginView> {
                             "Signup".tr,
                             style: TextStyle(
                               fontSize: 14,
-                              fontFamily: 'Roboto',
+                              fontFamily: 'Poppins',
                               color: AppColors.secondaryGradient,
                               decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               decorationColor: AppColors.primaryGradient
                             ),
                           ),

@@ -1241,6 +1241,9 @@ class _BookingInfoState extends State<BookingInfo> {
                         print("Total Distance: ${resultTotal['total_distance']}");
                         print("Total Time: ${resultTotal['total_time']}");
                         String totalDistanceNew = resultTotal['total_distance'].toString();
+                        String distanceString = resultTotal['total_distance'].toString();
+                        distanceString = distanceString.replaceAll(RegExp(r'[a-zA-Z\s]'), '');
+                        double eLoader = double.tryParse(distanceString) ?? 0.0;
                         String totalTimeNew = resultTotal['total_time'].toString();
                         final chosen = result['chosen'];
                         final km = (chosen['distanceValue'] as int) / 1000.0;
@@ -1264,6 +1267,7 @@ class _BookingInfoState extends State<BookingInfo> {
                           stopLocations: stopLocations,
                           distance: totalDistanceNew,
                           expectedTime: totalTimeNew,
+                          eLoader: eLoader,
                         ));
                       } catch (e) {
                         print("Error: $e");

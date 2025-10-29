@@ -125,9 +125,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                        flex:3,
-                        child: Image.network(authController.bookingDetailsResponse!.vehicleImg!=null ? "${AppContants.imageURL}uploaded_files/category_img/${authController.bookingDetailsResponse!.vehicleImg}":"https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png",height: 70,)),
+                    // Expanded(
+                    //     flex:3,
+                    //     child: Image.network(authController.bookingDetailsResponse!.vehicleImg!=null ? "${AppContants.imageURL}uploaded_files/category_img/${authController.bookingDetailsResponse!.vehicleImg}":"https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png",height: 70,)),
                     Expanded(
                         flex:7,
                         child: Column(
@@ -135,9 +135,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
 
-                            Text("${authController.bookingDetailsResponse!.categoryName??"EV"}",style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w700),),
+                            Text("${authController.bookingDetailsResponse!.name??"EV"}",style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w700),),
                           //  Text("3 Wheeler",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
-                            Text("${authController.bookingDetailsResponse!.weight??"80"} ${authController.bookingDetailsResponse!.weightType??'Kg'.tr}",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
+
+                              Text("${authController.bookingDetailsResponse!.weight??"80"} ${authController.bookingDetailsResponse!.weightType??'Kg'.tr}",style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6),fontWeight: FontWeight.w400),),
 
                             Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.totalAmount!}",style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.w700),),
                           ],
@@ -166,16 +167,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Discount(10%)".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
-                      Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.discount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Text("Discount(10%)".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                //       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.discount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
+                //     ],
+                //   ),
+                // ),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(vertical: 8.0),
                 //   child: Row(
@@ -187,16 +188,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                 //   ),
                 // ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Stop Charge".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
-                      Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.stopCharge!}",style: TextStyle(fontSize: 16,color: Colors.black),),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Text("Stop Charge".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                //       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.stopCharge!}",style: TextStyle(fontSize: 16,color: Colors.black),),
+                //     ],
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(

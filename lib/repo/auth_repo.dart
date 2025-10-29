@@ -42,6 +42,11 @@ class AuthRepo{
     return await apiClient.getData(
         AppContants.driverFAQURl);
   }
+  Future<Response> notificationHistory(body) async {
+    print("call:::::::::::::::::::");
+    return await apiClient.postMultipartData(
+        AppContants.getNotificationHistoryURL,body,[]);
+  }
   Future<Response> checkTicketLimits(body) async {
 
     return await apiClient.postMultipartData(
@@ -65,7 +70,8 @@ class AuthRepo{
   Future<Response> checkPayment({String? bookingID}) async {
     return await apiClient.postData(
         AppContants.checkPaymentURL,{"booking_id":bookingID});
-  }Future<Response> cancelOrder({String? bookingID,String? userID,String? reason,String? comment}) async {
+  }
+  Future<Response> cancelOrder({String? bookingID,String? userID,String? reason,String? comment}) async {
     return await apiClient.postData(
         AppContants.cancelOrderURL,{"booking_id":bookingID,"reason":reason,/*"cus_id":userID,"reason":reason,"additional_comment":comment*/});
   }
@@ -99,6 +105,12 @@ class AuthRepo{
   Future<Response> getBookingDriver({String? bookingID}) async {
     return await apiClient.getData(
         "${AppContants.driverDetailsURL}?booking_id=$bookingID");
+  }
+  Future<Response> getBookingDriverHome({String? customerID}) async {
+    return await apiClient.postData(
+        AppContants.driverDetailURL,{
+      "driver_id":customerID,
+    });
   }
   Future<Response> getFaqList() async {
     return await apiClient.getData(AppContants.driverFAQHelpURl);
@@ -154,7 +166,11 @@ class AuthRepo{
           "trn_id":trnId,
     });
   }
+  Future<Response> getCity() async {
 
+    return await apiClient.getData(
+        AppContants.getCityURL);
+  }
   Future<Response> bookNow({
     required String amount,
     required String categoryId,
@@ -287,6 +303,10 @@ class AuthRepo{
   Future<bool>saveUserId(String id)
   async{
     return await sharedPreferences.setString(AppContants.userID, id);
+  }
+  Future<bool>saveCityId(String cityId)
+  async{
+    return await sharedPreferences.setString(AppContants.cityID, cityId);
   }
 
   Future<bool>saveUserName(String name)

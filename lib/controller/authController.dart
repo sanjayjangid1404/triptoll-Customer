@@ -1,13 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,13 +13,13 @@ import 'package:triptoll/model/booking_details_response.dart';
 import 'package:triptoll/model/booking_list_response.dart';
 import 'package:triptoll/model/bookingdriver_response.dart';
 import 'package:triptoll/screen/home/homeview.dart';
-
 import '../api/api_checker.dart';
-
 import '../model/category_type_response.dart';
 import '../model/check_ticket_limit_model.dart';
+import '../model/city_responce.dart';
 import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
+import '../model/notification_model.dart';
 import '../model/subCategoryVehicle.dart';
 import '../model/vehicle_data.dart';
 import '../model/wallet_responce_model.dart';
@@ -50,8 +44,8 @@ class AuthController extends GetxController implements GetxService
   CategoryTypeResponse? categoryTypeResponse = CategoryTypeResponse();
   SubCategoryVehicle? subCategoryVehicle = SubCategoryVehicle();
   BookingDetailsResponse? bookingDetailsResponse = BookingDetailsResponse();
-  List<BookingListResponse?> bookingListResponse = [];
-  List<BookingListResponse?> latestBookingListResponse = [];
+  List<Orders?> bookingListResponse = [];
+  List<Orders?> latestBookingListResponse = [];
   List<FaqModel?> faqLIstResponse = [];
   VehicleData? vehicleData = VehicleData();
   int? getIndex;
@@ -236,6 +230,7 @@ class AuthController extends GetxController implements GetxService
         authRepo.saveUserPhone(response.body['contact_number']);
         // authRepo.saveUserPassword(password);
         authRepo.saveUserId(response.body['id'].toString());
+        authRepo.saveCityId(response.body['city_id'].toString());
         // if(response.body["success"]) {
         //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
         // }
@@ -317,6 +312,49 @@ class AuthController extends GetxController implements GetxService
   }
 
   String? activeBookingID;
+
+  Future<void> getNotificationHistory(body) async {
+    // update();
+    Response response = await authRepo.notificationHistory(body);
+    if (response.statusCode == 200) {
+
+      notificationHistoryModel.value = NotificationHistoryModel.fromJson(response.body);
+    }
+    else {
+      ApiChecker.checkApi(response);
+    }
+
+    isLoading = false;
+    // update();
+  }
+  Rx<NotificationHistoryModel> notificationHistoryModel = NotificationHistoryModel().obs;
+  bool isUploading = false;
+  List<CityResponse> cityResponse = [];
+  Future<void> getCity() async {
+    isUploading = true;
+
+
+    Response response = await authRepo.getCity();
+    cityResponse = [];
+
+    //  LoginResponse? loginResponse;
+
+    if (response.statusCode == 200 || response.statusCode == 400) {
+      for (int i = 0; i < response.body.length; i++) {
+        cityResponse.add(CityResponse.fromJson(response.body[i]));
+      }
+
+
+      update();
+    }
+    else {
+
+
+    }
+
+    isUploading = false;
+    update();
+  }
   Future<void>bookingNow({
     required String amount,
     required String categoryId,
@@ -644,6 +682,7 @@ class AuthController extends GetxController implements GetxService
         authRepo.saveUserPhone(response.body['contact_number']);
         // authRepo.saveUserPassword(password);
         authRepo.saveUserId(response.body['id'].toString());
+        authRepo.saveCityId(response.body['city_id'].toString());
         // if(response.body["success"]) {
         //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
         // }
@@ -806,7 +845,7 @@ class AuthController extends GetxController implements GetxService
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
-          text: 'Transaction Completed Successfully!',
+          text: 'Transaction Completed Successfully!'.tr,
           onConfirmBtnTap: (){
             Get.offAll(HomePage());
           }
@@ -856,7 +895,7 @@ class AuthController extends GetxController implements GetxService
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
-          text: 'Payment Completed Successfully!',
+          text: 'Payment Completed Successfully!'.tr,
           onConfirmBtnTap: (){
             Get.offAll(HomePage());
           }
@@ -906,7 +945,7 @@ class AuthController extends GetxController implements GetxService
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
-          text: 'Transaction Completed Successfully!',
+          text: 'Transaction Completed Successfully!'.tr,
           onConfirmBtnTap: (){
             Get.offAll(HomePage());
           }
@@ -1006,7 +1045,7 @@ class AuthController extends GetxController implements GetxService
 
 
       for(int i=0; i<response.body.length; i++){
-        bookingListResponse.add( BookingListResponse.fromJson(response.body[i]));
+        bookingListResponse.add( Orders.fromJson(response.body[i]));
       }
 
 
@@ -1053,8 +1092,7 @@ class AuthController extends GetxController implements GetxService
 
         if(response.body["orders"]!=null) {
           for (int i = 0; i < response.body["orders"].length; i++) {
-            latestBookingListResponse.add(
-                BookingListResponse.fromJson(response.body["orders"][i]));
+            latestBookingListResponse.add(Orders.fromJson(response.body["orders"][i]));
           }
         }
 
@@ -1169,52 +1207,52 @@ class AuthController extends GetxController implements GetxService
 
   }
 
-  Future<void>cancelOrderHome({String? bookingID,String? reason,String? comment,bool? isOrder})
-  async {
-
-
-    update();
-    print(getUserDeviceID());
-
-   // vehicleData = null;
-    Response response = await authRepo.cancelOrder(bookingID: bookingID,userID: getUserDeviceID(),comment: comment,reason: reason);
-
-
-
-
-    if(response.statusCode==200 || response.statusCode ==400)
-    {
-
-     // getAllBookingLoading = false;
-
-      if(isOrder!){
-        getAllBooking(status: "all",limit: "10");
-        // Get.back();
-      }
-      else {
-        // Get.offAll(HomePage());
-      }
-
-      update();
-    }
-    else {
-
-
-      // dynamic data = jsonDecode(response.body);
-
-      ApiChecker.checkApi(response);
-
-
-
-
-    }
-
-    getAllBookingLoading = false;
-    update();
-
-
-
-  }
+  // Future<void>cancelOrderHome({String? bookingID,String? reason,String? comment,bool? isOrder})
+  // async {
+  //
+  //
+  //   update();
+  //   print(getUserDeviceID());
+  //
+  //  // vehicleData = null;
+  //   Response response = await authRepo.cancelOrder(bookingID: bookingID,userID: getUserDeviceID(),comment: comment,reason: reason);
+  //
+  //
+  //
+  //
+  //   if(response.statusCode==200 || response.statusCode ==400)
+  //   {
+  //
+  //    // getAllBookingLoading = false;
+  //
+  //     if(isOrder!){
+  //       getAllBooking(status: "all",limit: "10");
+  //       // Get.back();
+  //     }
+  //     else {
+  //       // Get.offAll(HomePage());
+  //     }
+  //
+  //     update();
+  //   }
+  //   else {
+  //
+  //
+  //     // dynamic data = jsonDecode(response.body);
+  //
+  //     ApiChecker.checkApi(response);
+  //
+  //
+  //
+  //
+  //   }
+  //
+  //   getAllBookingLoading = false;
+  //   update();
+  //
+  //
+  //
+  // }
 
   bool isBookingDetails = false;
   Future<void>getBookingDetails({String? bookingID,String? driverLat,String? driverLng,Driver? driver})
@@ -1238,7 +1276,7 @@ class AuthController extends GetxController implements GetxService
     {
 
 
-      bookingDetailsResponse = BookingDetailsResponse.fromJson(response.body);
+      bookingDetailsResponse = BookingDetailsResponse.fromJson(response.body[0]);
 
       if(driverLat!=null && driverLat!.isNotEmpty && driverLng!=null && driverLng!.isNotEmpty && bookingDetailsResponse!=null){
 
@@ -1260,7 +1298,7 @@ class AuthController extends GetxController implements GetxService
               driver: driver!,
               bookingID: bookingDetailsResponse!,
               bookingIdNew: bookingID!,
-              bookingLocation: LatLng(double.parse(bookingDetailsResponse!.pickupLat!), double.parse(bookingDetailsResponse!.pickupLong!)), driverInitialLocation: LatLng(double.parse(driverLat), double.parse(driverLng))));
+              bookingLocation: LatLng(double.parse(bookingDetailsResponse!.pickup!.lat.toString()), double.parse(bookingDetailsResponse!.pickup!.lng.toString())), driverInitialLocation: LatLng(double.parse(driverLat), double.parse(driverLng))));
         }
         // if(bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "delivered"){
         //   Get.offAllNamed(RouteHelper.getHomeView());
@@ -1318,7 +1356,7 @@ class AuthController extends GetxController implements GetxService
 
       detailsResponse = null;
 
-      detailsResponse = BookingDetailsResponse.fromJson(response.body);
+      detailsResponse = BookingDetailsResponse.fromJson(response.body[0]);
 
       update();
     }
@@ -1404,6 +1442,61 @@ class AuthController extends GetxController implements GetxService
     update();
   }
 
+  Future<void> getBookingDriverHome({String? bookingID, bool? isCall = false,driverID}) async {
+    // अगर ये bookingID अब active नहीं है तो return कर दो
+    // if (activeBookingID != null && bookingID != activeBookingID) {
+    //   print("Skipping old bookingID: $bookingID");
+    //   return;
+    // }
+
+    isBookingDetails = true;
+    update();
+    driver = null;
+
+    Response response = await authRepo.getBookingDriverHome(customerID: driverID);
+
+    if (response.statusCode == 200 || response.statusCode == 400) {
+      if (response.body["status"]) {
+        driver = BookingdriverResponse.fromJson(response.body);
+
+        if (isCall!) {
+          Driver driver2 = Driver(
+            name: driver!.driverDetails!.firstName!,
+            vehicleType: driver!.driverDetails!.vehicleType!,
+            vehicleName: driver!.driverDetails!.vehicleNumber ?? "",
+            mobileNumber: driver!.driverDetails!.contactNumber ?? "",
+            id: driver!.driverDetails!.id ?? "",
+          );
+
+
+          driverCurrentLocation = LatLng(double.parse(driver!.driverDetails!.lat.toString()),double.parse(driver!.driverDetails!.long.toString()));
+          update();
+          getBookingDetails(
+            bookingID: bookingID,
+            driverLng: driver!.driverDetails!.long,
+            driverLat: driver!.driverDetails!.lat,
+            driver: driver2,
+          );
+        }
+      } else {
+        // सिर्फ active booking पर ही दोबारा call करना
+        if (bookingID == activeBookingID) {
+          getBookingDriver(bookingID: bookingID);
+        }
+      }
+
+      update();
+    } else if (response.statusCode == 404) {
+      if (bookingID == activeBookingID) {
+        getBookingDriver(bookingID: bookingID);
+      }
+    } else {
+      ApiChecker.checkApi(response);
+    }
+
+    isBookingDetails = false;
+    update();
+  }
   Future<void>getFaqListFunction() async {
 
     update();
@@ -1478,6 +1571,10 @@ class AuthController extends GetxController implements GetxService
   String? getUserDeviceID()
   {
     return authRepo.sharedPreferences.getString(AppContants.userDeviceID);
+  }
+ String? getCityID()
+  {
+    return authRepo.sharedPreferences.getString(AppContants.cityID);
   }
 
   String? getUserPassword()

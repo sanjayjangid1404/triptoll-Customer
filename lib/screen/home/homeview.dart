@@ -24,6 +24,7 @@ import 'package:triptoll/util/custom_snackbar.dart';
 import '../../model/booking_list_response.dart';
 import '../widget/nav_bar.dart';
 import 'feedback_screen.dart';
+import 'notification_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -108,35 +109,6 @@ class _HomePageState extends State<HomePage> {
     _timer?.cancel();
     _timer = null;
   }
-  void checkAndCancelBooking() {
-
-    if (authController.latestBookingListResponse == null && authController.latestBookingListResponse.isEmpty) {
-      print("No booking data available. Cannot schedule auto-cancel.");
-      return; // function yahan exit
-    }
-
-    final bookingDateString = authController.latestBookingListResponse[0]!.bookingDate.toString();
-    final bookingDateTime = DateTime.parse(bookingDateString);
-    final now = DateTime.now();
-    final difference = bookingDateTime.add(Duration(minutes: 10)).difference(now);
-    print("difference${difference.toString()}");
-    Duration delay = difference.isNegative ? Duration(seconds: 0) : difference;
-    print("delay${delay.toString()}");
-    print("difference${authController.driver!.toJson()}");
-
-    Timer(delay, () {
-      if (authController.driver!.status == null) {
-        print('csdasdsadsad');
-        authController.cancelOrderHome(
-          bookingID: authController.latestBookingListResponse[0]!.id.toString(),
-          reason: "No driver found in 10 minutes",
-          comment: "Auto-cancelled",
-          isOrder: false,
-        );
-        Get.find<AuthController>().latestBooking(status: "all",limit: "1",offset: "10");
-      }
-    });
-  }
   @override
   void initState() {
     super.initState();
@@ -163,9 +135,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
 
       });
-      Future.delayed(Duration(seconds: 5),() {
-        checkAndCancelBooking();
-      },);
     });
   }
 
@@ -357,7 +326,21 @@ class _HomePageState extends State<HomePage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Icon(Icons.search,color: AppColors.primaryGradient,)
+                           Row(
+                             crossAxisAlignment: CrossAxisAlignment.center,
+                             children: [
+                               Icon(Icons.search,color: AppColors.primaryGradient,),
+                               SizedBox(
+                                 width: 20,
+                               ),
+                               InkWell(
+                                 onTap: (){
+                                   Get.to(const NotificationScreen());
+                                 },
+                                 child: Icon(Icons.notifications_active,color: AppColors.primaryGradient,),
+                               ),
+                             ],
+                           ),
                           ],
                         ),
                         Text(pickController.text,maxLines: 2,style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6)),),
@@ -1026,7 +1009,7 @@ class _HomePageState extends State<HomePage> {
                        ListView.builder(
                          shrinkWrap: true,
                          physics: NeverScrollableScrollPhysics(),
-                         itemCount: auhController.latestBookingListResponse!.length,
+                         itemCount: auhController.latestBookingListResponse.length,
                          itemBuilder: (context, index) {
                          return Column(
                            crossAxisAlignment: CrossAxisAlignment.start,
@@ -1039,11 +1022,12 @@ class _HomePageState extends State<HomePage> {
                                  children: [
                                    Icon(Icons.location_on_outlined,color: Colors.green,size: 25,),
                                    SizedBox(width: 5,),
-                                   Expanded(child: Column(
+                                   Expanded(child:
+                                   Column(
                                      crossAxisAlignment: CrossAxisAlignment.start,
                                      children: [
 
-                                       Text(auhController.latestBookingListResponse![index]!.pickupAddress!,maxLines: 2,style: TextStyle(fontSize: 13),),
+                                       Text(auhController.latestBookingListResponse[index]!.dropoffs![index]!.address.toString(),maxLines: 2,style: TextStyle(fontSize: 13),),
                                      ],
                                    ))
 
@@ -1056,13 +1040,35 @@ class _HomePageState extends State<HomePage> {
                                child: Row(
                                  crossAxisAlignment: CrossAxisAlignment.start,
                                  children: [
-                                   Icon(Icons.location_on_outlined,color: Colors.red,size: 25,),
-                                   SizedBox(width: 5,),
                                    Expanded(child: Column(
                                      crossAxisAlignment: CrossAxisAlignment.start,
                                      children: [
-
-                                       Text(auhController.latestBookingListResponse![index]!.dropAddress!,maxLines: 2,style: TextStyle(fontSize: 13),),
+                                       if (auhController.latestBookingListResponse[index]!.dropoffs != null && auhController.latestBookingListResponse[index]!.dropoffs!.isNotEmpty)
+                                         ListView.builder(
+                                           shrinkWrap: true,
+                                           physics: const NeverScrollableScrollPhysics(),
+                                           itemCount:auhController.latestBookingListResponse[index]!.dropoffs!.length,
+                                           itemBuilder: (context, dropIndex) {
+                                             final drop = auhController.latestBookingListResponse[index]!.dropoffs![dropIndex];
+                                             return Padding(
+                                               padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2),
+                                               child: Row(
+                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                 children: [
+                                                   const Icon(Icons.location_on_outlined, color: Colors.red, size: 25),
+                                                   const SizedBox(width: 5),
+                                                   Expanded(
+                                                     child: Text(
+                                                       drop.address ?? "No drop address",
+                                                       maxLines: 2,
+                                                       style: const TextStyle(fontSize: 13),
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                             );
+                                           },
+                                         ),
                                      ],
                                    ))
 
@@ -1074,7 +1080,8 @@ class _HomePageState extends State<HomePage> {
 
                                  InkWell(
                                    onTap: (){
-                                     Get.find<AuthController>().getBookingDriver(bookingID:auhController.latestBookingListResponse![index]!.id.toString(),isCall: true);
+                                     Get.find<AuthController>().getBookingDriverHome(driverID:auhController.latestBookingListResponse[index]!.driverId.toString(),isCall: true,
+                                     bookingID: auhController.latestBookingListResponse[index]!.id.toString());
                                    },
                                    child: Padding(
                                      padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),

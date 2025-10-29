@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class _SignupState extends State<Forgot> {
       print(response.body);
 
       if (response.statusCode == 200) {
+        startTimer();
         final data = jsonDecode(response.body);
 
 
@@ -80,6 +82,36 @@ class _SignupState extends State<Forgot> {
     setState(() {
       isLoading = false;
     });
+
+  }
+  bool isOtpButtonEnabled = true;
+  int secondsRemaining = 0;
+  Timer? _timer;
+
+  void startTimer() {
+    setState(() {
+      isOtpButtonEnabled = false;
+      secondsRemaining = 30;
+    });
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (secondsRemaining > 1) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        timer.cancel();
+        setState(() {
+          isOtpButtonEnabled = true;
+          secondsRemaining = 0;
+        });
+      }
+    });
+  }
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -89,9 +121,9 @@ class _SignupState extends State<Forgot> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: false,
-          backgroundColor: AppColors.primaryGradient,
+          backgroundColor: AppColors.secondaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("Forgot".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
+          title: Text("Forgot".tr,style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.w500),),
 
         ),
         body: SingleChildScrollView(
@@ -154,18 +186,18 @@ class _SignupState extends State<Forgot> {
 
 
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
 
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
 
                     suffixIcon: Column(
@@ -174,10 +206,10 @@ class _SignupState extends State<Forgot> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: GestureDetector(
-                            onTap: () {
-                              // TODO: Navigate to signup screen
-
+                            onTap: isOtpButtonEnabled
+                                ?() {
                               if(phoneCt.text.isNotEmpty && phoneCt.text.length ==10) {
+                                startTimer();
                                 authController.forgetPassword({
                                   "user_type" : "customer",
                                   "login_id":phoneCt.text,
@@ -201,15 +233,17 @@ class _SignupState extends State<Forgot> {
                               else{
                                 showCustomSnackBar("Enter valid OTP".tr);
                               }
-                            },
+                            }: null,
                             child:  Text(
-                              "Get OTP".tr,
+                              isOtpButtonEnabled
+                                  ? "GET OTP".tr
+                                  : "${'Retry in'.tr} $secondsRemaining s",
                               style: TextStyle(
                                   fontSize: 14,
-                                  fontFamily: 'Roboto',
+                                  fontFamily: 'Poppins',
                                   color: AppColors.secondaryGradient,
                                   decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w600,
                                   decorationColor: AppColors.primaryGradient
                               ),
                             ),
@@ -223,7 +257,7 @@ class _SignupState extends State<Forgot> {
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -237,37 +271,29 @@ class _SignupState extends State<Forgot> {
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextField(
                   controller: otpCt,
-                  style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
+                  style: TextStyle(fontSize: 14, fontFamily: 'Poppins',),
                   keyboardType: TextInputType.number,
                   maxLength: 10,
                   decoration: InputDecoration(
                     counter: SizedBox(),
                     border: OutlineInputBorder(
-
-
-
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     fillColor: Color(0xFFC11F1F),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
-
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
-
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-
-
-
                     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
                     hintText: "OTP".tr,
                     hintStyle: TextStyle(
                       color: Color(0xFF868686),
                       fontSize: 15,
-                      fontFamily: 'Roboto',
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
                       height: 0,
                     ),
@@ -327,13 +353,13 @@ class _SignupState extends State<Forgot> {
                 },
                 child:authController.isRegistration ? Center(child: CircularProgressIndicator(color: AppColors.primaryGradient,),): Container(
 
-                  height: 40,
+                  height: 45,
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   //padding: const EdgeInsets.symmetric(vertical: 17),
                   clipBehavior: Clip.antiAlias,
                   decoration: ShapeDecoration(
-                    color: AppColors.primaryGradient,
+                    color: AppColors.secondaryGradient,
                     /*gradient: LinearGradient(
                               begin: Alignment(1.00, 0.00),
                               end: Alignment(-1, 0),
@@ -354,7 +380,7 @@ class _SignupState extends State<Forgot> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.60,
-                          fontFamily: 'Roboto',
+                          fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
                           height: 0,
                           letterSpacing: 1.33,
@@ -378,7 +404,7 @@ class _SignupState extends State<Forgot> {
                     "Back To ".tr,
                     style: TextStyle(
                       fontSize: 14,
-                      fontFamily: 'Roboto',
+                      fontFamily: 'Poppins',
                       color: Colors.black87,
                     ),
                   ),
@@ -391,10 +417,10 @@ class _SignupState extends State<Forgot> {
                       "Sign In".tr,
                       style: TextStyle(
                           fontSize: 14,
-                          fontFamily: 'Roboto',
+                          fontFamily: 'Poppins',
                           color: AppColors.secondaryGradient,
                           decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           decorationColor: AppColors.primaryGradient
                       ),
                     ),

@@ -249,7 +249,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
       'description': 'Booking Payment',
       'order_id': id, // custom 8 digit order id
       'prefill': {
-        'contact': '${widget.bookingID!.contactNumber??"123123123"}',
+        'contact': widget.bookingID.pickup!.contactNumber??"123123123",
         'email': 'tritoll@gmail.com'
       },
       'theme': {
@@ -564,7 +564,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '${widget.bookingID!.categoryName} || ${widget.bookingID!.weight} ${widget.bookingID!.weightType}',
+                                            '${widget.bookingID.name} || ${widget.bookingID!.weight} ${widget.bookingID!.weightType}',
                                             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: Colors.grey),
                                           ),
 
@@ -628,8 +628,10 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                                 Expanded(child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    widget.bookingID.pickup != null ?
+                                    Text(widget.bookingID.pickup!.address??"",maxLines: 2,style: TextStyle(fontSize: 13),) :
+                                        SizedBox.shrink()
 
-                                    Text(widget.bookingID!.pickupAddress??"",maxLines: 2,style: TextStyle(fontSize: 13),),
                                   ],
                                 ))
 
@@ -669,14 +671,38 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.location_on_outlined,color: Colors.red,size: 25,),
-                                SizedBox(width: 5,),
                                 Expanded(child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    widget.bookingID.dropoffs != null ?
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        itemCount: widget.bookingID.dropoffs!.length,
+                                        itemBuilder: (context, dropIndex) {
+                                          final drop =  widget.bookingID.dropoffs![dropIndex];
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2),
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Icon(Icons.location_on_outlined, color: Colors.red, size: 25),
+                                                const SizedBox(width: 5),
+                                                Expanded(
+                                                  child: Text(
+                                                    drop.address ?? "No drop address",
+                                                    maxLines: 2,
+                                                    style: const TextStyle(fontSize: 13),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ) :
+                                    SizedBox.shrink(),
 
-                                    Text(widget.bookingID!.dropAddress??"",maxLines: 2,style: TextStyle(fontSize: 13),),
-                                  ],
+                                    ],
                                 ))
 
                               ],
@@ -756,7 +782,8 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                 onTap: (){
 
 
-                  authController.getBookingDriver(bookingID: widget.bookingID.id.toString(),isCall: false);
+                  authController.getBookingDriverHome(driverID: widget.bookingID.driverId.toString(),isCall: false,
+                      bookingID: widget.bookingID.id.toString());
                   _initializeLocations();
 
                   _startTracking();

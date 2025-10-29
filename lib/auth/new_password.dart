@@ -51,7 +51,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: false,
-          backgroundColor: AppColors.primaryGradient,
+          backgroundColor: AppColors.secondaryGradient,
           iconTheme: IconThemeData(color: Colors.white),
           title: Text("New Password".tr,style: TextStyle(fontSize: 18,color: Colors.white),),
 
