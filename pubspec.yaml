@@ -59,14 +59,14 @@ dependencies:
   smooth_page_indicator :
   quickalert: ^1.1.0
   flutter_animation_progress_bar:
-  firebase_crashlytics: ^5.0.1
+#  firebase_crashlytics: ^5.0.1
   google_maps_flutter :
   geolocator: ^10.0.0
   geocoding: ^2.1.1
   flutter_html:
   flutter_rating_bar: ^4.0.1
-
-
+  flutter_keyboard_visibility: ^6.0.0
+  firebase_core: ^4.2.0
   google_maps_webservice :
 
   # The following adds the Cupertino Icons font to your application.
@@ -79,7 +79,7 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_typeahead : ^4.6.0
+  flutter_typeahead: ^5.2.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

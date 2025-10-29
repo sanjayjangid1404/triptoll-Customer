@@ -26,7 +26,7 @@ class LocationPickerTypeAheadPage extends StatefulWidget {
 }
 
 class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPage> {
-  final TextEditingController pickController = TextEditingController();
+  TextEditingController pickController = TextEditingController();
   GoogleMapController? mapController;
   double pickupLat = 0;
   double pickupLng =0;
@@ -161,25 +161,29 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
             child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),
-              child: TypeAheadField<Map<String, dynamic>>(
-                textFieldConfiguration: TextFieldConfiguration(
-                  //controller: pickController,
-                  decoration: InputDecoration(
-                    hintText: '${'Enter'.tr} ${widget.title!.tr}',
-                    prefixIcon: Icon(Icons.location_on, color: Colors.blue),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
+              child:TypeAheadField<Map<String, dynamic>>(
                 suggestionsCallback: _getPlaceSuggestions,
+                builder: (context, controller, focusNode) {
+                  pickController = controller;
+                  return TextField(
+                    focusNode: focusNode,
+                    controller: pickController,
+                    decoration: InputDecoration(
+                      hintText: '${'Enter'.tr} ${widget.title!.tr}',
+                      prefixIcon: Icon(Icons.location_on, color: Colors.blue),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  );
+                },
                 itemBuilder: (context, suggestion) {
                   return ListTile(
                     leading: Icon(Icons.location_on),
                     title: Text(suggestion['description']),
                   );
                 },
-                onSuggestionSelected: (suggestion) async {
+                onSelected: (suggestion) async {
                   pickController.text = suggestion['description'];
                   final latLng = await _getPlaceLatLng(suggestion['place_id']);
                   setState(() {
@@ -188,7 +192,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   });
                   _moveToLocation(pickupLat, pickupLng);
                 },
-              ),
+              )
             ),
           ),
           Align(
