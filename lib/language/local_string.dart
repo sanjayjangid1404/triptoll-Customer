@@ -145,9 +145,11 @@ class LocaleString extends Translations {
           "Email email": "Email email",
           "Enter" : "Enter",
           "Add New Stop" :  "Add New Stop",
+          "Delete Account" : "Delete Account"
         },
         'ta_IN': {
           'Language': "மொழி",
+          'Delete Account': "கணக்கை நீக்கு",
           "Home": "முகப்பு",
           "Profile": "சுயவிவரம்",
           "My Order": "என் ஆர்டர்",
@@ -298,6 +300,7 @@ class LocaleString extends Translations {
         },
         'bn_BD': {
           'Language': "ভাষা",
+          'Delete Account': "অ্যাকাউন্ট মুছে ফেলুন",
           "Home": "বাড়ি",
           "Profile": "প্রোফাইল",
           "My Order": "আমার অর্ডার",
@@ -446,6 +449,7 @@ class LocaleString extends Translations {
         },
         'te_IN': {
       'Language': "భాష",
+      'Delete Account': "ఖాతాను తొలగించు",
       "Home": "హోమ్",
       "Profile": "ప్రొఫైల్",
       "My Order": "నా ఆర్డర్",

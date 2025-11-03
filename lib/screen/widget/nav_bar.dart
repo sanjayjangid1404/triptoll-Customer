@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -278,11 +279,50 @@ class _NavBarState extends State<NavBar> {
             //   leading: Icon(Icons.share_outlined),
             //   onTap: () => null,
             // ),
-
             ListTile(
               title: Text('Logout'.tr),
               leading: Icon(Icons.login_outlined),
               onTap: () => authController.logoutUser(),
+            ),
+            ListTile(
+              title: Text('Delete Account'.tr),
+              leading: Icon(Icons.delete,color: Colors.red,),
+              onTap: () {
+                showCupertinoDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return CupertinoAlertDialog(
+                      title: const Text(
+                        'Delete Account',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      content: const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Are you sure you want to delete your account?',
+                        ),
+                      ),
+                      actions: [
+                        CupertinoDialogAction(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        CupertinoDialogAction(
+                          isDestructiveAction: true,
+                          onPressed: () {
+
+                            authController.disableCustomr();
+                          },
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),

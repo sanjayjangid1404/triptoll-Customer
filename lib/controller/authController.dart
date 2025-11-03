@@ -1382,6 +1382,36 @@ class AuthController extends GetxController implements GetxService
 
 
   }
+
+  Future<void>disableCustomr()
+  async {
+
+
+    // vehicleData = null;
+    Response response = await authRepo.disableCustomr(userID: getUserID());
+
+
+    Get.back();
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+      logoutUser();
+      update();
+    }
+    else {
+
+
+      update();
+      ApiChecker.checkApi(response);
+
+
+    }
+    update();
+
+
+
+
+  }
   BookingdriverResponse? driver = BookingdriverResponse();
   FaqModel? faqModel = FaqModel();
   LatLng? driverCurrentLocation;

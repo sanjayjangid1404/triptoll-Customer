@@ -101,6 +101,10 @@ class AuthRepo{
     return await apiClient.getDataWithBody(AppContants.getBookingDetails, {
           "booking_id":bookingID.toString()});
   }
+  Future<Response> disableCustomr({String? userID}) async {
+    // return await apiClient.getData("${AppContants.getBookingDetails}/$bookingID?user_type=customer&user_id=$userID");
+    return await apiClient.getData('${AppContants.disableCustomrURL}$userID',);
+  }
 
   Future<Response> getBookingDriver({String? bookingID}) async {
     return await apiClient.getData(

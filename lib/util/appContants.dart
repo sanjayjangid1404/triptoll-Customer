@@ -61,6 +61,7 @@ class AppContants
   static String faqListURL = "Home/getFaq/customer";
   static String getWalletHistoryURL = "Driver/getWalletHistory";
   static String addCustomerWalletURL = "Customer/addCustomerWallet";
+  static String disableCustomrURL = "User/disableCustomr/";
   static String categoryVehicleURL = "home/getVehicleByCategoryId/";
   static String verifyOtpURl = "verify-otp";
   static String myComplaintURl = "get-my-complaints";
