@@ -187,7 +187,7 @@ class _WalletViewState extends State<WalletView> {
                           ),
                         ),
                         Text(
-                          "$totalAmount",
+                          totalAmount.toStringAsFixed(2),
                           style: TextStyle(
                             color: Color(0xff282F39),
                             fontSize: 25,
@@ -206,25 +206,32 @@ class _WalletViewState extends State<WalletView> {
                   color: Colors.grey,
                   width: double.maxFinite,
                 ),
-                Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
                       onPressed: () {
                         _showPaymentPopup(context);
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                       child: Text(
                         "Wallet Recharge".tr,
                         style: TextStyle(
-                          color: Colors.green,
+                          color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
                 Container(
                   height: 12,
                   color: Color(0xffF2F5F7),

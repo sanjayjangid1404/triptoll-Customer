@@ -25,6 +25,8 @@ class AppContants
   static String userID = "User ID";
   static String cityID = "city";
   static String userName = "User Name";
+  static String fName = "First Name";
+  static String lName = "Last Name";
   static String userEmail = "User Email";
   static String userPhone = "User Phone";
   static String notification = "Notification ID";

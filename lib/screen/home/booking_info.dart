@@ -971,7 +971,9 @@ class _BookingInfoState extends State<BookingInfo> {
 
                             onExpansionChanged: (expanded) {},
                             children: [
-                              // 🧩 Your existing TextFields below
+                              SizedBox(
+                                height: 20,
+                              ),
                               TextField(
                                 controller: controller,
                                 style: TextStyle(
@@ -979,7 +981,6 @@ class _BookingInfoState extends State<BookingInfo> {
                                   fontFamily: AppFonts.poppinsRegular,
                                 ),
                                 keyboardType: TextInputType.text,
-                                maxLength: 10,
                                 decoration: InputDecoration(
                                   counter: const SizedBox(),
                                   border: OutlineInputBorder(
@@ -1012,7 +1013,6 @@ class _BookingInfoState extends State<BookingInfo> {
                                 controller: senderController,
                                 style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
                                 keyboardType: TextInputType.text,
-                                maxLength: 10,
                                 decoration: InputDecoration(
                                   counter: SizedBox(),
                                   border: OutlineInputBorder(
@@ -1091,6 +1091,7 @@ class _BookingInfoState extends State<BookingInfo> {
                           ),
                         ),
                         if (index == stopLocations.length - 1)
+                          Get.find<AuthController>().isLoggedIn() ?
                           GetBuilder<AuthController>(builder: (authController) {
                             return CheckboxListTile(
                               value: isActive,
@@ -1125,7 +1126,7 @@ class _BookingInfoState extends State<BookingInfo> {
                                 ),
                               ),
                             );
-                          }),
+                          }) : SizedBox.shrink(),
                       ],
                     );
 
@@ -1285,7 +1286,7 @@ class _BookingInfoState extends State<BookingInfo> {
                     //padding: const EdgeInsets.symmetric(vertical: 17),
                     clipBehavior: Clip.antiAlias,
                     decoration: ShapeDecoration(
-                      color: AppColors.primaryGradient,
+                      color:AppColors.secondaryGradient,
                       /*gradient: LinearGradient(
                             begin: Alignment(1.00, 0.00),
                             end: Alignment(-1, 0),

@@ -322,6 +322,14 @@ class AuthRepo{
   async{
     return await sharedPreferences.setString(AppContants.userEmail, name);
   }
+  Future<bool>saveFName(String fName)
+  async{
+    return await sharedPreferences.setString(AppContants.fName, fName);
+  }
+  Future<bool>saveLName(String lName)
+  async{
+    return await sharedPreferences.setString(AppContants.lName, lName);
+  }
 
   Future<bool>saveUserPhone(String name)
   async{

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/util/appContants.dart';
 
@@ -31,6 +32,14 @@ class _OrderDetailsState extends State<OrderDetails> {
 
     });
   }
+  String getTimeFromDate(String dateTimeString) {
+    try {
+      DateTime dt = DateTime.parse(dateTimeString);
+      return DateFormat("hh:mm a").format(dt);
+    } catch (e) {
+      return "";
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
@@ -57,11 +66,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("#${authController.bookingDetailsResponse!.orderId??""}",style: TextStyle(fontSize: 32,color: AppColors.secondaryGradient),),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Order Id',
+                          style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w500),),
+                        Text("#${authController.bookingDetailsResponse!.orderId??""}",style: TextStyle(fontSize: 14,color: AppColors.secondaryGradient,fontWeight: FontWeight.w500),),
+                      ],
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(authController.bookingDetailsResponse!.addDate!=null ? "${AppContants.changeDateFormat(authController.bookingDetailsResponse!.addDate!, "dd MMM yyyy")}":"",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7),fontWeight: FontWeight.w400),),
+                        Text(authController.bookingDetailsResponse!.addDate!=null ? "${getTimeFromDate(authController.bookingDetailsResponse!.addDate!.toString())}":"",style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7),fontWeight: FontWeight.w400),),
                         Text("${authController.bookingDetailsResponse!.orderStatus!.toUpperCase()}",style: TextStyle(fontSize: 14,color: AppColors.primaryGradient,fontWeight: FontWeight.w400),),
                       ],
                     ),
@@ -69,22 +86,31 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ),
 
                 SizedBox(height: 20,),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 15,
-                      width: 15,
-                      margin: EdgeInsets.only(top: 4),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.green
+                InkWell(
+                  onTap: (){
+                    print('::::::');
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 15,
+                        width: 15,
+                        margin: EdgeInsets.only(top: 4),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.green
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 5,),
-                    Expanded(child: Text("${authController.bookingDetailsResponse!.pickupAddress!}",maxLines: 2,))
+                      SizedBox(width: 5,),
+                      Expanded(child: Text(""
+                          "${authController.bookingDetailsResponse!.pickup!.address.toString()}"
+                        ,style: TextStyle(
+                          color: Colors.black
+                        ),))
 
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(height: 10,),
                 Row(
@@ -100,8 +126,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                       ),
                     ),
                     SizedBox(width: 5,),
-                    Expanded(child: Text("${authController.bookingDetailsResponse!.dropAddress!}",maxLines: 2,))
-
+                    authController.bookingDetailsResponse!.dropoffs != null ?
+                    Expanded(
+                      child: ListView.builder(
+                       shrinkWrap: true,
+                       itemCount: authController.bookingDetailsResponse!.dropoffs!.length,
+                       itemBuilder: (context, index) {
+                         final item = authController.bookingDetailsResponse!.dropoffs![index];
+                          return   Text("${item.address ?? ''}",
+                            maxLines: 2,);
+                      
+                       },
+                      ),
+                    ) : SizedBox.shrink(),
                   ],
                 ),
                 SizedBox(height: 10,),
@@ -157,16 +194,16 @@ class _OrderDetailsState extends State<OrderDetails> {
 
                 SizedBox(height: 10,),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Amount".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
-                      Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.amount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Text("Amount".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                //       Text("${AppContants.rupessSystem}${authController.bookingDetailsResponse!.amount!}",style: TextStyle(fontSize: 16,color: Colors.black),),
+                //     ],
+                //   ),
+                // ),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(vertical: 8.0),
                 //   child: Row(

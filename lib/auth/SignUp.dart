@@ -93,6 +93,9 @@ class _SignupState extends State<Signup> {
           print(OTP);
         });
       } else {
+        final data = jsonDecode(response.body);
+        final message = data['message'] ?? "Something went wrong";
+        showCustomSnackBar(message.toString(),isError: true);
         setState(() {
           apiResponse = "Error: ${response.statusCode}";
           isVerify = false;

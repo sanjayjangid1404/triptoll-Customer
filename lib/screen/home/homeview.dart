@@ -77,7 +77,11 @@ class _HomePageState extends State<HomePage> {
     } else if (lang == "தமிழ்" || lang == "Tamil") {
       Get.updateLocale(const Locale('ta', 'IN'));
       authController.selectedLanguage.value = 'தமிழ்';
-    } else if (lang == "తెలుగు" || lang == "Telugu") {
+    }  else if (lang == "हिन्दी" ||lang == "Hindi") {
+      Get.updateLocale(const Locale('hi', 'IN'));
+      authController.selectedLanguage.value = "Hindi";
+    }
+    else if (lang == "తెలుగు" || lang == "Telugu") {
       Get.updateLocale(const Locale('te', 'IN'));
       authController.selectedLanguage.value = 'తెలుగు';
     } else if (lang == "বাংলা" || lang == "Bengali") {
@@ -265,7 +269,8 @@ class _HomePageState extends State<HomePage> {
         extendBodyBehindAppBar: true,
 
         appBar: AppBar(
-            backgroundColor: Colors.white.withOpacity(0.4),
+            // backgroundColor: Colors.white.withOpacity(0.4),
+            backgroundColor: Colors.white,
             surfaceTintColor: Colors.transparent,
             shadowColor: Colors.transparent,
             elevation: 0,
@@ -942,7 +947,8 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-         bottomSheet:auhController.latestBookingListResponse!=null && auhController.latestBookingListResponse!.isNotEmpty &&  auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="paid" && auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="cancelled" ?
+         bottomSheet: Get.find<AuthController>().isLoggedIn() &&
+         auhController.latestBookingListResponse!=null && auhController.latestBookingListResponse!.isNotEmpty &&  auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="paid" && auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="cancelled" ?
          Container(
            padding: const EdgeInsets.only(top: 20),
            // Space for the drag handle
@@ -1022,14 +1028,12 @@ class _HomePageState extends State<HomePage> {
                                  children: [
                                    Icon(Icons.location_on_outlined,color: Colors.green,size: 25,),
                                    SizedBox(width: 5,),
-                                   Expanded(child:
                                    Column(
                                      crossAxisAlignment: CrossAxisAlignment.start,
                                      children: [
-
-                                       Text(auhController.latestBookingListResponse[index]!.dropoffs![index]!.address.toString(),maxLines: 2,style: TextStyle(fontSize: 13),),
+                                       Text(auhController.latestBookingListResponse[index]!.pickup!.address.toString(),maxLines: 2,style: TextStyle(fontSize: 13),),
                                      ],
-                                   ))
+                                   )
 
                                  ],
                                ),
@@ -1095,8 +1099,8 @@ class _HomePageState extends State<HomePage> {
                                            borderRadius: BorderRadius.circular(10)
                                          ),
                                          child: Text(
-                                           auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
-                                           "${'Pay'.tr} ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![0]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                           auhController.latestBookingListResponse![index]!.orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
+                                           "${'Pay'.tr} ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![index]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
                                    ),
                                  )
                               :

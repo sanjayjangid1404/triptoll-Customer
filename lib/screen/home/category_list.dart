@@ -16,6 +16,7 @@ import 'package:http/http.dart' as http;
 import 'package:triptoll/screen/home/toll_message.dart';
 import 'package:triptoll/screen/home/userTraking_view.dart';
 
+import '../../auth/loginView.dart';
 import '../../util/appColors.dart';
 import '../../util/appContants.dart';
 import 'homeview.dart';
@@ -1072,7 +1073,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                    child: ImageIcon(AssetImage("assets/images/rupess.jpg"),color: Colors.white,size: 40,))),
                Expanded(
                  child: InkWell(
-                   onTap: (){
+                   onTap:Get.find<AuthController>().isLoggedIn() ? (){
                      var lastHouseNoValue;
                      if (widget.houseNoCt.isNotEmpty) {
                        var lastKey = widget.houseNoCt.keys.last;
@@ -1084,6 +1085,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      }
 
                      var lastSendMobile;
+                     widget.stopLocations[0]['contact_number'] = Get.find<AuthController>().getUserPhone();
                      if (widget.sendMobile.isNotEmpty) {
                        lastSendMobile = widget.sendMobile[widget.sendMobile.keys.last]?.text;
                      }
@@ -1112,11 +1114,12 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        'totalFare': (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0),
                      };
                      print('kfjdjfkdfjdkfjk${widget.stopLocations.toString()}');
-
                      authController.bookingMultipleNow(
                          distance: widget.distance,
                          expectedTime: widget.expectedTime,
-                         amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),
+                         // amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),
+                         amount: updatedFares[selectIndex].toStringAsFixed(2),
+                         totalAmount: updatedFares[selectIndex].toStringAsFixed(2),
                          categoryId: "",
                          categoryName: "",
                          discount: "0",
@@ -1132,7 +1135,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          pickupLong: widget.pickLng.toString(),
                          rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
                          receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
-                         totalAmount: updatedFares[selectIndex].toStringAsFixed(2), totalDistance: calculateDistanceWithPickup(
+                         totalDistance: calculateDistanceWithPickup(
                          pickLat:widget.pickLat,
                          pickLng:  widget.pickLng,
                          stops:  widget.stopLocations
@@ -1143,6 +1146,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      print(bookingData);
 
                     // Get.to(ReviewBooking(data: bookingData,));
+                   }
+                   : (){
+                     Get.to(LoginView());
                    },
                    child: Container(height: 45,
                    width: double.infinity,
@@ -1152,7 +1158,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        borderRadius: BorderRadius.circular(4),
                        color: AppColors.secondaryGradient
                      ),
-                     child:authController!.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 16,color: Colors.white),),
+                     child:authController!.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 15,color: Colors.white),),
                    ),
                  ),
                ),
@@ -1459,9 +1465,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
           ] else ...[
             Row(
               children: [
-                const CircleAvatar(
+                 CircleAvatar(
                   radius: 30,
-                  backgroundImage: NetworkImage('https://randomuser.me/api/portraits/men/1.jpg'),
+                  backgroundImage: NetworkImage("${AppContants.imageURL}uploaded_files/category_img/${authController.driver!.driverDetails!.profilePhoto}"),
                 ),
                 const SizedBox(width: 15),
                 Column(
@@ -1577,7 +1583,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
               ),
               onPressed: () {
                 if(authController.driver!=null){
-                  Driver driver = Driver(name: authController.driver!.driverDetails!.firstName!, vehicleType: authController.driver!.driverDetails!.vehicleType!, vehicleName: authController.driver!.driverDetails!.vehicleNumber??"", mobileNumber: authController.driver!.driverDetails!.contactNumber??"",id: authController.driver!.driverDetails!.id??"");
+                  Driver driver = Driver(name: authController.driver!.driverDetails!.firstName!, vehicleType: authController.driver!.driverDetails!.vehicleType!, vehicleName: authController.driver!.driverDetails!.vehicleNumber??"",
+                      mobileNumber: authController.driver!.driverDetails!.contactNumber??"",id: authController.driver!.driverDetails!.id??"");
                   authController.getBookingDetails(bookingID: authController.newBookingID,driver: driver,driverLat: authController.driver!.driverDetails!.lat!,driverLng: authController.driver!.driverDetails!.long!);
                 }
                 else {

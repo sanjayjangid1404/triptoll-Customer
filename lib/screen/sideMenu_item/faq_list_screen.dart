@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/authController.dart';
+import '../../util/appColors.dart';
 
 
 class FrequentlyAskedQuestionsScreen extends StatefulWidget {
@@ -32,10 +33,10 @@ class _FrequentlyAskedQuestionsScreenState
           backgroundColor: Colors.white,
           appBar: AppBar(
             centerTitle: false,
-            backgroundColor: Colors.white,
-            iconTheme: IconThemeData(color: Colors.black),
+            backgroundColor: AppColors.primaryGradient,
+            iconTheme: IconThemeData(color: Colors.white),
             title: Text(
-              "FAQ".tr, style: TextStyle(fontSize: 18, color: Colors.black),),
+              "FAQ".tr, style: TextStyle(fontSize: 18, color: Colors.white),),
           ),
           body:  ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),

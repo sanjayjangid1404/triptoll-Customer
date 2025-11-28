@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TollInfoBanner extends StatelessWidget {
   const TollInfoBanner({super.key});
@@ -31,7 +32,7 @@ class TollInfoBanner extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                "Toll roads aren't included in the fare.\nPlease pay them separately",
+                "Toll roads aren't included in the fare.\nPlease pay them separately".tr,
                 style: const TextStyle(
                   color: Colors.black87,
                   fontSize: 14,

@@ -101,7 +101,8 @@ class DriverDetails {
       dynamic executiveCode, 
       dynamic referralPrice, 
       String? username, 
-      String? password, 
+      String? profilePhoto,
+      String? password,
       String? model, 
       String? rcNo, 
       String? vehicleNumber, 
@@ -155,6 +156,7 @@ class DriverDetails {
     _executiveCode = executiveCode;
     _referralPrice = referralPrice;
     _username = username;
+    _profilePhoto = profilePhoto;
     _password = password;
     _model = model;
     _rcNo = rcNo;
@@ -212,6 +214,7 @@ class DriverDetails {
     _executiveCode = json['executive_code'];
     _referralPrice = json['referral_price'];
     _username = json['username'];
+    _profilePhoto = json['profile_photo'];
     _password = json['password'];
     _model = json['model'];
     _rcNo = json['rc_no'];
@@ -267,6 +270,7 @@ class DriverDetails {
   dynamic _executiveCode;
   dynamic _referralPrice;
   String? _username;
+  String? _profilePhoto;
   String? _password;
   String? _model;
   String? _rcNo;
@@ -321,6 +325,7 @@ DriverDetails copyWith({  String? id,
   dynamic executiveCode,
   dynamic referralPrice,
   String? username,
+  String? profilePhoto,
   String? password,
   String? model,
   String? rcNo,
@@ -375,6 +380,7 @@ DriverDetails copyWith({  String? id,
   executiveCode: executiveCode ?? _executiveCode,
   referralPrice: referralPrice ?? _referralPrice,
   username: username ?? _username,
+  profilePhoto: profilePhoto ?? _profilePhoto,
   password: password ?? _password,
   model: model ?? _model,
   rcNo: rcNo ?? _rcNo,
@@ -430,6 +436,7 @@ DriverDetails copyWith({  String? id,
   dynamic get executiveCode => _executiveCode;
   dynamic get referralPrice => _referralPrice;
   String? get username => _username;
+  String? get profilePhoto => _profilePhoto;
   String? get password => _password;
   String? get model => _model;
   String? get rcNo => _rcNo;
@@ -487,6 +494,7 @@ DriverDetails copyWith({  String? id,
     map['executive_code'] = _executiveCode;
     map['referral_price'] = _referralPrice;
     map['username'] = _username;
+    map['profile_photo'] = _profilePhoto;
     map['password'] = _password;
     map['model'] = _model;
     map['rc_no'] = _rcNo;

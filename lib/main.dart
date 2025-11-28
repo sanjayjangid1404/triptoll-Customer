@@ -156,7 +156,8 @@ class _MyApp extends State<MyApp> {
       home: AnimatedSplashScreen(
         duration: 3000,
         splash: AppImage.splashLogo,
-        nextScreen: Get.find<AuthController>().isLoggedIn() ? HomePage() : LoginView(),
+        // nextScreen: Get.find<AuthController>().isLoggedIn() ? HomePage() : LoginView(),
+        nextScreen: HomePage() ,
         splashTransition: SplashTransition.fadeTransition,
         backgroundColor: Colors.white,
       ),

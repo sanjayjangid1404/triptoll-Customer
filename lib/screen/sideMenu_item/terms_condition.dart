@@ -4,6 +4,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../util/appColors.dart';
+
 class TermsAndCondition extends StatefulWidget {
   const TermsAndCondition({super.key});
 
@@ -39,9 +41,11 @@ class _PrivacyPolicyPageState extends State<TermsAndCondition> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text("Terms & Conditions".tr,style: TextStyle(color: Colors.black),),
+        backgroundColor: AppColors.primaryGradient,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Terms & Conditions".tr,style: TextStyle(color: Colors.white),),
 
       ),
       body: htmlContent.isEmpty

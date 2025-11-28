@@ -46,7 +46,10 @@ class _LoginViewState extends State<LoginView> {
     if (lang == null || lang == "English") {
       Get.updateLocale(const Locale('en', 'US'));
       // authController.selectedLanguage.value = "English";
-    } else if (lang == "தமிழ்" || lang == "Tamil") {
+    }  else if (lang == "हिन्दी" ||lang == "Hindi") {
+      Get.updateLocale(const Locale('hi', 'IN'));
+    }
+    else if (lang == "தமிழ்" || lang == "Tamil") {
       Get.updateLocale(const Locale('ta', 'IN'));
       // authController.selectedLanguage.value = 'தமிழ்';
     } else if (lang == "తెలుగు" || lang == "Telugu") {
@@ -121,6 +124,28 @@ class _LoginViewState extends State<LoginView> {
                                                     setState(() {});
                                                   },
                                                 )),
+                                          ),
+
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: const Color(0xffDCDCDC)),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                              child: RadioListTile(
+                                                title: Text('हिन्दी'.tr),
+                                                activeColor: const Color(0xff014E70),
+                                                value: "Hindi",
+                                                groupValue: authController.selectedLanguage.value,
+                                                onChanged: (value) {
+                                                  locale = const Locale('hi', 'IN');
+                                                  authController.selectedLanguage.value = value!;
+                                                  updateLanguage("Hindi");
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
                                           ),
                                           const SizedBox(
                                             height: 10,

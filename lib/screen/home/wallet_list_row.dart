@@ -21,6 +21,10 @@ class WalletRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  '${wObj.trnId ?? ""}',
+                  style: TextStyle(color: Color(0xff282F39), fontSize: 12),
+                ),
+                Text(
                   wObj.remark??"",
                   style: TextStyle(color: Color(0xff282F39), fontSize: 12),
                 ),

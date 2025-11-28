@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/order_list.dart';
+import '../../util/appColors.dart';
 import '../home/WalletView.dart';
 import '../payment/payment_list.dart';
 import '../sideMenu_item/contact_us.dart';
@@ -29,13 +30,15 @@ class _NavBarState extends State<NavBar> {
     return GetBuilder<AuthController>(
       builder: (authController) =>
        Drawer(
+         backgroundColor: Colors.white,
         child: ListView(
-          // Remove padding
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(authController.getUserName()!),
-              accountEmail: Text(authController.getUserEmail()!),
+              accountName:  Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserName()!) :
+              Text('User'),
+              accountEmail: Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserEmail()!) :
+              Text(''),
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
                   child: Image.asset(
@@ -59,27 +62,30 @@ class _NavBarState extends State<NavBar> {
               title: Text('Home'.tr),
               onTap: () => Get.back(),
             ),
-
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               leading: Icon(Icons.person_2_outlined),
               title: Text('Profile'.tr),
               onTap: () => Get.to(ProfileView()),
-            ),
+            ) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               leading: Icon(Icons.file_present_outlined),
               title: Text('My Order'.tr),
               onTap: () => Get.to(OrderList()),
-            ),
+            ) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               leading: Icon(Icons.wallet),
               title: Text('Wallet'.tr),
               onTap: () => Get.to(WalletView()),
-            ),
+            ) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               leading: Icon(Icons.payment_outlined),
               title: Text('Payments'.tr),
               onTap: () => Get.to(PaymentList()),
-            ),
+            ) : SizedBox.shrink(),
 
             Divider(),
             ListTile(
@@ -118,6 +124,27 @@ class _NavBarState extends State<NavBar> {
                                           setState(() {});
                                         },
                                       )),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: const Color(0xffDCDCDC)),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: RadioListTile(
+                                      title: Text('हिन्दी'.tr),
+                                      activeColor: const Color(0xff014E70),
+                                      value: "Hindi",
+                                      groupValue: authController.selectedLanguage.value,
+                                      onChanged: (value) {
+                                        locale = const Locale('hi', 'IN');
+                                        authController.selectedLanguage.value = value!;
+                                        updateLanguage("Hindi");
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 10,
@@ -227,7 +254,7 @@ class _NavBarState extends State<NavBar> {
                                       child: Container(
                                         height: 56,
                                         width: MediaQuery.sizeOf(context).width,
-                                        color: Color(0xFFEC6C0C),
+                                        color: AppColors.secondaryGradient,
                                         child: Center(
                                           child: Text(
                                             'Apply'.tr,
@@ -279,11 +306,13 @@ class _NavBarState extends State<NavBar> {
             //   leading: Icon(Icons.share_outlined),
             //   onTap: () => null,
             // ),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               title: Text('Logout'.tr),
               leading: Icon(Icons.login_outlined),
               onTap: () => authController.logoutUser(),
-            ),
+            ) : SizedBox(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               title: Text('Delete Account'.tr),
               leading: Icon(Icons.delete,color: Colors.red,),
@@ -323,7 +352,10 @@ class _NavBarState extends State<NavBar> {
                   },
                 );
               },
-            ),
+            )  : SizedBox(),
+            SizedBox(
+              height: 50,
+            )
           ],
         ),
       ),

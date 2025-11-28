@@ -25,7 +25,6 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
 
@@ -33,8 +32,11 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
-      builder: (authController) =>
-       Scaffold(
+      builder: (authController) {
+        emailCt.text = authController.getUserEmail()!;
+        fNameCt.text = authController.getFName()!;
+        lNameCt.text = authController.getLName()!;
+      return Scaffold(
         appBar: AppBar(
           centerTitle: false,
           backgroundColor: AppColors.primaryGradient,
@@ -101,7 +103,7 @@ class _ProfileViewState extends State<ProfileView> {
               ),
 
               SizedBox(height: 30,),
-              
+
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
@@ -118,15 +120,12 @@ class _ProfileViewState extends State<ProfileView> {
                   children: [
                     TextField(
                       controller: fNameCt,
+                      readOnly: true,
                       style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
+                      keyboardType: TextInputType.name,
                       decoration: InputDecoration(
                         counter: SizedBox(),
                         border: OutlineInputBorder(
-
-
-
                           borderRadius: BorderRadius.circular(4),
                         ),
                         fillColor: Color(0xFFC11F1F),
@@ -164,15 +163,12 @@ class _ProfileViewState extends State<ProfileView> {
                   children: [
                     TextField(
                       controller: lNameCt,
+                      readOnly: true,
                       style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
+                      keyboardType: TextInputType.name,
                       decoration: InputDecoration(
                         counter: SizedBox(),
                         border: OutlineInputBorder(
-
-
-
                           borderRadius: BorderRadius.circular(4),
                         ),
                         fillColor: Color(0xFFC11F1F),
@@ -211,15 +207,12 @@ class _ProfileViewState extends State<ProfileView> {
                   children: [
                     TextField(
                       controller: emailCt,
+                      readOnly: true,
                       style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         counter: SizedBox(),
                         border: OutlineInputBorder(
-
-
-
                           borderRadius: BorderRadius.circular(4),
                         ),
                         fillColor: Color(0xFFC11F1F),
@@ -277,56 +270,57 @@ class _ProfileViewState extends State<ProfileView> {
               SizedBox(height: 30,),
 
               //action Button
-              InkWell(
-                onTap: (){
-                  // Get.offAllNamed(RouteHelper.getHomeView());
-
-
-
-                },
-                child: Container(
-
-                  height: 50,
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  //padding: const EdgeInsets.symmetric(vertical: 17),
-                  clipBehavior: Clip.antiAlias,
-                  decoration: ShapeDecoration(
-                    color: AppColors.primaryGradient,
-                    /*gradient: LinearGradient(
-                            begin: Alignment(1.00, 0.00),
-                            end: Alignment(-1, 0),
-                            colors: [ AppColors.primaryGradient,AppColors.secondaryGradient],
-                          ),*/
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppContants.btnRadius),
-                    ),
-                  ),
-                  child:/*authController!.isLoading ? SpinKitThreeBounce(color: Colors.white):*/ Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Update'.toUpperCase().tr,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.60,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w600,
-                          height: 0,
-                          letterSpacing: 1.33,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // InkWell(
+              //   onTap: (){
+              //     // Get.offAllNamed(RouteHelper.getHomeView());
+              //
+              //
+              //
+              //   },
+              //   child: Container(
+              //
+              //     height: 50,
+              //     width: double.infinity,
+              //     margin: EdgeInsets.symmetric(horizontal: 20),
+              //     //padding: const EdgeInsets.symmetric(vertical: 17),
+              //     clipBehavior: Clip.antiAlias,
+              //     decoration: ShapeDecoration(
+              //       color: AppColors.primaryGradient,
+              //       /*gradient: LinearGradient(
+              //               begin: Alignment(1.00, 0.00),
+              //               end: Alignment(-1, 0),
+              //               colors: [ AppColors.primaryGradient,AppColors.secondaryGradient],
+              //             ),*/
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(AppContants.btnRadius),
+              //       ),
+              //     ),
+              //     child:/*authController!.isLoading ? SpinKitThreeBounce(color: Colors.white):*/ Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         Text(
+              //           'Update'.toUpperCase().tr,
+              //           textAlign: TextAlign.center,
+              //           style: TextStyle(
+              //             color: Colors.white,
+              //             fontSize: 16.60,
+              //             fontFamily: 'Roboto',
+              //             fontWeight: FontWeight.w600,
+              //             height: 0,
+              //             letterSpacing: 1.33,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
-      ),
+      );
+    }
     );
   }
 }

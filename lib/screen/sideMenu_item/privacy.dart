@@ -4,6 +4,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../util/appColors.dart';
+
 class PrivacyPolicyPage extends StatefulWidget {
   @override
   _PrivacyPolicyPageState createState() => _PrivacyPolicyPageState();
@@ -38,9 +40,11 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text("Privacy Policy".tr,style: TextStyle(color: Colors.black),),
+        backgroundColor: AppColors.primaryGradient,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Privacy Policy".tr,style: TextStyle(color: Colors.white),),
 
       ),
       body: htmlContent.isEmpty

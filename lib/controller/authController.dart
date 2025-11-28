@@ -228,14 +228,19 @@ class AuthController extends GetxController implements GetxService
         authRepo.saveUserName(response.body['name']);
         authRepo.saveUserEmail(response.body['email']);
         authRepo.saveUserPhone(response.body['contact_number']);
-        // authRepo.saveUserPassword(password);
         authRepo.saveUserId(response.body['id'].toString());
         authRepo.saveCityId(response.body['city_id'].toString());
+        authRepo.saveFName(response.body['first_name']);
+        print('sddsd${response.body['first_name']}');
+        print('sddsd${response.body['last_name']}');
+        print('sddsd${response.body['contact_number']}');
+        authRepo.saveLName(response.body['last_name']);
+
         // if(response.body["success"]) {
         //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
         // }
-        Get.offAllNamed(RouteHelper.getHomeView());
-
+        // Get.offAllNamed(RouteHelper.getHomeView());
+        Get.back();
 
         _image = null;
       }
@@ -678,6 +683,12 @@ class AuthController extends GetxController implements GetxService
         // _lResponse = LoginResponse.fromJson(response.body);
         authRepo.saveUserToken(response.body['token']);
         authRepo.saveUserName(response.body['name']);
+        if (response.body['first_name'] != null && response.body['first_name'].toString().isNotEmpty) {
+          authRepo.saveFName(response.body['first_name']);
+        }
+        if (response.body['last_name'] != null && response.body['last_name'].toString().isNotEmpty) {
+          authRepo.saveLName(response.body['last_name']);
+        }
         authRepo.saveUserEmail(response.body['email']??"");
         authRepo.saveUserPhone(response.body['contact_number']);
         // authRepo.saveUserPassword(password);
@@ -686,7 +697,9 @@ class AuthController extends GetxController implements GetxService
         // if(response.body["success"]) {
         //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
         // }
-        Get.offAllNamed(RouteHelper.getHomeView());
+        // Get.offAllNamed(RouteHelper.getHomeView());
+        Get.back();
+        Get.back();
       }
 
       update();
@@ -1620,6 +1633,14 @@ class AuthController extends GetxController implements GetxService
   String? getUserEmail()
   {
     return authRepo.sharedPreferences.getString(AppContants.userEmail);
+  }
+  String? getFName()
+  {
+    return authRepo.sharedPreferences.getString(AppContants.fName);
+  }
+  String? getLName()
+  {
+    return authRepo.sharedPreferences.getString(AppContants.lName);
   }
 
   String? getUserPhone()
