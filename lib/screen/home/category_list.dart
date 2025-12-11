@@ -1522,20 +1522,20 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                       ],
                     ),
                   ),
-                  Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.message),
-                      ),
-                      const SizedBox(height: 5),
-                       Text('Message'.tr),
-                    ],
-                  ),
+                  // Column(
+                  //   children: [
+                  //     Container(
+                  //       padding: const EdgeInsets.all(10),
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.grey[200],
+                  //         shape: BoxShape.circle,
+                  //       ),
+                  //       child: const Icon(Icons.message),
+                  //     ),
+                  //     const SizedBox(height: 5),
+                  //      Text('Message'.tr),
+                  //   ],
+                  // ),
                   Column(
                     children: [
                       Container(

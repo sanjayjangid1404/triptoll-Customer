@@ -360,8 +360,10 @@ class AppContants
               //   },
               // ),
               DropdownButtonFormField<String>(
+                dropdownColor: Colors.white,
                 decoration: InputDecoration(
                   labelText: 'Select a reason'.tr,
+
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
