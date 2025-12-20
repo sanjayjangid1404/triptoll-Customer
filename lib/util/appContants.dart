@@ -34,12 +34,16 @@ class AppContants
   // static String baseURl = "https://dev.triptoll.in/api/";
   static String baseURl = "https://triptoll.in/app-admin/api/";
   // static String imageURL = "https://dev.triptoll.in/";
+  // static String baseURl = "https://triptoll.online/app-admin/api/";
   static String imageURL = "https://triptoll.in/app-admin/";
   static String loginUrl = "Customer/login";
+  static String loginOTPUrl = "Customer/loginOTP";
+  static String verifyLoginOTPUrl = "Customer/verifyLoginOTP";
   static String getAllCategory = "home/getAllCategory";
   static String checkPaymentURL = "Booking/checkPayment";
   static String sendDriverOTPURL = "Customer/customerSignupOTP";
   static String createCustomerURL = "Customer/customerCreate";
+  static String createCustomerNewURL = "Customer/customerSignupOTP";
   static String forgetPasswordURL = "User/forgotPasswordOTP";
   static String updatePasswordURL = "User/updatePassword";
   static String driverFAQURl = "Home/getFaq/customer";

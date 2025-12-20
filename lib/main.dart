@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,6 +23,22 @@ import 'util/get_di.dart' as di;
 import 'package:triptoll/util/appImage.dart';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+Future<void> _setCurrentLocation() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      // Permission denied permanently, handle gracefully
+      return;
+    }
+  }
+
+  Position position = await Geolocator.getCurrentPosition(
+    desiredAccuracy: LocationAccuracy.high,
+  );
+
+}
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +53,7 @@ void main() async{
 
   await di.init();
   await Firebase.initializeApp();
+  _setCurrentLocation();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   await Permission.notification.isDenied.then((value) {
     if (value) {

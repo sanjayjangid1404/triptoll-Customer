@@ -113,11 +113,34 @@ class _HomePageState extends State<HomePage> {
     _timer?.cancel();
     _timer = null;
   }
+
+  Future<void> _setCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        // Permission denied permanently, handle gracefully
+        return;
+      }
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      pickupLat = position.latitude;
+      pickupLng = position.longitude;
+    });
+    await _getAddressFromLatLng(pickupLat!, pickupLng! );
+  }
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setCurrentLocation();
       checkLanguage();
       authController.getDriverFAQ();
       authController.checkTicket({

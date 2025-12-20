@@ -266,8 +266,8 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
   }
 
   Future<String?> createRazorpayOrderId({required int amount}) async {
-    const String keyId = 'rzp_live_RAJBCQWCkgqpEb';      // 🔑 Your Key ID
-    const String keySecret = 'DfWgvxPob2CSxM147onlshnF';  // 🔒 Your Key Secret (⚠️ sensitive!)
+    const String keyId = 'rzp_live_RAJBCQWCkgqpEb';
+    const String keySecret = 'DfWgvxPob2CSxM147onlshnF';
 
     final String basicAuth = 'Basic ' + base64Encode(utf8.encode('$keyId:$keySecret'));
 
@@ -280,7 +280,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
         'authorization': basicAuth,
       },
       body: jsonEncode({
-        "amount": amount,     // amount in paise (₹500 = 50000)
+        "amount": amount,
         "currency": "INR",
         "receipt": "receipt_${DateTime.now().millisecondsSinceEpoch}"
       }),

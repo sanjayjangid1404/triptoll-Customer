@@ -264,6 +264,80 @@ class AuthController extends GetxController implements GetxService
 
   }
 
+  Future<void>loginFunctionNew(String phoneNumber,String otp)
+  async {
+
+    isLoading = true;
+
+    update();
+    print(getUserDeviceID());
+
+    String? token;
+
+
+
+    if(Platform.isAndroid)
+    {
+      token =  await FirebaseMessaging.instance.getToken();
+    }
+    else
+    {
+      token = await FirebaseMessaging.instance.getAPNSToken();
+    }
+
+    Response response = await authRepo.loginVerifyOtp(phone: phoneNumber,otp:
+    otp,token: token);
+
+  //  LoginResponse? loginResponse;
+
+    if(response.statusCode== 200 || response.statusCode ==400)
+    {
+      if(response.body["status"].toString() == "false"){
+        showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
+      }else{
+        showCustomSnackBar(response.body["msg"], getXSnackBar: false,isError: false);
+        // loginResponse = LoginResponse.fromJson(response.body);
+        // _lResponse = LoginResponse.fromJson(response.body);
+        authRepo.saveUserToken(response.body['token']);
+        authRepo.saveUserName(response.body['name']);
+        authRepo.saveUserEmail(response.body['email']);
+        authRepo.saveUserPhone(response.body['contact_number']);
+        authRepo.saveUserId(response.body['id'].toString());
+        authRepo.saveCityId(response.body['city_id'].toString());
+        authRepo.saveFName(response.body['first_name']);
+        print('sddsd${response.body['first_name']}');
+        print('sddsd${response.body['last_name']}');
+        print('sddsd${response.body['contact_number']}');
+        authRepo.saveLName(response.body['last_name']);
+
+        // if(response.body["success"]) {
+        //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
+        // }
+        // Get.offAllNamed(RouteHelper.getHomeView());
+        Get.back();
+
+        _image = null;
+      }
+
+    }
+    else {
+      showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
+      // dynamic data = jsonDecode(response.body);
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    isLoading = false;
+    update();
+
+
+
+  }
+
 
   Future<void>getCategoryType()
   async {
@@ -670,6 +744,83 @@ class AuthController extends GetxController implements GetxService
 
 
     Response response = await authRepo.createCustomer(body);
+
+  //  LoginResponse? loginResponse;
+
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+      if(response.body["status"].toString() == "false"){
+        showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: true);
+      }else{
+        showCustomSnackBar(response.body["msg"], getXSnackBar: false,isError: false);
+        // loginResponse = LoginResponse.fromJson(response.body);
+        // _lResponse = LoginResponse.fromJson(response.body);
+        authRepo.saveUserToken(response.body['token']);
+        authRepo.saveUserName(response.body['name']);
+        if (response.body['first_name'] != null && response.body['first_name'].toString().isNotEmpty) {
+          authRepo.saveFName(response.body['first_name']);
+        }
+        if (response.body['last_name'] != null && response.body['last_name'].toString().isNotEmpty) {
+          authRepo.saveLName(response.body['last_name']);
+        }
+        authRepo.saveUserEmail(response.body['email']??"");
+        authRepo.saveUserPhone(response.body['contact_number']);
+        // authRepo.saveUserPassword(password);
+        authRepo.saveUserId(response.body['id'].toString());
+        authRepo.saveCityId(response.body['city_id'].toString());
+        // if(response.body["success"]) {
+        //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
+        // }
+        // Get.offAllNamed(RouteHelper.getHomeView());
+        Get.back();
+        Get.back();
+      }
+
+      update();
+    }
+    else {
+
+
+
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    isRegistration = false;
+    update();
+
+
+
+  }
+  Future<void>createCustomerNew(body) async {
+
+    isRegistration = true;
+
+    update();
+
+    String? token;
+
+
+
+    if(Platform.isAndroid)
+    {
+      token =  await FirebaseMessaging.instance.getToken();
+    }
+    else
+    {
+      token = await FirebaseMessaging.instance.getAPNSToken();
+    }
+
+    body.addAll({
+      "device_token":token.toString()
+    });
+
+
+    Response response = await authRepo.createCustomerNew(body);
 
   //  LoginResponse? loginResponse;
 

@@ -22,6 +22,14 @@ class AuthRepo{
     return await apiClient.postData(
         AppContants.loginUrl,{"contact_number":phone!,"password":password!,"token":token});
   }
+  Future<Response> loginVerifyOtp({String? phone,String? otp,String? token}) async {
+    return await apiClient.postData(
+        AppContants.verifyLoginOTPUrl,{"contact_number":phone!,"otp":otp!,"token":token});
+  }
+  Future<Response> loginOTP({String? phone}) async {
+    return await apiClient.postData(
+        AppContants.loginOTPUrl,{"contact_number":phone!});
+  }
 
   Future<Response> getCategoryTYPE() async {
     return await apiClient.getData(
@@ -36,6 +44,10 @@ class AuthRepo{
   Future<Response> createCustomer(body) async {
     return await apiClient.postMultipartData(
         AppContants.createCustomerURL,body,[]);
+  }
+  Future<Response> createCustomerNew(body) async {
+    return await apiClient.postMultipartData(
+        AppContants.createCustomerNewURL,body,[]);
   }
   Future<Response> driverFAQ() async {
 
@@ -137,6 +149,12 @@ class AuthRepo{
     return await apiClient.postData(
         AppContants.notifyDriverURL,{
           "booking_id":id
+    });
+  }
+  Future<Response> loginCustomer(String number) async {
+    return await apiClient.postData(
+        AppContants.loginOTPUrl,{
+          "contact_number":number
     });
   }
 

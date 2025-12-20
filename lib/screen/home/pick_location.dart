@@ -123,7 +123,6 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-
         iconTheme: IconThemeData(color: AppColors.primaryGradient),
         centerTitle: false,
         backgroundColor: Colors.transparent,
@@ -154,10 +153,9 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
             },
           ),
           Positioned(
-            top: 80,
+            top: 90,
             left: 16,
             right: 16,
-
             child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),

@@ -1,14 +1,11 @@
-
-
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/auth/SignUp.dart';
 import 'package:triptoll/controller/authController.dart';
-import 'package:triptoll/screen/home/homeview.dart';
-
 import '../screen/widget/nav_bar.dart';
 import '../util/appColors.dart';
 import '../util/appContants.dart';
@@ -16,10 +13,7 @@ import '../util/appImage.dart';
 import '../util/app_fonts.dart';
 import '../util/custom_snackbar.dart';
 import 'forgot.dart';
-
-
-
-
+import 'package:http/http.dart' as http;
 
 
 class LoginView extends StatefulWidget {
@@ -33,6 +27,93 @@ class _LoginViewState extends State<LoginView> {
 
   TextEditingController emailCt = TextEditingController(text: "");
   TextEditingController passwordCt = TextEditingController(text: "");
+  TextEditingController otpCon = TextEditingController(text: "");
+  String OTP = "";
+  bool isOtpButtonEnabled = true; // by default enabled
+  int secondsRemaining = 0;
+  Timer? _timer;
+  bool otpVerify = false;
+  bool isSHowOTP = false;
+  bool isLoading = false;
+  String apiResponse = "";
+  bool isVerify = false;
+  void startTimer() {
+    setState(() {
+      isOtpButtonEnabled = false;
+      secondsRemaining = 30;
+    });
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (secondsRemaining > 1) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        timer.cancel();
+        setState(() {
+          isOtpButtonEnabled = true;
+          secondsRemaining = 0;
+        });
+      }
+    });
+  }
+  Future<void> sendOtp() async {
+    setState(() {
+      isLoading = true;
+      apiResponse = "";
+    });
+
+    String apiUrl =
+        "${AppContants.baseURl}${AppContants.loginOTPUrl}";
+    print(apiUrl);
+    print({
+      "contact_number": emailCt.text,
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "contact_number": emailCt.text.trim(),
+        }),
+      );
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        startTimer();
+        final data = jsonDecode(response.body);
+
+
+        setState(() {
+          OTP = data["otp_code"].toString();
+          isSHowOTP = true;
+          apiResponse = data.toString();
+          isVerify = true;
+          print(OTP);
+        });
+      } else {
+        final data = jsonDecode(response.body);
+        final message = data['message'] ?? "Something went wrong";
+        showCustomSnackBar(message.toString(),isError: true);
+        setState(() {
+          apiResponse = "Error: ${response.statusCode}";
+          isVerify = false;
+          isSHowOTP = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        apiResponse = "Exception: $e";
+      });
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
   bool passwordVisible = false;
   bool _obscureText = true;
   updateLanguage(String gg) async {
@@ -371,6 +452,42 @@ class _LoginViewState extends State<LoginView> {
 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
                         hintText: "Mobile Number".tr,
+                        suffixIcon: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: GestureDetector(
+                                onTap:isOtpButtonEnabled
+                                    ?  () {
+                                  // TODO: Navigate to signup screen
+
+                                  if(emailCt.text.isNotEmpty && emailCt.text.length ==10) {
+                                    sendOtp();
+                                    setState(() {
+                                      otpVerify = false;
+                                    });
+                                  }
+                                  else{
+                                    showCustomSnackBar("Enter valid phone number".tr);
+                                  }
+                                } : null,
+                                child:  Text(
+                                  isOtpButtonEnabled
+                                      ? "GET OTP".tr
+                                      : "${'Retry in'.tr} $secondsRemaining s",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColors.secondaryGradient,
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.bold,
+                                      decorationColor: AppColors.primaryGradient
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         hintStyle: TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
@@ -382,69 +499,119 @@ class _LoginViewState extends State<LoginView> {
 
                     SizedBox(height: 15,),
 
+                    // TextField(
+                    //   controller: passwordCt,
+                    //   obscureText: _obscureText,
+                    //   style: const TextStyle(
+                    //     fontSize: 14,
+                    //     fontFamily: 'Poppins',
+                    //   ),
+                    //   decoration: InputDecoration(
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //     focusedBorder: OutlineInputBorder(
+                    //       borderSide: const BorderSide(color: Colors.grey),
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //     enabledBorder: OutlineInputBorder(
+                    //       borderSide: const BorderSide(color: Colors.grey),
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    //     hintText: "Password".tr,
+                    //     hintStyle: const TextStyle(
+                    //       color: Color(0xFF868686),
+                    //       fontSize: 15,
+                    //       fontWeight: FontWeight.w500,
+                    //       height: 0,
+                    //     ),
+                    //     suffixIcon: IconButton(
+                    //       icon: Icon(
+                    //         _obscureText ? Icons.visibility_off : Icons.visibility,
+                    //         color: Colors.grey,
+                    //         size: 20,
+                    //       ),
+                    //       onPressed: () {
+                    //         setState(() {
+                    //           _obscureText = !_obscureText;
+                    //         });
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
                     TextField(
-                      controller: passwordCt,
-                      obscureText: _obscureText,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                      ),
+                      controller: otpCon,
+                      style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
                       decoration: InputDecoration(
+                        counter: SizedBox(),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
+                        fillColor: Color(0xFFC11F1F),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
+                          borderSide: BorderSide(color: Colors.grey),
+
                           borderRadius: BorderRadius.circular(8),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
+                          borderSide: BorderSide(color: Colors.grey),
+
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        hintText: "Password".tr,
-                        hintStyle: const TextStyle(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
+                        hintText: "OTP".tr,
+                        // suffixIcon:otpVerify ? SizedBox(): InkWell(
+                        //   onTap: (){
+                        //
+                        //     if(otpCon.text.isNotEmpty && otpCon.text.length ==6 && otpCon.text == OTP) {
+                        //       setState(() {
+                        //         otpVerify = true;
+                        //       });
+                        //       showCustomSnackBar("OTP Verify".tr,isError: false);
+                        //     }
+                        //     else {
+                        //       showCustomSnackBar("Invalid OTP".tr);
+                        //     }
+                        //   },
+                        //   child: Padding(
+                        //     padding: EdgeInsets.all(12.0),
+                        //     child: Text("Verify".tr,style: TextStyle(fontSize: 14,color: Colors.green,fontWeight: FontWeight.bold),),
+                        //   ),
+                        // ),
+                        hintStyle: TextStyle(
                           color: Color(0xFF868686),
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           height: 0,
                         ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureText ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.grey,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                        ),
                       ),
+
                     ),
                     SizedBox(height: 10,),
 
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          // TODO: Navigate to forget password screen
-                          Get.to(Forgot());
-                          print("Forget Password tapped");
-                        },
-                        child: Text(
-                          "Forgot Password?".tr,
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Poppins',
-                              color: AppColors.secondaryGradient,
-                              // decoration: TextDecoration.underline,
-                              // decorationColor: AppColors.primaryGradient
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       // TODO: Navigate to forget password screen
+                    //       Get.to(Forgot());
+                    //       print("Forget Password tapped");
+                    //     },
+                    //     child: Text(
+                    //       "Forgot Password?".tr,
+                    //       style: TextStyle(
+                    //           fontSize: 14,
+                    //           fontFamily: 'Poppins',
+                    //           color: AppColors.secondaryGradient,
+                    //           // decoration: TextDecoration.underline,
+                    //           // decorationColor: AppColors.primaryGradient
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
 
                     SizedBox(height: 30,),
@@ -458,14 +625,15 @@ class _LoginViewState extends State<LoginView> {
                           {
                             showCustomSnackBar("Invalid mobile no.".tr, getXSnackBar: false,isError: true);
                           }
-                        else if(passwordCt.text.isEmpty){
-                          showCustomSnackBar("Enter password".tr);
+                        else if(otpCon.text.isEmpty || otpCon.text.trim() !=OTP){
+                          showCustomSnackBar("Enter valid otp".tr, getXSnackBar: false,isError: true);
                         }
 
                         else
                         {
 
-                          authController.loginFunction(emailCt.text, passwordCt.text);
+                          authController.loginFunctionNew(emailCt.text, otpCon.text);
+                          // authController.loginFunction(emailCt.text, passwordCt.text);
 
 
 

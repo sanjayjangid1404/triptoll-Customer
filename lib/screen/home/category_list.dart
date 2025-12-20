@@ -88,6 +88,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     super.initState();
     _driverStream = Stream.periodic(Duration(seconds: 60), (count) => count).listen((count) {
       if (count >= 9 && Get.find<AuthController>().driver == null) {
+        print('booking start now:::::::::');
         Get.find<AuthController>().cancelOrder(
           bookingID: Get.find<AuthController>().newBookingID,
           reason: "No driver found in 10 minutes",
