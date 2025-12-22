@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:google_place/google_place.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/booking_info.dart';
@@ -391,7 +389,6 @@ class _HomePageState extends State<HomePage> {
             children: [
               Container(
                 height: MediaQuery.of(context).size.height*0.6,
-          
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.grey[200],
@@ -642,56 +639,336 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),*/
                         const SizedBox(height: 0),
-                        SizedBox(
-                          height: 60,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      select = 0;
-                                    });
-
-                                    Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
-                                  },
-                                  child: Container(
-                                    //  margin: EdgeInsets.only(right: 15),
-
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.35),
-                                          blurRadius: 1,
-                                          spreadRadius: 1,
-                                          // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                                        ),
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(0.8),
-                                          blurRadius: 1,
-                                          spreadRadius: 1,
-                                          // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(AppImage.parcelImage,width: 25,),
-                                        SizedBox(width: 4,),
-                                        Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                                      ],
-                                    ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: (){
+                                  setState(() {
+                                    select = 0;
+                                  });
+                        
+                                  Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.35),
+                                        blurRadius: 1,
+                                        spreadRadius: 1,
+                                        // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.8),
+                                        blurRadius: 1,
+                                        spreadRadius: 1,
+                                        // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(AppImage.parcelImage,width: 25,),
+                                      SizedBox(width: 4,),
+                                      Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    select = 0;
+                                  });
+
+                                  DateTime? selectedDate;
+                                  TimeOfDay? selectedTime;
+
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                    ),
+                                    builder: (context) {
+                                      return StatefulBuilder(
+                                        builder: (context, setModalState) {
+                                          return Container(
+                                            padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 12,
+                                              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                                            ),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Center(
+                                                  child: Container(
+                                                    width: 40,
+                                                    height: 4,
+                                                    margin: const EdgeInsets.only(bottom: 14),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey.shade300,
+                                                      borderRadius: BorderRadius.circular(10),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                /// 🔹 Title
+                                                const Center(
+                                                  child: Text(
+                                                    "Schedule Delivery",
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 20),
+
+                                                /// 🔹 Date Picker
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    DateTime? picked = await showDatePicker(
+                                                      context: context,
+                                                      initialDate: DateTime.now(),
+                                                      firstDate: DateTime.now(),
+                                                      lastDate: DateTime.now().add(const Duration(days: 1)), // 🔒 max tomorrow
+                                                    );
+
+                                                    if (picked != null) {
+                                                      setModalState(() {
+                                                        selectedDate = picked;
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      border: Border.all(color: Colors.grey.shade300),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        const Icon(Icons.calendar_today, size: 18),
+                                                        const SizedBox(width: 10),
+                                                        Text(
+                                                          selectedDate == null
+                                                              ? "Select Date"
+                                                              : DateFormat('dd MMM yyyy').format(selectedDate!),
+                                                          style: const TextStyle(fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 12),
+
+                                                /// 🔹 Time Picker
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    TimeOfDay? picked = await showTimePicker(
+                                                      context: context,
+                                                      initialTime: TimeOfDay.now(),
+                                                    );
+
+                                                    if (picked != null) {
+                                                      setModalState(() {
+                                                        selectedTime = picked;
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      border: Border.all(color: Colors.grey.shade300),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        const Icon(Icons.access_time, size: 18),
+                                                        const SizedBox(width: 10),
+                                                        Text(
+                                                          selectedTime == null
+                                                              ? "Select Time"
+                                                              : selectedTime!.format(context),
+                                                          style: const TextStyle(fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 14),
+                                                Text('* You can schedule your delivery within the next 24 hours only.'.tr,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500
+                                                ),
+                                                ),
+                                                const SizedBox(height: 24),
+
+                                                /// 🔹 Buttons
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child:ElevatedButton(
+                                                        onPressed: () => Navigator.pop(context),
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.grey,
+                                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                        ),
+
+                                                        child: const Text(
+                                                          "Cancel",
+                                                          style: TextStyle(color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    Expanded(
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          if (selectedDate == null || selectedTime == null) {
+                                                            Get.snackbar(
+                                                              "Error",
+                                                              "Please select date & time",
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          // 🔹 Combine date + time
+                                                          final selectedDateTime = DateTime(
+                                                            selectedDate!.year,
+                                                            selectedDate!.month,
+                                                            selectedDate!.day,
+                                                            selectedTime!.hour,
+                                                            selectedTime!.minute,
+                                                          );
+
+                                                          final now = DateTime.now();
+                                                          final maxTime = now.add(const Duration(hours: 24));
+
+                                                          if (selectedDateTime.isBefore(now)) {
+                                                            Get.snackbar(
+                                                              "Invalid Time",
+                                                              "Please select a future time",
+                                                            );
+                                                            return;
+                                                          }
+                                                          if (selectedDateTime.isAfter(maxTime)) {
+                                                            Get.snackbar(
+                                                              "Invalid Schedule",
+                                                              "You can schedule only within next 24 hours",
+                                                            );
+                                                            return;
+                                                          }
+                                                          final Duration difference = selectedDateTime.difference(now);
+
+                                                          final int hours = difference.inHours;
+                                                          final int minutes = difference.inMinutes.remainder(60);
+
+                                                          // 🔹 PRINT
+                                                          print("Scheduled After: $hours hours $minutes minutes");
+                                                          return;
+                                                          Get.back();
+
+                                                          String formattedTime =
+                                                              '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}';
+                                                          String onlyDate =
+                                                          DateFormat('yyyy-MM-dd').format(selectedDate!);
+
+                                                          Get.to(
+                                                            LocationPickerTypeAheadPage(
+                                                              isPick: false,
+                                                              pickLng: pickupLng,
+                                                              pickLat: pickupLat,
+                                                              pickAddress: pickController.text,
+                                                              title: "Drop Location",
+                                                              date: onlyDate,
+                                                              time: formattedTime,
+                                                            ),
+                                                          );
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.blue,
+                                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                        ),
+
+                                                        child: const Text(
+                                                          "Confirm",
+                                                          style: TextStyle(color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                   alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.35),
+                                        blurRadius: 1,
+                                        spreadRadius: 1,
+                                        ),
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.8),
+                                        blurRadius: 1,
+                                        spreadRadius: 1,
+                                        ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(AppImage.scheduleDelivery,width: 25,),
+                                      SizedBox(width: 4,),
+                                      Text("Schedule Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),

@@ -22,7 +22,9 @@ class BookingInfo extends StatefulWidget {
   double pickLng;
   double dropLng;
   double dropLat;
-   BookingInfo({super.key,required this.dropLng,required this.dropLat,required this.pickAddress,required this.pickLat,required this.pickLng,required this.dropAddress});
+  String? scheduleTime;
+  String? scheduleDate;
+   BookingInfo({super.key,this.scheduleDate,this.scheduleTime,required this.dropLng,required this.dropLat,required this.pickAddress,required this.pickLat,required this.pickLng,required this.dropAddress});
 
   @override
   State<BookingInfo> createState() => _BookingInfoState();
@@ -1269,6 +1271,8 @@ class _BookingInfoState extends State<BookingInfo> {
                           distance: totalDistanceNew,
                           expectedTime: totalTimeNew,
                           eLoader: eLoader,
+                          scheduleDate: widget.scheduleDate,
+                          scheduleTime: widget.scheduleTime,
                         ));
                       } catch (e) {
                         print("Error: $e");

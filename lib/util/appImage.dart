@@ -10,6 +10,7 @@ class AppImage
   static String logoSvg =  "assets/images/logo.svg";
   static String menuImage =  "assets/images/menu.png";
   static String parcelImage =  "assets/images/boxes.png";
+  static String scheduleDelivery =  "assets/images/schedule-delivery.png";
   static String logisticImage =  "assets/images/logistic.png";
   static String driverMrkIMage =  "assets/images/driver_mark.png";
   static String payImage =  "assets/images/pay.svg";

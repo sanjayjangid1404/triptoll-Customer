@@ -32,13 +32,15 @@ class CategoryList extends StatefulWidget {
   double eLoader;
   String expectedTime;
   int? selectedIndex12;
+  String? scheduleTime;
+  String? scheduleDate;
   Map<int, TextEditingController> houseNoCt = {};
   Map<int, TextEditingController> senderName = {};
   Map<int, TextEditingController> sendMobile = {};
   List<Map<String, dynamic>> stopLocations = [];
   CategoryList({super.key,required this.distance,required this.expectedTime,required this.pickAddress,required this.pickLat,required this.pickLng
     ,required this.dropAddress,required this.senderName,required this.sendMobile,required this.houseNoCt,required this.stopLocations,
-    required this.eLoader
+    required this.eLoader,this.scheduleTime,this.scheduleDate
   });
 
 
@@ -83,6 +85,29 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       }
     });
   }
+  Timer? timer;
+  void startChecking() {
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      checkData();
+    });
+  }
+  void checkData() {
+    if (Get.find<AuthController>().driver != null) {
+      print("Data received");
+      Driver driver = Driver(name: Get.find<AuthController>().driver!.driverDetails!.firstName!, vehicleType: Get.find<AuthController>().driver!.driverDetails!.vehicleType!, vehicleName: Get.find<AuthController>().driver!.driverDetails!.vehicleNumber??"",
+          mobileNumber: Get.find<AuthController>().driver!.driverDetails!.contactNumber??"",id: Get.find<AuthController>().driver!.driverDetails!.id??"");
+      Get.find<AuthController>().getBookingDetails(bookingID: Get.find<AuthController>().newBookingID,driver: driver,driverLat: Get.find<AuthController>().driver!.driverDetails!.lat!,driverLng: Get.find<AuthController>().driver!.driverDetails!.long!);
+      timer!.cancel();
+
+    } else {
+      print("Data not received");
+    }
+  }
+
+
+  void stopChecking() {
+    timer?.cancel();
+  }
   @override
   void initState() {
     super.initState();
@@ -117,10 +142,10 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
         setState(() {
           _driverAccepted = true;
         });
-        // In real app, you would navigate to ride tracking screen
       }
     });
     _addMarkers();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
 
@@ -494,6 +519,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
             authController.vehicleData!.data == null ||
             cachedFaresAndRates == null ||
             cachedFaresAndRates!.isEmpty) {
+          print('data loading ${authController.vehicleData.toString()} ${authController.vehicleData!.data.toString()}'
+              '${cachedFaresAndRates.toString()} ${cachedFaresAndRates!.isEmpty.toString()}');
           return Center(
             child: CircularProgressIndicator(color: AppColors.primaryGradient),
           );
@@ -1123,6 +1150,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          totalAmount: updatedFares[selectIndex].toStringAsFixed(2),
                          categoryId: "",
                          categoryName: "",
+                         scheduleTime: widget.scheduleTime,
+                         scheduleDate: widget.scheduleDate,
                          discount: "0",
                          discountPercentage: "0",
                          dropAddress: lastStopLocation["address"],
@@ -1145,6 +1174,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          stopLocations: widget.stopLocations);
                      _startTimer();
                      print(bookingData);
+                     startChecking();
 
                     // Get.to(ReviewBooking(data: bookingData,));
                    }
@@ -1478,13 +1508,13 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                       '${authController.driver!.driverDetails!.firstName}',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 5),
-                        const Text('4.5 (320 Rides)'),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Icon(Icons.star, color: Colors.amber, size: 16),
+                    //     const SizedBox(width: 5),
+                    //     const Text('4.5 (320 Rides)'),
+                    //   ],
+                    // ),
 
                     Row(
                       children: [

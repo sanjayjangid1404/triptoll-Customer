@@ -547,6 +547,8 @@ class AuthController extends GetxController implements GetxService
     required String vehicleImg,
     required String vehicleName,
     required String distance,
+    String? scheduleDate,
+    String? scheduleTime,
     required List<Map<String, dynamic>> stopLocations,
   })
   async {
@@ -562,7 +564,7 @@ class AuthController extends GetxController implements GetxService
 
 
     Response response = await authRepo.bookMultiple(distance: distance,expectedTime: expectedTime,amount: amount, categoryId: categoryId, categoryName: categoryName, cusId: getUserID()??"", discount: discount, discountPercentage: discountPercentage, dropAddress: dropAddress, dropAddressHeading: dropAddressHeading, dropLat: dropLat, dropLong: dropLong, paymentType: paymentType, pickupAddress: pickupAddress, pickupHeading: pickupHeading, pickupLat: pickupLat, pickupLong: pickupLong, rate: rate, receiverContactNumber: receiverContactNumber, receiverName: receiverName, senderContactNumber: getUserPhone()??"", senderName: getUserName()??"", stopAddress: stopAddress, stopCharge: stopCharge, totalAmount: totalAmount, totalDistance: totalDistance, vehicleId: vehicleId, vehicleImg: vehicleImg, vehicleName: vehicleName,
-        stopLocations: stopLocations);
+        stopLocations: stopLocations,scheduleTime: scheduleTime,scheduleDate: scheduleDate);
 
   //  LoginResponse? loginResponse;
 

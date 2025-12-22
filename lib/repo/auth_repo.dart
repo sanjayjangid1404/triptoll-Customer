@@ -289,6 +289,8 @@ class AuthRepo{
     required String vehicleImg,
     required String vehicleName,
     required String expectedTime,
+    String? scheduleDate,
+    String? scheduleTime,
     required List<Map<String, dynamic>> stopLocations,
   }) async {
     final body = {
@@ -304,6 +306,8 @@ class AuthRepo{
       'distance' : distance,
       "expected_time": expectedTime,
       "locations": stopLocations,
+      "schedule_date": scheduleDate,
+      "schedule_time": scheduleTime,
     };
 
     return await apiClient.postData(AppContants.saveBookingMultiLocation, body);

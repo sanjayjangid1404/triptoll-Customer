@@ -15,12 +15,12 @@ class LocationPickerTypeAheadPage extends StatefulWidget {
   bool? isPick;
   String? pickAddress;
   String? title;
-
   double? pickLat;
   double? pickLng;
+  String? date;
+  String? time;
 
-
-  LocationPickerTypeAheadPage({super.key,required this.isPick,this.pickLng,this.pickLat,this.pickAddress,this.title});
+  LocationPickerTypeAheadPage({super.key,required this.isPick,this.date,this.time,this.pickLng,this.pickLat,this.pickAddress,this.title});
   @override
   _LocationPickerTypeAheadPageState createState() => _LocationPickerTypeAheadPageState();
 }
@@ -203,7 +203,6 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                 padding: EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () {
-
                 if(widget.isPick!) {
                   Navigator.pop(context, {
                   'lat': pickupLat,
@@ -216,7 +215,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   print('qwertyui${widget.pickLat.toString()}');
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => BookingInfo(dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
+                    MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,scheduleTime: widget.time,dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
                   );
 
 
