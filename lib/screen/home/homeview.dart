@@ -139,6 +139,7 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setCurrentLocation();
+      authController.isBookingProcess = false;
       checkLanguage();
       authController.getDriverFAQ();
       authController.checkTicket({
@@ -858,6 +859,8 @@ class _HomePageState extends State<HomePage> {
                                                             Get.snackbar(
                                                               "Error",
                                                               "Please select date & time",
+                                                                backgroundColor: Colors.red,
+                                                                colorText: Colors.white
                                                             );
                                                             return;
                                                           }
@@ -878,6 +881,8 @@ class _HomePageState extends State<HomePage> {
                                                             Get.snackbar(
                                                               "Invalid Time",
                                                               "Please select a future time",
+                                                              backgroundColor: Colors.red,
+                                                              colorText: Colors.white
                                                             );
                                                             return;
                                                           }
@@ -885,6 +890,8 @@ class _HomePageState extends State<HomePage> {
                                                             Get.snackbar(
                                                               "Invalid Schedule",
                                                               "You can schedule only within next 24 hours",
+                                                                backgroundColor: Colors.red,
+                                                                colorText: Colors.white
                                                             );
                                                             return;
                                                           }
@@ -895,7 +902,6 @@ class _HomePageState extends State<HomePage> {
 
                                                           // 🔹 PRINT
                                                           print("Scheduled After: $hours hours $minutes minutes");
-                                                          return;
                                                           Get.back();
 
                                                           String formattedTime =

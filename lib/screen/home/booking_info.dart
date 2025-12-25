@@ -1259,7 +1259,7 @@ class _BookingInfoState extends State<BookingInfo> {
                         stopLocations[0]['distance_to_next'] = distanceText;
                         print("Distance: $distanceText, Time: $timeText");
                         // Now navigate and pass values
-                        Get.to(CategoryList(
+                        Get.to(() =>CategoryList(
                           dropAddress: widget.dropAddress,
                           pickAddress: widget.pickAddress,
                           pickLat: widget.pickLat,
@@ -1275,7 +1275,7 @@ class _BookingInfoState extends State<BookingInfo> {
                           scheduleTime: widget.scheduleTime,
                         ));
                       } catch (e) {
-                        print("Error: $e");
+                        print("Error issss: $e");
                         showCustomSnackBar("Failed to calculate distance".tr);
                       }
                     } else {

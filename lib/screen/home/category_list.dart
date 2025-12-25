@@ -111,28 +111,37 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
   @override
   void initState() {
     super.initState();
-    _driverStream = Stream.periodic(Duration(seconds: 60), (count) => count).listen((count) {
-      if (count >= 9 && Get.find<AuthController>().driver == null) {
-        print('booking start now:::::::::');
-        Get.find<AuthController>().cancelOrder(
-          bookingID: Get.find<AuthController>().newBookingID,
-          reason: "No driver found in 10 minutes",
-          comment: "Auto-cancelled",
-          isOrder: false,
-        );
-        Get.snackbar(
-          "Ride Cancelled".tr,
-          "All drivers are busy, please try after some time".tr,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.orangeAccent,
-          colorText: Colors.white,
-          duration: Duration(seconds: 12),
-          margin: EdgeInsets.all(12),
-          borderRadius: 8,
-        );
-        _driverStream.cancel();
-      }
-    });
+    if( widget.scheduleDate == null && widget.scheduleTime == null) {
+      print('call start now');
+      _driverStream =
+          Stream.periodic(Duration(seconds: 60), (count) => count).listen((
+              count) {
+            if (count >= 9 && Get
+                .find<AuthController>()
+                .driver == null) {
+              print('booking start now:::::::::');
+              Get.find<AuthController>().cancelOrder(
+                bookingID: Get
+                    .find<AuthController>()
+                    .newBookingID,
+                reason: "No driver found in 10 minutes",
+                comment: "Auto-cancelled",
+                isOrder: false,
+              );
+              Get.snackbar(
+                "Ride Cancelled".tr,
+                "All drivers are busy, please try after some time".tr,
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.orangeAccent,
+                colorText: Colors.white,
+                duration: Duration(seconds: 12),
+                margin: EdgeInsets.all(12),
+                borderRadius: 8,
+              );
+              _driverStream.cancel();
+            }
+          });
+    }
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _waitingTime++;
@@ -519,9 +528,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
             authController.vehicleData!.data == null ||
             cachedFaresAndRates == null ||
             cachedFaresAndRates!.isEmpty) {
-          print('data loading ${authController.vehicleData.toString()} ${authController.vehicleData!.data.toString()}'
-              '${cachedFaresAndRates.toString()} ${cachedFaresAndRates!.isEmpty.toString()}');
-          return Center(
+         return Center(
             child: CircularProgressIndicator(color: AppColors.primaryGradient),
           );
         }
@@ -1172,10 +1179,15 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      ).toStringAsFixed(0), vehicleId: authController.vehicleData!.data![selectIndex].id??"", vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
                          vehicleName: authController.vehicleData!.data![selectIndex].name??"",
                          stopLocations: widget.stopLocations);
+                     print('fdfd${widget.scheduleDate.toString()}');
+                     print('fdfd${widget.scheduleTime.toString()}');
                      _startTimer();
                      print(bookingData);
                      startChecking();
-
+                     if( widget.scheduleDate != null && widget.scheduleTime != null
+                         && widget.scheduleDate != '' && widget.scheduleTime  != ''){
+                       Future.delayed(Duration(seconds: 4),() =>  Get.offAll(() => HomePage()),);
+                     }
                     // Get.to(ReviewBooking(data: bookingData,));
                    }
                    : (){
@@ -1189,7 +1201,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        borderRadius: BorderRadius.circular(4),
                        color: AppColors.secondaryGradient
                      ),
-                     child:authController!.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 15,color: Colors.white),),
+                     child:authController.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 15,color: Colors.white),),
                    ),
                  ),
                ),
