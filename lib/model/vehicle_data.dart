@@ -4,7 +4,7 @@
 
 class VehicleData {
   VehicleData({
-      String? message, 
+      dynamic message, 
       List<Data>? data, 
       bool? status,}){
     _message = message;
@@ -22,17 +22,17 @@ class VehicleData {
     }
     _status = json['status'];
   }
-  String? _message;
+  dynamic _message;
   List<Data>? _data;
   bool? _status;
-VehicleData copyWith({  String? message,
+VehicleData copyWith({  dynamic message,
   List<Data>? data,
   bool? status,
 }) => VehicleData(  message: message ?? _message,
   data: data ?? _data,
   status: status ?? _status,
 );
-  String? get message => _message;
+  dynamic get message => _message;
   List<Data>? get data => _data;
   bool? get status => _status;
 
@@ -63,18 +63,18 @@ VehicleData copyWith({  String? message,
 
 class Data {
   Data({
-      String? id, 
-      String? name, 
-      String? maxLoad, 
-      String? loadUnit, 
-      String? baseFare, 
-      String? baseFareUpto, 
-      String? rate1PerKm, 
-      String? rate2PerKm, 
-      String? rate3PerKm, 
-      String? rate4PerKm, 
-      String? extraPrice, 
-      String? fileName,}){
+      dynamic id, 
+      dynamic name, 
+      dynamic maxLoad, 
+      dynamic loadUnit, 
+      dynamic baseFare, 
+      dynamic baseFareUpto, 
+      dynamic rate1PerKm, 
+      dynamic rate2PerKm, 
+      dynamic rate3PerKm, 
+      dynamic rate4PerKm, 
+      dynamic extraPrice, 
+      dynamic fileName,}){
     _id = id;
     _name = name;
     _maxLoad = maxLoad;
@@ -103,30 +103,30 @@ class Data {
     _extraPrice = json['extra_price'];
     _fileName = json['file_name'];
   }
-  String? _id;
-  String? _name;
-  String? _maxLoad;
-  String? _loadUnit;
-  String? _baseFare;
-  String? _baseFareUpto;
-  String? _rate1PerKm;
-  String? _rate2PerKm;
-  String? _rate3PerKm;
-  String? _rate4PerKm;
-  String? _extraPrice;
-  String? _fileName;
-Data copyWith({  String? id,
-  String? name,
-  String? maxLoad,
-  String? loadUnit,
-  String? baseFare,
-  String? baseFareUpto,
-  String? rate1PerKm,
-  String? rate2PerKm,
-  String? rate3PerKm,
-  String? rate4PerKm,
-  String? extraPrice,
-  String? fileName,
+  dynamic _id;
+  dynamic _name;
+  dynamic _maxLoad;
+  dynamic _loadUnit;
+  dynamic _baseFare;
+  dynamic _baseFareUpto;
+  dynamic _rate1PerKm;
+  dynamic _rate2PerKm;
+  dynamic _rate3PerKm;
+  dynamic _rate4PerKm;
+  dynamic _extraPrice;
+  dynamic _fileName;
+Data copyWith({  dynamic id,
+  dynamic name,
+  dynamic maxLoad,
+  dynamic loadUnit,
+  dynamic baseFare,
+  dynamic baseFareUpto,
+  dynamic rate1PerKm,
+  dynamic rate2PerKm,
+  dynamic rate3PerKm,
+  dynamic rate4PerKm,
+  dynamic extraPrice,
+  dynamic fileName,
 }) => Data(  id: id ?? _id,
   name: name ?? _name,
   maxLoad: maxLoad ?? _maxLoad,
@@ -140,18 +140,18 @@ Data copyWith({  String? id,
   extraPrice: extraPrice ?? _extraPrice,
   fileName: fileName ?? _fileName,
 );
-  String? get id => _id;
-  String? get name => _name;
-  String? get maxLoad => _maxLoad;
-  String? get loadUnit => _loadUnit;
-  String? get baseFare => _baseFare;
-  String? get baseFareUpto => _baseFareUpto;
-  String? get rate1PerKm => _rate1PerKm;
-  String? get rate2PerKm => _rate2PerKm;
-  String? get rate3PerKm => _rate3PerKm;
-  String? get rate4PerKm => _rate4PerKm;
-  String? get extraPrice => _extraPrice;
-  String? get fileName => _fileName;
+  dynamic get id => _id;
+  dynamic get name => _name;
+  dynamic get maxLoad => _maxLoad;
+  dynamic get loadUnit => _loadUnit;
+  dynamic get baseFare => _baseFare;
+  dynamic get baseFareUpto => _baseFareUpto;
+  dynamic get rate1PerKm => _rate1PerKm;
+  dynamic get rate2PerKm => _rate2PerKm;
+  dynamic get rate3PerKm => _rate3PerKm;
+  dynamic get rate4PerKm => _rate4PerKm;
+  dynamic get extraPrice => _extraPrice;
+  dynamic get fileName => _fileName;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

@@ -723,7 +723,7 @@ class _BookingInfoState extends State<BookingInfo> {
                       // TODO: Navigate to forget password screen
                       final result = await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Pick Location",)),
+                        MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isShare: false,isPick: true,title: "Pick Location",)),
                       );
 
                       if (result != null) {
@@ -916,6 +916,7 @@ class _BookingInfoState extends State<BookingInfo> {
                                           builder: (context) => LocationPickerTypeAheadPage(
                                             isPick: true,
                                             title: "Drop Location",
+                                            isShare: false,
                                           ),
                                         ),
                                       );
@@ -1146,6 +1147,7 @@ class _BookingInfoState extends State<BookingInfo> {
                         builder: (context) => LocationPickerTypeAheadPage(
                           isPick: true,
                           title: "Drop Location",
+                          isShare: false,
                         ),
                       ),
                     );
@@ -1258,7 +1260,6 @@ class _BookingInfoState extends State<BookingInfo> {
                         stopLocations[0]['expected_time_to_next'] = timeText;
                         stopLocations[0]['distance_to_next'] = distanceText;
                         print("Distance: $distanceText, Time: $timeText");
-                        // Now navigate and pass values
                         Get.to(() =>CategoryList(
                           dropAddress: widget.dropAddress,
                           pickAddress: widget.pickAddress,

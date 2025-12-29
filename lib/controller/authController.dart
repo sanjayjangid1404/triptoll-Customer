@@ -1154,6 +1154,7 @@ class AuthController extends GetxController implements GetxService
 
     vehicleData = null;
     newBookingID ='';
+    print('data is new}');
     Response response = await authRepo.getAllVehicle();
 
 
@@ -1163,8 +1164,8 @@ class AuthController extends GetxController implements GetxService
       isShowDriver = false;
 
       vehicleData = VehicleData.fromJson(response.body);
-
       isVehicle = false;
+      print('data is new${response.body}');
       update();
     }
     else {

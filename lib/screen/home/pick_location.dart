@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geocoding/geocoding.dart';
@@ -6,9 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:triptoll/util/appColors.dart';
-
 import 'booking_info.dart';
 
 class LocationPickerTypeAheadPage extends StatefulWidget {
@@ -19,8 +18,9 @@ class LocationPickerTypeAheadPage extends StatefulWidget {
   double? pickLng;
   String? date;
   String? time;
+  bool? isShare;
 
-  LocationPickerTypeAheadPage({super.key,required this.isPick,this.date,this.time,this.pickLng,this.pickLat,this.pickAddress,this.title});
+  LocationPickerTypeAheadPage({super.key,required this.isPick,required this.isShare,this.date,this.time,this.pickLng,this.pickLat,this.pickAddress,this.title});
   @override
   _LocationPickerTypeAheadPageState createState() => _LocationPickerTypeAheadPageState();
 }
@@ -66,7 +66,42 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
     _moveToLocation(pickupLat!, pickupLng!);
     await _getAddressFromLatLng(pickupLat!, pickupLng!, true);
   }
+  Future<void> _setCurrentLocationShare() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        // Permission denied permanently, handle gracefully
+        return;
+      }
+    }
 
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      pickupLat = position.latitude;
+      pickupLng = position.longitude;
+    });
+    await _getAddressFromLatLngShare(pickupLat!, pickupLng!);
+  }
+  Future<void> _getAddressFromLatLngShare(double lat, double lng) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        final address =
+            "${place.name}, ${place.subLocality}, ${place.locality}, ${place.country}";
+        // setState(() {
+          pickController.text = address;
+          print('address address${address}');
+        // });
+      }
+    } catch (e) {
+      print("Error in reverse geocoding: $e");
+    }
+  }
 
   Future<void> _getAddressFromLatLng(double lat, double lng,bool current) async {
     try {
@@ -107,17 +142,43 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
     );
   }
 
+  void _updateMapLocation(pickupLat,pickupLng) {
+    if (pickupLat != 0 && pickupLng != 0 && mapController != null) {
+      mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(pickupLat, pickupLng),
+            zoom: 15,
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _setCurrentLocation();
+    print('widget.isShare1 ${widget.isShare}');
+    if(widget.isShare == false) {
+      _setCurrentLocation();
+      log('widget.isShare1 ${widget.isShare}');
+    }
+    if(widget.isShare == true){
+      pickupLatShare = widget.pickLat ?? 0;
+      pickupLngShare = widget.pickLng ?? 0;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateMapLocation(pickupLatShare, pickupLngShare);
+      });
 
+      log('widget.isShare212 ${widget.isShare}');
+    }
     setState(() {
 
     });
   }
+  double pickupLatShare = 0.0;
+  double pickupLngShare =0.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,7 +195,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(pickupLat, pickupLng),
+              target: widget.isShare == true ? LatLng(pickupLatShare, pickupLngShare) : LatLng(pickupLat, pickupLng),
               zoom: 15,
             ),
             onMapCreated: (controller) {
@@ -181,10 +242,22 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   pickController.text = suggestion['description'];
                   final latLng = await _getPlaceLatLng(suggestion['place_id']);
                   setState(() {
-                    pickupLat = latLng['lat']!;
-                    pickupLng = latLng['lng']!;
+                    if(widget.isShare == true){
+                      widget.pickLat = latLng['lat']!;
+                      widget.pickLng = latLng['lng']!;
+                    }else {
+                      pickupLat = latLng['lat']!;
+                      pickupLng = latLng['lng']!;
+                    }
                   });
-                  _moveToLocation(pickupLat, pickupLng);
+                  if(widget.isShare == true){
+                    double pickupLat = latLng['lat']!;
+                    double pickupLng = latLng['lng']!;
+                    _moveToLocation(pickupLat, pickupLng);
+                  }else{
+                    _moveToLocation(pickupLat, pickupLng);
+                  }
+
                 },
               ),
             ),
@@ -203,20 +276,42 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                 padding: EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () {
+                _setCurrentLocationShare();
                 if(widget.isPick!) {
                   Navigator.pop(context, {
                   'lat': pickupLat,
                   'lng': pickupLng,
                   'address': pickController.text,
                 });
-                  print('qwertyui${widget.pickLat.toString()}');
+                  print('qwertyuiback${widget.pickLat.toString()}');
                 }
                 else {
-                  print('qwertyui${widget.pickLat.toString()}');
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,scheduleTime: widget.time,dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
-                  );
+                  if(widget.isShare == true){
+
+                    print('class mean:::share location is work ${pickupLat.toString() + pickupLng.toString() + widget.pickLat!.toString()}');
+                    print('class mean:::share location is work ${ pickController.text.toString()}');
+                     Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          BookingInfo(scheduleDate: widget.date,
+                              scheduleTime: widget.time,
+                              pickAddress: pickController.text,
+                              pickLat: pickupLat,
+                              pickLng: pickupLng,
+                              dropAddress: widget.pickAddress!,
+                              dropLat: widget.pickLat!,
+                              dropLng: widget.pickLng!)),
+                    );
+                  }
+                  else{
+                    print('class mean:::share location not work');
+                    print('qwertyui1111${widget.pickLat.toString()}');
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,scheduleTime: widget.time,dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
+                    );
+                  }
+
 
 
                 }

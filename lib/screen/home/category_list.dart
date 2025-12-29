@@ -179,7 +179,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
   }
   @override
   void dispose() {
-    _driverStream.cancel();
+    if( widget.scheduleDate == null && widget.scheduleTime == null) {
+      _driverStream.cancel();
+    }
     _timer.cancel();
     super.dispose();
   }
@@ -528,13 +530,13 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
             authController.vehicleData!.data == null ||
             cachedFaresAndRates == null ||
             cachedFaresAndRates!.isEmpty) {
+          print('data is${cachedFaresAndRates.toString()}');
          return Center(
             child: CircularProgressIndicator(color: AppColors.primaryGradient),
           );
         }
         final length = authController.vehicleData!.data!.length;
 
-// ✅ Initialize lists once, using proper cachedFaresAndRates
         if (updatedFares.length != length) {
           updatedFares = List.generate(
             length,
@@ -548,17 +550,14 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
         //authController.isShowDriver ?
         return
           PopScope(
-            canPop: false, // Disables default back navigation
+            canPop: false,
             onPopInvoked: (bool didPop) async {
-              if (didPop) return; // Already handled
-
-              // Navigate to HomePage and clear the stack
-
+              if (didPop) return;
               if(authController.isShowDriver) {
                 Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => HomePage()),
-                    (route) => false, // Remove all previous routes
+                    (route) => false,
               );
               }
               else {

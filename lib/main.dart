@@ -18,6 +18,7 @@ import 'package:triptoll/screen/landing_page.dart';
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/route_helper.dart';
 import 'controller/authController.dart';
+import 'controller/location_from_share.dart';
 import 'language/local_string.dart';
 import 'util/get_di.dart' as di;
 import 'package:triptoll/util/appImage.dart';
@@ -42,11 +43,6 @@ Future<void> _setCurrentLocation() async {
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
-
-
-
-
-
   final sharedPreferences = await SharedPreferences.getInstance();
   Get.lazyPut(() => sharedPreferences);
 
@@ -68,6 +64,7 @@ void main() async{
   /* await FaceCamera.initialize();
   await Firebase.initializeApp();*/
   runApp( MyApp());
+  MapShareHandler.init();
 }
 
 class MyApp extends StatefulWidget{

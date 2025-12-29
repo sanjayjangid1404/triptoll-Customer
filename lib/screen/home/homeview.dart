@@ -318,7 +318,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () async {
                   final result = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Pick Location",)),
+                    MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Pick Location",isShare: false,)),
                   );
 
                   if (result != null) {
@@ -652,7 +652,7 @@ class _HomePageState extends State<HomePage> {
                                     select = 0;
                                   });
                         
-                                  Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                                  Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
@@ -911,6 +911,7 @@ class _HomePageState extends State<HomePage> {
 
                                                           Get.to(
                                                             LocationPickerTypeAheadPage(
+                                                              isShare: false,
                                                               isPick: false,
                                                               pickLng: pickupLng,
                                                               pickLat: pickupLat,
