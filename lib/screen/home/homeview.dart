@@ -5,23 +5,20 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
-import 'package:triptoll/screen/home/booking_info.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
-import 'package:triptoll/screen/home/userTraking_view.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart' as slider;
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/appImage.dart';
-import 'package:triptoll/util/custom_snackbar.dart';
-
-import '../../model/booking_list_response.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widget/nav_bar.dart';
-import 'feedback_screen.dart';
 import 'notification_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,10 +36,40 @@ class _HomePageState extends State<HomePage> {
   TextEditingController senderName = TextEditingController();
   TextEditingController sendMobile = TextEditingController();
   String currentAddress = "";
+  String currentAddress1 = "";
+  String currentAddress2 = "";
+  String currentAddress3 = "";
   int select = -1;
   double? pickupLat;
   double? pickupLng;
   int activeIndex = 0;
+
+  Future<void> logUpdateError(String message) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("in_app_update_error")
+          .add({
+        "message": message,
+        "time": FieldValue.serverTimestamp(),
+        "platform": "android",
+      });
+    } catch (_) {
+
+    }
+  }
+  Future<void> checkForUpdate() async {
+    try {
+      final info = await InAppUpdate.checkForUpdate();
+
+      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+
+        await InAppUpdate.performImmediateUpdate();
+      }
+
+    } catch (e) {
+      await logUpdateError(e.toString());
+    }
+  }
   slider.CarouselSliderController controller = slider.CarouselSliderController();
 
   final List<String> imageList = [
@@ -61,6 +88,20 @@ class _HomePageState extends State<HomePage> {
 
 
   // 🔸 Jaipur fallback location
+  static const String _packageName = "customers.triptoll.in";
+
+  Future<void> _openPlayStore() async {
+    final Uri playStoreUrl = Uri.parse(
+      "https://play.google.com/store/apps/details?id=$_packageName",
+    );
+
+    if (!await launchUrl(
+      playStoreUrl,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw "Play Store open nahi ho paya";
+    }
+  }
 
 
 
@@ -132,12 +173,13 @@ class _HomePageState extends State<HomePage> {
     });
     await _getAddressFromLatLng(pickupLat!, pickupLng! );
   }
-
+  AppUpdateInfo? _updateInfo;
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkForUpdate();
       _setCurrentLocation();
       authController.isBookingProcess = false;
       checkLanguage();
@@ -230,6 +272,9 @@ class _HomePageState extends State<HomePage> {
         pickController.text =
         "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}";
         currentAddress = "${place.name}";
+        currentAddress1 = "${place.subLocality}";
+        currentAddress2 = "${place.locality}";
+        currentAddress3 = "${place.administrativeArea}";
 
         // ✅ Add green marker for current location
         markers = {
@@ -651,8 +696,14 @@ class _HomePageState extends State<HomePage> {
                                   setState(() {
                                     select = 0;
                                   });
-                        
-                                  Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+
+                                  Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
+                                    pickLng: pickupLng,pickLat: pickupLat,
+                                    houseNumber: currentAddress.toString(),
+                                    street: currentAddress1.toString(),
+                                    city: currentAddress2.toString(),
+                                    pickAddress: pickController.text,
+                                    title: "Drop Location",));
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
@@ -915,6 +966,9 @@ class _HomePageState extends State<HomePage> {
                                                               isPick: false,
                                                               pickLng: pickupLng,
                                                               pickLat: pickupLat,
+                                                              houseNumber: currentAddress.toString(),
+                                                              street: currentAddress.toString(),
+                                                              city: currentAddress.toString(),
                                                               pickAddress: pickController.text,
                                                               title: "Drop Location",
                                                               date: onlyDate,

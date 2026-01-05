@@ -24,7 +24,12 @@ class BookingInfo extends StatefulWidget {
   double dropLat;
   String? scheduleTime;
   String? scheduleDate;
-   BookingInfo({super.key,this.scheduleDate,this.scheduleTime,required this.dropLng,required this.dropLat,required this.pickAddress,required this.pickLat,required this.pickLng,required this.dropAddress});
+  String? houseNumber;
+  String? city;
+  String? street;
+   BookingInfo({super.key,this.scheduleDate,this.scheduleTime,required this.dropLng,
+     this.city,this.street,this.houseNumber,
+     required this.dropLat,required this.pickAddress,required this.pickLat,required this.pickLng,required this.dropAddress});
 
   @override
   State<BookingInfo> createState() => _BookingInfoState();
@@ -181,7 +186,8 @@ class _BookingInfoState extends State<BookingInfo> {
    Map<int, TextEditingController> senderName = {};
    Map<int, TextEditingController> sendMobile = {};
 
-
+   TextEditingController cityController = TextEditingController();
+   TextEditingController addressController = TextEditingController();
   // Jaipur locations as example
   final LatLng _pickupLocation = const LatLng(26.9124, 75.7873); // Jaipur center
   final LatLng _dropLocation = const LatLng(26.8371, 75.8338);   // Malviya Nagar
@@ -194,7 +200,10 @@ class _BookingInfoState extends State<BookingInfo> {
   @override
   void initState() {
     super.initState();
-
+    if( widget.houseNumber != '' && widget.street  != '' && widget.city != ''){
+      cityController.text =  widget.city.toString();
+      addressController.text =  widget.pickAddress.toString();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
 
       await prepareStopIcons();
@@ -203,7 +212,8 @@ class _BookingInfoState extends State<BookingInfo> {
         "type": "pickup",
         'lat': widget.pickLat,
         'lng': widget.pickLng,
-        'address': widget.pickAddress,
+        // 'address': widget.pickAddress,
+        'address': addressController.text,
         'sequence': stopLocations.length+1,
         'name':  'Him',
         'contact_number': Get.find<AuthController>().getUserPhone(),
@@ -240,6 +250,17 @@ class _BookingInfoState extends State<BookingInfo> {
 
 
     });
+  }
+  void updatePickupAddress(String newAddress) {
+    int pickupIndex = stopLocations.indexWhere(
+          (stop) => stop['type'] == 'pickup',
+    );
+
+    if (pickupIndex != -1) {
+      setState(() {
+        stopLocations[pickupIndex]['address'] = newAddress;
+      });
+    }
   }
 
 
@@ -714,137 +735,153 @@ class _BookingInfoState extends State<BookingInfo> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20,),
                 const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: GestureDetector(
-                    onTap: () async {
-                      // TODO: Navigate to forget password screen
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isShare: false,isPick: true,title: "Pick Location",)),
-                      );
-
-                      if (result != null) {
-
-
-                        print("Selected Lat: ${result['lat']}");
-                        print("Selected Lng: ${result['lng']}");
-                        print("Selected Address: ${result['address']}");
-
-                        setState(() {
-                          widget.pickLng = result['lng'];
-                          widget.pickLat = result['lat'];
-                          widget.pickAddress = result['address'];
-
-                          _addMarkers();
-                          _getRouteBetweenPoints(pickLat: result['lat'],pickLng: result['lng'],stopLocations: stopLocations);
-                          calculateAllStopDistances().then((list) {
-                            print("📦 Final list for API: $list");
-                          });
-                        });
-                      }
-
-                    },
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.location_on_outlined,color: Colors.green,size: 30,),
-                        SizedBox(width: 5,),
-                        Expanded(child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                 Text(
-                                  'Pickup Location'.tr,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Icon(Icons.expand_more,color: AppColors.primaryGradient,)
-                              ],
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                    child: ExpansionTile(
+                      initiallyExpanded: true,
+                      tilePadding: EdgeInsets.zero,
+                      childrenPadding: const EdgeInsets.only(left: 35, right: 8, bottom: 6),
+                      title: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(
+                          Icons.location_on_outlined,
+                          color: Colors.green,
+                          size: 30,
+                        ),
+                        title: Text(
+                          'Pickup Location'.tr,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          widget.pickAddress.isNotEmpty
+                              ? widget.pickAddress
+                              : 'Select pickup location'.tr,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LocationPickerTypeAheadPage(
+                                isShare: false,
+                                isPick: true,
+                                title: "Pick Location",
+                              ),
                             ),
-                            Text(widget.pickAddress,maxLines: 2,),
-                          ],
-                        ))
+                          );
 
+                          if (result != null) {
+                            debugPrint("Selected Lat: ${result['lat']}");
+                            debugPrint("Selected Lng: ${result['lng']}");
+                            debugPrint("Selected Address: ${result['address']}");
+
+                            setState(() {
+                              widget.pickLat = result['lat'];
+                              widget.pickLng = result['lng'];
+                              widget.pickAddress = result['address'];
+
+                              _addMarkers();
+                              _getRouteBetweenPoints(
+                                pickLat: result['lat'],
+                                pickLng: result['lng'],
+                                stopLocations: stopLocations,
+                              );
+                            });
+
+                            calculateAllStopDistances().then((list) {
+                              debugPrint("📦 Final list for API: $list");
+                            });
+                          }
+                        },
+                      ),
+
+                      /// ✅ CHILDREN
+                      children: [
+                       SizedBox(
+                         height: 10,
+                       ),
+                        /// Receiver Name
+                        TextFormField(
+                          controller: addressController,
+                          style:  TextStyle(
+                            fontSize: 14,
+                            fontFamily: AppFonts.poppinsRegular,
+                          ),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            labelText: "Pickup address".tr,
+                            labelStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 12,
+                              fontFamily: AppFonts.poppinsMedium,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        /// Receiver Mobile
+                        TextFormField(
+                          controller: cityController,
+                          readOnly: true,
+                          maxLength: 10,
+                          style:  TextStyle(
+                            fontSize: 14,
+                            fontFamily: AppFonts.poppinsRegular,
+                          ),
+                          decoration: InputDecoration(
+                            counterText: '',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            labelText: "City".tr,
+                            labelStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 12,
+                              fontFamily: AppFonts.poppinsMedium,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
-
-
-                SizedBox(height: 10,),
-
-             //   const SizedBox(height: 24),
-
-                // Drop Location
-
                 const SizedBox(height: 8),
-               /* Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: GestureDetector(
-                    onTap: () async {
-                      // TODO: Navigate to forget password screen
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
-                      );
-
-                      if (result != null) {
-
-
-                        print("Selected Lat: ${result['lat']}");
-                        print("Selected Lng: ${result['lng']}");
-                        print("Selected Address: ${result['address']}");
-
-                        setState(() {
-                          widget.dropLng = result['lng'];
-                          widget.dropLat = result['lat'];
-                          widget.dropAddress = result['address'];
-
-                          _addMarkers();
-                          _getRouteBetweenPoints(dropLat: result['lat'],dropLng: result['lng'],pickLat: widget.pickLat,pickLng: widget.pickLng);
-                        });
-                      }
-
-                    },
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
-                        SizedBox(width: 5,),
-                        Expanded(child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Drop Location',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Icon(Icons.expand_more,color: AppColors.primaryGradient,)
-                              ],
-                            ),
-                            Text(widget.dropAddress,maxLines: 2,),
-                          ],
-                        ))
-
-                      ],
-                    ),
-                  ),
-                ),*/
-
-
-
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: stopLocations.length,
@@ -1211,27 +1248,9 @@ class _BookingInfoState extends State<BookingInfo> {
                     ],
                   ).paddingOnly(left: 10,bottom: 20),
                 ),
-                // SizedBox(height: 10,),
-                
-                // CheckboxListTile(value: isActive,
-                //     controlAffinity: ListTileControlAffinity.leading,
-                //     contentPadding: EdgeInsets.zero,
-                //     visualDensity: VisualDensity(horizontal: -4,vertical: -4),
-                //     activeColor: AppColors.primaryGradient,
-                //     onChanged: (bool? value){
-                //
-                //        setState(() {
-                //          isActive = value!;
-                //        });
-                //     },
-                //   title: Text("Use My Mobile Number",style: TextStyle(fontSize: 13,color: Colors.black,fontFamily: AppFonts.poppinsMedium),),
-                //
-                //
-                //     ),
-                // SizedBox(height: 10,),
-
                 InkWell(
                   onTap: () async {
+                    updatePickupAddress(addressController.text.trim());
                     if (validateFields()) {
                       try {
                         // Call the API and wait for result
@@ -1262,7 +1281,8 @@ class _BookingInfoState extends State<BookingInfo> {
                         print("Distance: $distanceText, Time: $timeText");
                         Get.to(() =>CategoryList(
                           dropAddress: widget.dropAddress,
-                          pickAddress: widget.pickAddress,
+                          // pickAddress: widget.pickAddress,
+                          pickAddress: addressController.text,
                           pickLat: widget.pickLat,
                           pickLng: widget.pickLng,
                           sendMobile: sendMobile,

@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:get/get.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/auth/loginView.dart';
@@ -40,6 +41,7 @@ Future<void> _setCurrentLocation() async {
   );
 
 }
+
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,6 +81,9 @@ class _MyApp extends State<MyApp> {
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
+
+
+
   @override
   void initState() {
     // TODO: implement initState

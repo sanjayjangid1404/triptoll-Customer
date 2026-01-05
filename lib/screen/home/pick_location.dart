@@ -18,9 +18,14 @@ class LocationPickerTypeAheadPage extends StatefulWidget {
   double? pickLng;
   String? date;
   String? time;
+  String? houseNumber;
+  String? city;
+  String? street;
   bool? isShare;
 
-  LocationPickerTypeAheadPage({super.key,required this.isPick,required this.isShare,this.date,this.time,this.pickLng,this.pickLat,this.pickAddress,this.title});
+  LocationPickerTypeAheadPage({super.key,required this.isPick,required this.isShare,
+    this.city,this.street,this.houseNumber,
+    this.date,this.time,this.pickLng,this.pickLat,this.pickAddress,this.title});
   @override
   _LocationPickerTypeAheadPageState createState() => _LocationPickerTypeAheadPageState();
 }
@@ -297,6 +302,9 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                               scheduleTime: widget.time,
                               pickAddress: pickController.text,
                               pickLat: pickupLat,
+                              houseNumber: widget.houseNumber.toString(),
+                              street: widget.street.toString(),
+                              city: widget.city.toString(),
                               pickLng: pickupLng,
                               dropAddress: widget.pickAddress!,
                               dropLat: widget.pickLat!,
@@ -308,7 +316,12 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                     print('qwertyui1111${widget.pickLat.toString()}');
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,scheduleTime: widget.time,dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
+                      MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,
+                          scheduleTime: widget.time,
+                          houseNumber: widget.houseNumber.toString(),
+                          street: widget.street.toString(),
+                          city: widget.city.toString(),
+                          dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
                     );
                   }
 
