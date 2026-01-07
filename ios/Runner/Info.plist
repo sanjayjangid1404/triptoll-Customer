@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Taxi Driver</string>
+	<string>Trip Toll</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -42,7 +42,9 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Please allow location for current location get on map</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Please allow location for current location get on map</string>
+    <string>We use your location so that our driver can reach your location and collect your product efficiently.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We use your location so that our driver can reach your location and collect your product efficiently, even if the app is running in the background.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs photos access to get profile image from photo library</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

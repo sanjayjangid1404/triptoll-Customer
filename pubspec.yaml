@@ -67,6 +67,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   in_app_update: ^4.2.3
   cloud_firestore: ^6.1.1
+  flutter_keyboard_visibility: ^6.0.0
 
   google_maps_webservice :
 
@@ -81,7 +82,7 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_typeahead : ^4.6.0
+  flutter_typeahead: ^5.2.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
