@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:triptoll/controller/authController.dart';
@@ -170,8 +171,6 @@ class _BookingInfoState extends State<BookingInfo> {
         print("⚠️ Error at ${i} → ${i + 1}: $e");
       }
     }
-
-    // ⏱ Convert seconds to readable time
     int hours = totalSeconds ~/ 3600;
     int minutes = (totalSeconds % 3600) ~/ 60;
     String totalTime = hours > 0 ? "${hours}h ${minutes}m" : "${minutes}m";
@@ -188,9 +187,8 @@ class _BookingInfoState extends State<BookingInfo> {
 
    TextEditingController cityController = TextEditingController();
    TextEditingController addressController = TextEditingController();
-  // Jaipur locations as example
-  final LatLng _pickupLocation = const LatLng(26.9124, 75.7873); // Jaipur center
-  final LatLng _dropLocation = const LatLng(26.8371, 75.8338);   // Malviya Nagar
+   TextEditingController senderNameController = TextEditingController();
+   TextEditingController senderPhoneController = TextEditingController();
 
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
@@ -345,38 +343,6 @@ class _BookingInfoState extends State<BookingInfo> {
       stopIcons[label] = await createCustomMarker(label, color: Colors.orange);
     }
   }
-  // void _addMarkers() {
-  //   _markers.clear();
-  //
-  //   // Pickup marker
-  //   _markers.add(Marker(
-  //     markerId: MarkerId('pickup'),
-  //     position: LatLng(widget.pickLat, widget.pickLng),
-  //     infoWindow: InfoWindow(title: "Pickup Location"),
-  //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-  //   ));
-  //
-  //   // Drop marker
-  //   // _markers.add(Marker(
-  //   //   markerId: MarkerId('drop'),
-  //   //   position: LatLng(widget.dropLat, widget.dropLng),
-  //   //   infoWindow: InfoWindow(title: "Drop Location"),
-  //   //   icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-  //   // ));
-  //
-  //   // Stop markers
-  //   for (int i = 0; i < stopLocations.length; i++) {
-  //     final stop = stopLocations[i];
-  //     _markers.add(Marker(
-  //       markerId: MarkerId('stop_$i'),
-  //       position: LatLng(stop['lat'], stop['lng']),
-  //       infoWindow: InfoWindow(title: 'Stop ${i + 1}'),
-  //       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-  //     ));
-  //   }
-  //
-  //   setState(() {});
-  // }
   void _addMarkers() {
     _markers.clear();
 
@@ -384,7 +350,6 @@ class _BookingInfoState extends State<BookingInfo> {
       final stop = stopLocations[i];
 
       if (stop['type'] == 'pickup') {
-        // Pickup marker - normal red
         _markers.add(Marker(
           markerId: MarkerId('pickup'),
           position: LatLng(stop['lat'], stop['lng']),
@@ -407,93 +372,6 @@ class _BookingInfoState extends State<BookingInfo> {
     setState(() {});
   }
 
-
-  // Future<void> _getRouteBetweenPoints({
-  //   required double pickLat,
-  //   required double pickLng,
-  //   required List<Map<String, dynamic>> stopLocations, // Required
-  // }) async
-  // {
-  //   if (stopLocations.isEmpty) {
-  //     print("No stops provided");
-  //     return;
-  //   }
-  //
-  //   // Drop location = last stop
-  //   final lastStop = stopLocations.last;
-  //   final dropLat = lastStop['lat'];
-  //   final dropLng = lastStop['lng'];
-  //
-  //   // Waypoints = all stops except last (since last is drop)
-  //   String waypoints = '';
-  //   if (stopLocations.length > 1) {
-  //     final midStops = stopLocations.sublist(0, stopLocations.length - 1);
-  //     waypoints = '&waypoints=' +
-  //         midStops.map((s) => '${s['lat']},${s['lng']}').join('|');
-  //   }
-  //
-  //   final url = Uri.parse(
-  //     'https://maps.googleapis.com/maps/api/directions/json?'
-  //         'origin=$pickLat,$pickLng'
-  //         '&destination=$dropLat,$dropLng'
-  //         '$waypoints'
-  //         '&key=$_googleMapsApiKey',
-  //   );
-  //
-  //   try {
-  //     final response = await http.get(url);
-  //     final data = json.decode(response.body);
-  //
-  //     if (data['status'] == 'OK') {
-  //       final points = data['routes'][0]['overview_polyline']['points'];
-  //       final route = _decodePoly(points);
-  //
-  //       setState(() {
-  //         _polylines = {
-  //           Polyline(
-  //             polylineId: const PolylineId('route'),
-  //             points: route,
-  //             color: Colors.blue,
-  //             width: 5,
-  //             geodesic: true,
-  //           ),
-  //         };
-  //
-  //         _markers.clear(); // Purane markers hata do
-  //
-  //         // Pickup location marker
-  //         _markers.add(
-  //           Marker(
-  //             markerId: const MarkerId('pickup'),
-  //             position: LatLng(pickLat, pickLng),
-  //             infoWindow: const InfoWindow(title: 'Pickup'),
-  //             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-  //           ),
-  //         );
-  //
-  //         // All stoppages markers
-  //         for (int i = 0; i < stopLocations.length; i++) {
-  //           final stop = stopLocations[i];
-  //           _markers.add(
-  //             Marker(
-  //               markerId: MarkerId('stop_$i'),
-  //               position: LatLng(stop['lat'], stop['lng']),
-  //               infoWindow: InfoWindow(title: 'Stop ${i + 1}'),
-  //               icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-  //             ),
-  //           );
-  //         }
-  //
-  //         _isRouteDrawn = true;
-  //       });
-  //
-  //     } else {
-  //       print('Directions request failed: ${data['status']}');
-  //     }
-  //   } catch (e) {
-  //     print('Error getting route: $e');
-  //   }
-  // }
 
   Future<void> _getRouteBetweenPoints({
     required double pickLat,
@@ -782,22 +660,28 @@ class _BookingInfoState extends State<BookingInfo> {
                           );
 
                           if (result != null) {
-                            debugPrint("Selected Lat: ${result['lat']}");
-                            debugPrint("Selected Lng: ${result['lng']}");
-                            debugPrint("Selected Address: ${result['address']}");
-
                             setState(() {
+                              addressController.text = result['address'];
                               widget.pickLat = result['lat'];
                               widget.pickLng = result['lng'];
                               widget.pickAddress = result['address'];
 
-                              _addMarkers();
-                              _getRouteBetweenPoints(
-                                pickLat: result['lat'],
-                                pickLng: result['lng'],
-                                stopLocations: stopLocations,
-                              );
+                              int pickupIndex =
+                              stopLocations.indexWhere((stop) => stop['type'] == 'pickup');
+
+                              if (pickupIndex != -1) {
+                                stopLocations[pickupIndex]['lat'] = result['lat'];
+                                stopLocations[pickupIndex]['lng'] = result['lng'];
+                                stopLocations[pickupIndex]['address'] = result['address'];
+                              }
                             });
+
+                            _addMarkers();
+                            await _getRouteBetweenPoints(
+                              pickLat: widget.pickLat,
+                              pickLng: widget.pickLng,
+                              stopLocations: stopLocations,
+                            );
 
                             calculateAllStopDistances().then((list) {
                               debugPrint("📦 Final list for API: $list");
@@ -806,7 +690,6 @@ class _BookingInfoState extends State<BookingInfo> {
                         },
                       ),
 
-                      /// ✅ CHILDREN
                       children: [
                        SizedBox(
                          height: 10,
@@ -869,6 +752,76 @@ class _BookingInfoState extends State<BookingInfo> {
                             contentPadding:
                             const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                             labelText: "City".tr,
+                            labelStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 12,
+                              fontFamily: AppFonts.poppinsMedium,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        /// Receiver Mobile
+                        TextFormField(
+                          controller: senderNameController,
+                          readOnly: false,
+                          style:  TextStyle(
+                            fontSize: 14,
+                            fontFamily: AppFonts.poppinsRegular,
+                          ),
+                          decoration: InputDecoration(
+                            counterText: '',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            labelText: "Sender name".tr,
+                            labelStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 12,
+                              fontFamily: AppFonts.poppinsMedium,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+
+                        TextFormField(
+                          controller: senderPhoneController,
+                          readOnly: false,
+                          maxLength: 10,
+                          keyboardType: TextInputType.number,
+                          style:  TextStyle(
+                            fontSize: 14,
+                            fontFamily: AppFonts.poppinsRegular,
+                          ),
+                          decoration: InputDecoration(
+                            counterText: '',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            labelText: "Sender phone number".tr,
                             labelStyle: TextStyle(
                               color: Colors.black.withOpacity(0.6),
                               fontSize: 12,
@@ -1148,6 +1101,8 @@ class _BookingInfoState extends State<BookingInfo> {
                                       stopLocations[i]['contact_number'] = authController.getUserPhone();
                                       senderName[i] = TextEditingController(text: authController.getUserName());
                                       sendMobile[i] = TextEditingController(text: authController.getUserPhone());
+                                      senderPhoneController.text = authController.getUserPhone().toString();
+                                      senderNameController.text = authController.getUserName().toString();
                                     } else {
                                       stopLocations[i]['name'] = '';
                                       stopLocations[i]['contact_number'] = '';
@@ -1294,9 +1249,17 @@ class _BookingInfoState extends State<BookingInfo> {
                           eLoader: eLoader,
                           scheduleDate: widget.scheduleDate,
                           scheduleTime: widget.scheduleTime,
+                          senderNameText : senderNameController.text.trim(),
+                          senderPhone : senderPhoneController.text.trim(),
                         ));
                       } catch (e) {
                         print("Error issss: $e");
+                        await logDistanceErrorToFirestore(
+                          error: e,
+                          stopLocations: stopLocations,
+                          pickLat: widget.pickLat,
+                          pickLng: widget.pickLng,
+                        );
                         showCustomSnackBar("Failed to calculate distance".tr);
                       }
                     } else {
@@ -1359,5 +1322,41 @@ class _BookingInfoState extends State<BookingInfo> {
       c.dispose();
     }
     super.dispose();
+  }
+  Future<void> logDistanceErrorToFirestore({
+    required dynamic error,
+    required List<Map<String, dynamic>> stopLocations,
+    required double pickLat,
+    required double pickLng,
+  }) async {
+    try {
+
+      await FirebaseFirestore.instance
+          .collection('distance_errors')
+          .add({
+        "error_message": error.toString(),
+        "error_type": error.runtimeType.toString(),
+        "timestamp": FieldValue.serverTimestamp(),
+
+
+        "user_phone":   Get.find<AuthController>().getUserPhone() ?? "",
+
+        // Pickup info
+        "pickup_lat": pickLat,
+        "pickup_lng": pickLng,
+
+        // Stops snapshot (VERY IMPORTANT)
+        "stop_locations": stopLocations,
+
+        // App info
+        "platform": "flutter",
+        "screen": "BookingInfo",
+
+        // Optional debug
+        "status": "failed",
+      });
+    } catch (e) {
+      debugPrint("🔥 Firestore logging failed: $e");
+    }
   }
 }

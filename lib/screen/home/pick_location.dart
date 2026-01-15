@@ -227,7 +227,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
               borderRadius: BorderRadius.circular(8),
               child: TypeAheadField<Map<String, dynamic>>(
                 textFieldConfiguration: TextFieldConfiguration(
-                  //controller: pickController,
+                  controller: pickController,
                   decoration: InputDecoration(
                     hintText: '${'Enter'.tr} ${widget.title!.tr}',
                     prefixIcon: Icon(Icons.location_on, color: Colors.blue),
@@ -244,9 +244,9 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   );
                 },
                 onSuggestionSelected: (suggestion) async {
-                  pickController.text = suggestion['description'];
                   final latLng = await _getPlaceLatLng(suggestion['place_id']);
                   setState(() {
+                  pickController.text = suggestion['description'];
                     if(widget.isShare == true){
                       widget.pickLat = latLng['lat']!;
                       widget.pickLng = latLng['lng']!;
@@ -316,12 +316,18 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                     print('qwertyui1111${widget.pickLat.toString()}');
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,
+                      MaterialPageRoute(builder: (context) => BookingInfo(
+                          scheduleDate: widget.date,
                           scheduleTime: widget.time,
                           houseNumber: widget.houseNumber.toString(),
                           street: widget.street.toString(),
                           city: widget.city.toString(),
-                          dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
+                          dropAddress: pickController.text,
+                          dropLat: pickupLat!,
+                          dropLng: pickupLng!,
+                          pickAddress: widget.pickAddress!,
+                          pickLat: widget.pickLat!,
+                          pickLng: widget.pickLng!)),
                     );
                   }
 
