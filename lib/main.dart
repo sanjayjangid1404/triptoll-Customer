@@ -51,14 +51,15 @@ void main() async{
 
   await di.init();
   await Firebase.initializeApp();
-  _setCurrentLocation();
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
 
     }
   });
+  _setCurrentLocation();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
