@@ -219,13 +219,12 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
             },
           ),
           Positioned(
-            top: 80,
+            top: 90,
             left: 16,
             right: 16,
-
             child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(8),
+              elevation: 4,
+              borderRadius: BorderRadius.circular(8),
                 child:TypeAheadField<Map<String, dynamic>>(
                   suggestionsCallback: _getPlaceSuggestions,
                   builder: (context, controller, focusNode) {
@@ -309,12 +308,18 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                     print('qwertyui1111${widget.pickLat.toString()}');
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => BookingInfo(scheduleDate: widget.date,
+                      MaterialPageRoute(builder: (context) => BookingInfo(
+                          scheduleDate: widget.date,
                           scheduleTime: widget.time,
                           houseNumber: widget.houseNumber.toString(),
                           street: widget.street.toString(),
                           city: widget.city.toString(),
-                          dropAddress: pickController.text,dropLat: pickupLat!,dropLng: pickupLng!,pickAddress: widget.pickAddress!,pickLat: widget.pickLat!,pickLng: widget.pickLng!)),
+                          dropAddress: pickController.text,
+                          dropLat: pickupLat!,
+                          dropLng: pickupLng!,
+                          pickAddress: widget.pickAddress!,
+                          pickLat: widget.pickLat!,
+                          pickLng: widget.pickLng!)),
                     );
                   }
 

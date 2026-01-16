@@ -291,12 +291,16 @@ class AuthRepo{
     required String expectedTime,
     String? scheduleDate,
     String? scheduleTime,
+    String? senderNameText,
+    String? senderPhone,
     required List<Map<String, dynamic>> stopLocations,
   }) async {
     final body = {
       "amount": amount,
       "category_id": vehicleId,
       "category_name": categoryName,
+      "sender_contact_number": senderContactNumber,
+      "sender_name": senderName,
       "cus_id": cusId,
       "total_amount": totalAmount,
       "rate": rate,

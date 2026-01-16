@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -73,66 +70,6 @@ class _HomePageState extends State<HomePage> {
       await logUpdateError(e.toString());
     }
   }
-
-  Future<void> checkForUpdateIOS(BuildContext context) async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentVersion = packageInfo.version;
-      final bundleId = packageInfo.packageName;
-
-      final response = await http.get(
-        Uri.parse('https://itunes.apple.com/lookup?bundleId=$bundleId'),
-      );
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        if (jsonData['resultCount'] > 0) {
-          final storeVersion = jsonData['results'][0]['version'];
-          final appStoreUrl = jsonData['results'][0]['trackViewUrl'];
-
-          if (_isUpdateAvailable(currentVersion, storeVersion)) {
-            _showUpdateDialog(context, appStoreUrl);
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint("Update check error: $e");
-    }
-  }
-  bool _isUpdateAvailable(String current, String store) {
-    final currentParts = current.split('.').map(int.parse).toList();
-    final storeParts = store.split('.').map(int.parse).toList();
-
-    for (int i = 0; i < storeParts.length; i++) {
-      if (i >= currentParts.length) return true;
-      if (storeParts[i] > currentParts[i]) return true;
-      if (storeParts[i] < currentParts[i]) return false;
-    }
-    return false;
-  }
-  void _showUpdateDialog(BuildContext context, String appStoreUrl) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("Update Available"),
-        content: const Text(
-          "A new version is available. Please update to continue using the app.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final uri = Uri.parse(appStoreUrl);
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
-            },
-            child: const Text("Update"),
-          ),
-        ],
-      ),
-    );
-  }
-
-
   slider.CarouselSliderController controller = slider.CarouselSliderController();
 
   final List<String> imageList = [
@@ -242,11 +179,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Platform.isAndroid) {
-        checkForUpdate();
-      } else if (Platform.isIOS) {
-        checkForUpdateIOS(context);
-      }
+      checkForUpdate();
       _setCurrentLocation();
       authController.isBookingProcess = false;
       checkLanguage();

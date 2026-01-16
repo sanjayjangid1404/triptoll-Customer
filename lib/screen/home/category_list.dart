@@ -24,8 +24,6 @@ import 'homeview.dart';
 class CategoryList extends StatefulWidget {
   String pickAddress;
   String dropAddress;
-
-
   double pickLat;
   double pickLng;
   String distance;
@@ -34,13 +32,15 @@ class CategoryList extends StatefulWidget {
   int? selectedIndex12;
   String? scheduleTime;
   String? scheduleDate;
+  String? senderPhone;
+  String? senderNameText;
   Map<int, TextEditingController> houseNoCt = {};
   Map<int, TextEditingController> senderName = {};
   Map<int, TextEditingController> sendMobile = {};
   List<Map<String, dynamic>> stopLocations = [];
   CategoryList({super.key,required this.distance,required this.expectedTime,required this.pickAddress,required this.pickLat,required this.pickLng
     ,required this.dropAddress,required this.senderName,required this.sendMobile,required this.houseNoCt,required this.stopLocations,
-    required this.eLoader,this.scheduleTime,this.scheduleDate
+    required this.eLoader,this.scheduleTime,this.scheduleDate,this.senderNameText,this.senderPhone
   });
 
 
@@ -1158,6 +1158,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          categoryName: "",
                          scheduleTime: widget.scheduleTime,
                          scheduleDate: widget.scheduleDate,
+                         senderNameText : widget.senderNameText,
+                         senderPhone : widget.senderPhone,
                          discount: "0",
                          discountPercentage: "0",
                          dropAddress: lastStopLocation["address"],
@@ -1185,7 +1187,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      startChecking();
                      if( widget.scheduleDate != null && widget.scheduleTime != null
                          && widget.scheduleDate != '' && widget.scheduleTime  != ''){
-                       Future.delayed(Duration(seconds: 4),() =>  Get.offAll(() => HomePage()),);
+                       Future.delayed(Duration(seconds: 0),() =>  Get.offAll(() => HomePage()),);
                      }
                     // Get.to(ReviewBooking(data: bookingData,));
                    }
