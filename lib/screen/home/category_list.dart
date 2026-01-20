@@ -700,15 +700,28 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Text(
-                                                    (authController.getUserName()??"")+"  ,  "+(authController.getUserPhone()??""),
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black.withOpacity(0.6)
+                                                    Text(
+                                                      (widget.senderNameText !=
+                                                                  null &&
+                                                              widget
+                                                                  .senderNameText!
+                                                                  .isNotEmpty &&
+                                                              widget.senderPhone !=
+                                                                  null &&
+                                                              widget
+                                                                  .senderPhone!
+                                                                  .isNotEmpty)
+                                                          ? "${widget.senderNameText} , ${widget.senderPhone}"
+                                                          : "${authController.getUserName() ?? ""}  ,  ${authController.getUserPhone() ?? ""}",
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.6)),
                                                     ),
-                                                  ),
-                                                 // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                    // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
                                                 ],
                                               ),
                                               Text(widget.pickAddress,maxLines: 2,),

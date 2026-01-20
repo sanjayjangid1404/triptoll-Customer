@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
+import 'package:triptoll/screen/home/schedule_delivery_pickup.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart' as slider;
@@ -961,16 +962,16 @@ class _HomePageState extends State<HomePage> {
                                                           DateFormat('yyyy-MM-dd').format(selectedDate!);
 
                                                           Get.to(
-                                                            LocationPickerTypeAheadPage(
+                                                            ScheduleDeliveryPickUpScreen(
                                                               isShare: false,
-                                                              isPick: false,
+                                                              isPick: true,
                                                               pickLng: pickupLng,
                                                               pickLat: pickupLat,
                                                               houseNumber: currentAddress.toString(),
                                                               street: currentAddress.toString(),
                                                               city: currentAddress.toString(),
                                                               pickAddress: pickController.text,
-                                                              title: "Drop Location",
+                                                              title: "PickUp Location",
                                                               date: onlyDate,
                                                               time: formattedTime,
                                                             ),
@@ -1389,12 +1390,18 @@ class _HomePageState extends State<HomePage> {
                                  children: [
                                    Icon(Icons.location_on_outlined,color: Colors.green,size: 25,),
                                    SizedBox(width: 5,),
-                                   Column(
-                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                     children: [
-                                       Text(auhController.latestBookingListResponse[index]!.pickup!.address.toString(),maxLines: 2,style: TextStyle(fontSize: 13),),
-                                     ],
-                                   )
+                               Expanded(
+                                 child: Column(
+                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                   children: [
+                                     Text(auhController
+                                         .latestBookingListResponse[index]!
+                                         .pickup!.address.toString(),
+                                       maxLines: 2,
+                                       style: TextStyle(fontSize: 13),),
+                                   ],
+                                 ),
+                                 ),
 
                                  ],
                                ),

@@ -1101,8 +1101,6 @@ class _BookingInfoState extends State<BookingInfo> {
                                       stopLocations[i]['contact_number'] = authController.getUserPhone();
                                       senderName[i] = TextEditingController(text: authController.getUserName());
                                       sendMobile[i] = TextEditingController(text: authController.getUserPhone());
-                                      senderPhoneController.text = authController.getUserPhone().toString();
-                                      senderNameController.text = authController.getUserName().toString();
                                     } else {
                                       stopLocations[i]['name'] = '';
                                       stopLocations[i]['contact_number'] = '';

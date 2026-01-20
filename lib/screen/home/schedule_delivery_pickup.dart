@@ -6,11 +6,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:triptoll/screen/home/pick_location.dart';
 import 'dart:convert';
 import 'package:triptoll/util/appColors.dart';
 import 'booking_info.dart';
 
-class LocationPickerTypeAheadPage extends StatefulWidget {
+class ScheduleDeliveryPickUpScreen extends StatefulWidget {
   bool? isPick;
   String? pickAddress;
   String? title;
@@ -23,39 +24,72 @@ class LocationPickerTypeAheadPage extends StatefulWidget {
   String? street;
   bool? isShare;
 
-  LocationPickerTypeAheadPage({super.key,required this.isPick,required this.isShare,
+  ScheduleDeliveryPickUpScreen({super.key,required this.isPick,required this.isShare,
     this.city,this.street,this.houseNumber,
     this.date,this.time,this.pickLng,this.pickLat,this.pickAddress,this.title});
   @override
-  _LocationPickerTypeAheadPageState createState() => _LocationPickerTypeAheadPageState();
+  _ScheduleDeliveryPickUpScreenState createState() => _ScheduleDeliveryPickUpScreenState();
 }
 
-class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPage> {
+class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScreen> {
   final TextEditingController pickController = TextEditingController();
   String pickupAddress = '';
   GoogleMapController? mapController;
-  Future<String> _getCityFromLatLng(double lat, double lng) async {
-    try {
-      List<Placemark> placemarks =
-      await placemarkFromCoordinates(lat, lng);
-
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks.first;
-        return place.locality ??
-            place.subAdministrativeArea ??
-            place.administrativeArea ??
-            "Unknown City";
-      }
-    } catch (e) {
-      print("City error: $e");
-    }
-    return "Unknown City";
-  }
-
   double pickupLat = 0;
   double pickupLng =0;
   final String googleApiKey = "AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk";
+  String currentAddress = "";
+  LatLng? currentLocation;
+  Future<void> _getCurrentLocation() async {
+    const double defaultLat = 26.9124; // Jaipur latitude
+    const double defaultLng = 75.7873; // Jaipur longitude
 
+    void setDefaultLocation() {
+      setState(() {
+        pickupLat = defaultLat;
+        pickupLng = defaultLng;
+        currentLocation = const LatLng(defaultLat, defaultLng);
+        currentAddress = "Jaipur, Rajasthan";
+        pickController.text = "Jaipur, Rajasthan";
+        pickupAddress = "Jaipur, Rajasthan";
+      });
+    }
+
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (!serviceEnabled || permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        setDefaultLocation();
+        return;
+      }
+    }
+
+    try {
+      Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(pos.latitude, pos.longitude);
+      Placemark place = placemarks.first;
+
+      setState(() {
+        pickupLat = pos.latitude;
+        pickupLng = pos.longitude;
+        currentLocation = LatLng(pickupLat!, pickupLng!);
+        pickController.text =
+        "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}";
+        pickupAddress = "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}";
+        currentAddress = place.locality ??
+            place.subAdministrativeArea ??
+            place.administrativeArea ??
+            "Unknown City";
+        print('city name::::${currentAddress}');
+
+      });
+    } catch (e) {
+      setDefaultLocation();
+    }
+  }
   Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
     final url =
         "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&components=country:in";
@@ -118,9 +152,9 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
         final address =
             "${place.name}, ${place.subLocality}, ${place.locality}, ${place.country}";
         // setState(() {
-          pickController.text = address;
-          pickupAddress = address;
-          print('address address${address}');
+        pickController.text = address;
+        pickupAddress = address;
+        print('address address${address}');
         // });
       }
     } catch (e) {
@@ -138,7 +172,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
         setState(() {
           if(current) {
             pickController.text = "";
-            pickupAddress = '';
+            pickupAddress = "";
           }
           else
           {
@@ -186,6 +220,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getCurrentLocation();
     print('widget.isShare1 ${widget.isShare}');
     if(widget.isShare == false) {
       _setCurrentLocation();
@@ -206,6 +241,24 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
   }
   double pickupLatShare = 0.0;
   double pickupLngShare =0.0;
+  Future<String> _getCityFromLatLng(double lat, double lng) async {
+    try {
+      List<Placemark> placemarks =
+      await placemarkFromCoordinates(lat, lng);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        return place.locality ??
+            place.subAdministrativeArea ??
+            place.administrativeArea ??
+            "Unknown City";
+      }
+    } catch (e) {
+      print("City error: $e");
+    }
+    return "Unknown City";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,7 +269,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
         backgroundColor: Colors.transparent,
         elevation: 0,
 
-       // title: Text(widget.title!,style: TextStyle(color: Colors.white),),
+        // title: Text(widget.title!,style: TextStyle(color: Colors.white),),
       ),
       body: Stack(
         children: [
@@ -250,9 +303,9 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
               child: TypeAheadField<Map<String, dynamic>>(
                 textFieldConfiguration: TextFieldConfiguration(
                   controller: pickController,
-                  onTap: (){
+                  onTap: () {
                     setState(() {
-                      pickController.text = '';
+                    pickController.text = '';
                     });
                   },
                   decoration: InputDecoration(
@@ -275,11 +328,11 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   double lat = latLng['lat']!;
                   double lng = latLng['lng']!;
                   String city = await _getCityFromLatLng(lat, lng);
-                  widget.city = city;
-                  print('city is address ${widget.city.toString()}');
+                  currentAddress = city;
+                  print('city is address ${currentAddress.toString()}');
                   setState(() {
-                  pickController.text = suggestion['description'];
-                  pickupAddress = suggestion['description'];
+                    pickController.text = suggestion['description'];
+                    pickupAddress = suggestion['description'];
                     if(widget.isShare == true){
                       widget.pickLat = latLng['lat']!;
                       widget.pickLng = latLng['lng']!;
@@ -314,60 +367,20 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                 padding: EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () {
-                _setCurrentLocationShare();
-                if(widget.isPick!) {
-                  Navigator.pop(context, {
-                  'lat': pickupLat,
-                  'lng': pickupLng,
-                  'address': pickController.text,
-                });
-                  print('qwertyuiback${widget.pickLat.toString()}');
-                }
-                else {
-                  if(widget.isShare == true){
-
-                    print('class mean:::share location is work ${pickupLat.toString() + pickupLng.toString() + widget.pickLat!.toString()}');
-                    print('class mean:::share location is work ${ pickController.text.toString()}');
-                     Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) =>
-                          BookingInfo(scheduleDate: widget.date,
-                              scheduleTime: widget.time,
-                              pickAddress: pickupAddress,
-                              pickLat: pickupLat,
-                              houseNumber: widget.houseNumber.toString(),
-                              street: widget.street.toString(),
-                              city: widget.city.toString(),
-                              pickLng: pickupLng,
-                              dropAddress: widget.pickAddress!,
-                              dropLat: widget.pickLat!,
-                              dropLng: widget.pickLng!)),
-                    );
-                  }
-                  else{
-                    print('class mean:::share location not work');
-                    print('qwertyui1111${widget.pickLat.toString()}');
-                    print('qwertyui1111${ widget.city.toString()}');
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => BookingInfo(
-                          scheduleDate: widget.date,
-                          scheduleTime: widget.time,
-                          houseNumber: widget.houseNumber.toString(),
-                          street: widget.street.toString(),
-                          city: widget.city.toString(),
-                          dropAddress: pickupAddress,
-                          dropLat: pickupLat!,
-                          dropLng: pickupLng!,
-                          pickAddress: widget.pickAddress!,
-                          pickLat: widget.pickLat!,
-                          pickLng: widget.pickLng!)),
-                    );
-                  }
-
-
-
-                }
+                  Get.to(LocationPickerTypeAheadPage(
+                      isShare: false,
+                      isPick: false,
+                      pickLng: pickupLng,
+                      pickLat: pickupLat,
+                      houseNumber: currentAddress.toString(),
+                      street: currentAddress.toString(),
+                      city: currentAddress.toString(),
+                      pickAddress: pickupAddress.toString(),
+                      title: "Drop Location",
+                      date: widget.date,
+                      time: widget.time,
+                    ),
+                  );
               },
               child: Text("${'Confirm'.tr} ${widget.title!.tr}", style: TextStyle(fontSize: 18,color: Colors.white)),
             ),
