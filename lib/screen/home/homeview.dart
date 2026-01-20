@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -194,7 +195,7 @@ class _HomePageState extends State<HomePage> {
       _getCurrentLocation();
       Get.snackbar(
         "Booking",
-        "Click on Delivery button to proceed booking",
+        "Click on schedule delivery button to proceed booking",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.blue,
         colorText: Colors.white,
@@ -292,8 +293,11 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+  DateTime? selectedDateTimeIos;
 
-
+  bool isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
 
   Future<void> _getAddressFromLatLng(double lat, double lng) async {
     try {
@@ -798,15 +802,29 @@ class _HomePageState extends State<HomePage> {
                                                 ),
 
                                                 const SizedBox(height: 20),
-
-                                                /// 🔹 Date Picker
                                                 GestureDetector(
                                                   onTap: () async {
+                                                    setState(() {
+                                                    selectedDateTimeIos = null;
+                                                    });
                                                     DateTime? picked = await showDatePicker(
                                                       context: context,
                                                       initialDate: DateTime.now(),
                                                       firstDate: DateTime.now(),
                                                       lastDate: DateTime.now().add(const Duration(days: 1)), // 🔒 max tomorrow
+                                                      builder: (context, child) {
+                                                        return Theme(
+                                                          data: Theme.of(context).copyWith(
+                                                            colorScheme: const ColorScheme.light(
+                                                              primary: Colors.black,
+                                                              onPrimary: Colors.white,
+                                                              onSurface: Colors.black,
+                                                            ),
+                                                            dialogBackgroundColor: Colors.white,
+                                                          ),
+                                                          child: child!,
+                                                        );
+                                                      },
                                                     );
 
                                                     if (picked != null) {
@@ -835,21 +853,133 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                 ),
-
                                                 const SizedBox(height: 12),
+                                                // GestureDetector(
+                                                //   onTap: () async {
+                                                //     TimeOfDay? picked = await showTimePicker(
+                                                //       context: context,
+                                                //       initialTime: TimeOfDay.now(),
+                                                //     );
+                                                //
+                                                //     if (picked != null) {
+                                                //       setModalState(() {
+                                                //         selectedTime = picked;
+                                                //       });
+                                                //     }
+                                                //   },
+                                                //   child: Container(
+                                                //     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                //     decoration: BoxDecoration(
+                                                //       borderRadius: BorderRadius.circular(10),
+                                                //       border: Border.all(color: Colors.grey.shade300),
+                                                //     ),
+                                                //     child: Row(
+                                                //       children: [
+                                                //         const Icon(Icons.access_time, size: 18),
+                                                //         const SizedBox(width: 10),
+                                                //         Text(
+                                                //           selectedTime == null
+                                                //               ? "Select Time"
+                                                //               : selectedTime!.format(context),
+                                                //           style: const TextStyle(fontSize: 14),
+                                                //         ),
+                                                //       ],
+                                                //     ),
+                                                //   ),
+                                                // ),
 
-                                                /// 🔹 Time Picker
                                                 GestureDetector(
-                                                  onTap: () async {
-                                                    TimeOfDay? picked = await showTimePicker(
-                                                      context: context,
-                                                      initialTime: TimeOfDay.now(),
-                                                    );
+                                                  onTap: () {
+                                                    if(selectedDate == null){
+                                                      Get.snackbar(
+                                                          "Error",
+                                                          "Please select date first",
+                                                          backgroundColor: Colors.red,
+                                                          colorText: Colors.white
+                                                      );
+                                                      return;
+                                                    }
+                                                    else {
+                                                      showCupertinoModalPopup(
+                                                        context: context,
+                                                        builder: (_) {
+                                                          DateTime now = DateTime.now();
 
-                                                    if (picked != null) {
-                                                      setModalState(() {
-                                                        selectedTime = picked;
-                                                      });
+                                                          DateTime selectedDay = selectedDate ?? now;
+
+                                                          DateTime minTimeToday = now.add(const Duration(hours: 1));
+
+                                                          DateTime tempDateTime = selectedDateTimeIos ??
+                                                              DateTime(
+                                                                selectedDay.year,
+                                                                selectedDay.month,
+                                                                selectedDay.day,
+                                                                minTimeToday.hour,
+                                                                minTimeToday.minute,
+                                                              );
+
+                                                          bool isToday = isSameDay(selectedDay, now);
+
+                                                          return Container(
+                                                            height: 300,
+                                                            color: Colors.white,
+                                                            child: Column(
+                                                              children: [
+                                                                Container(
+                                                                  alignment: Alignment.centerRight,
+                                                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                                  child: CupertinoButton(
+                                                                    padding: EdgeInsets.zero,
+                                                                    onPressed: () {
+                                                                      setModalState(() {
+                                                                        selectedDateTimeIos = tempDateTime;
+                                                                      });
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    child: const Text(
+                                                                      "Done",
+                                                                      style: TextStyle(
+                                                                        fontSize: 18,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: CupertinoColors.activeBlue,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: CupertinoDatePicker(
+                                                                    mode: CupertinoDatePickerMode.time,
+                                                                    use24hFormat: false,
+                                                                    initialDateTime: tempDateTime,
+                                                                    minimumDate: isToday
+                                                                        ? DateTime(
+                                                                      selectedDay.year,
+                                                                      selectedDay.month,
+                                                                      selectedDay.day,
+                                                                      minTimeToday.hour,
+                                                                      minTimeToday.minute,
+                                                                    )
+                                                                        : null,
+
+                                                                    onDateTimeChanged: (DateTime newTime) {
+                                                                      HapticFeedback.selectionClick();
+
+                                                                      tempDateTime = DateTime(
+                                                                        selectedDay.year,
+                                                                        selectedDay.month,
+                                                                        selectedDay.day,
+                                                                        newTime.hour,
+                                                                        newTime.minute,
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+
                                                     }
                                                   },
                                                   child: Container(
@@ -863,16 +993,15 @@ class _HomePageState extends State<HomePage> {
                                                         const Icon(Icons.access_time, size: 18),
                                                         const SizedBox(width: 10),
                                                         Text(
-                                                          selectedTime == null
+                                                          selectedDateTimeIos == null
                                                               ? "Select Time"
-                                                              : selectedTime!.format(context),
+                                                              : TimeOfDay.fromDateTime(selectedDateTimeIos!).format(context),
                                                           style: const TextStyle(fontSize: 14),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
-
                                                 const SizedBox(height: 14),
                                                 Text('* You can schedule your delivery within the next 24 hours only.'.tr,
                                                 style: TextStyle(
@@ -883,7 +1012,6 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 const SizedBox(height: 24),
 
-                                                /// 🔹 Buttons
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -907,7 +1035,7 @@ class _HomePageState extends State<HomePage> {
                                                     Expanded(
                                                       child: ElevatedButton(
                                                         onPressed: () {
-                                                          if (selectedDate == null || selectedTime == null) {
+                                                          if (selectedDate == null || selectedDateTimeIos == null) {
                                                             Get.snackbar(
                                                               "Error",
                                                               "Please select date & time",
@@ -917,13 +1045,12 @@ class _HomePageState extends State<HomePage> {
                                                             return;
                                                           }
 
-                                                          // 🔹 Combine date + time
                                                           final selectedDateTime = DateTime(
                                                             selectedDate!.year,
                                                             selectedDate!.month,
                                                             selectedDate!.day,
-                                                            selectedTime!.hour,
-                                                            selectedTime!.minute,
+                                                            selectedDateTimeIos!.hour,
+                                                            selectedDateTimeIos!.minute,
                                                           );
 
                                                           final now = DateTime.now();
@@ -957,7 +1084,7 @@ class _HomePageState extends State<HomePage> {
                                                           Get.back();
 
                                                           String formattedTime =
-                                                              '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}';
+                                                              '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
                                                           String onlyDate =
                                                           DateFormat('yyyy-MM-dd').format(selectedDate!);
 
