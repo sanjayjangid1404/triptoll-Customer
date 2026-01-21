@@ -75,10 +75,11 @@ class _HomePageState extends State<HomePage> {
   slider.CarouselSliderController controller = slider.CarouselSliderController();
 
   final List<String> imageList = [
-    'assets/images/slider12.png',
-    'assets/images/slider13.png',
-    'assets/images/slider14.png',
-
+    'assets/images/bike_slide.jpeg',
+    'assets/images/eriksha_slide.jpeg',
+    'assets/images/3temo_slide.jpeg',
+    'assets/images/tata_ace.jpeg',
+    'assets/images/truck.jpeg'
   ];
 
   double? dropLat;
@@ -1156,7 +1157,12 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index, realIndex) {
                                   return ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
-                                    child: Image.asset(imageList[index], fit: BoxFit.contain,width: double.infinity,),
+                                    child: Image.asset(
+                                      imageList[index],
+                                      fit: BoxFit.contain,
+                                      width: double.infinity,
+                                      height: 185,
+                                    ),
                                   );
                                 },
                                 options: slider.CarouselOptions(
