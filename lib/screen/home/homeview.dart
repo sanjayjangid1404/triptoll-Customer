@@ -702,13 +702,26 @@ class _HomePageState extends State<HomePage> {
                                     select = 0;
                                   });
 
-                                  Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
-                                    pickLng: pickupLng,pickLat: pickupLat,
-                                    houseNumber: currentAddress.toString(),
-                                    street: currentAddress1.toString(),
-                                    city: currentAddress2.toString(),
-                                    pickAddress: pickController.text,
-                                    title: "Drop Location",));
+                                  Get.to(
+                                    ScheduleDeliveryPickUpScreen(
+                                      isShare: false,
+                                      isPick: true,
+                                      pickLng: pickupLng,
+                                      pickLat: pickupLat,
+                                      houseNumber: currentAddress.toString(),
+                                      street: currentAddress.toString(),
+                                      city: currentAddress.toString(),
+                                      pickAddress: pickController.text,
+                                      title: "PickUp Location",
+                                    ),
+                                  );
+                                  // Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
+                                  //   pickLng: pickupLng,pickLat: pickupLat,
+                                  //   houseNumber: currentAddress.toString(),
+                                  //   street: currentAddress1.toString(),
+                                  //   city: currentAddress2.toString(),
+                                  //   pickAddress: pickController.text,
+                                  //   title: "Drop Location",));
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
@@ -854,40 +867,6 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 const SizedBox(height: 12),
-                                                // GestureDetector(
-                                                //   onTap: () async {
-                                                //     TimeOfDay? picked = await showTimePicker(
-                                                //       context: context,
-                                                //       initialTime: TimeOfDay.now(),
-                                                //     );
-                                                //
-                                                //     if (picked != null) {
-                                                //       setModalState(() {
-                                                //         selectedTime = picked;
-                                                //       });
-                                                //     }
-                                                //   },
-                                                //   child: Container(
-                                                //     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                                                //     decoration: BoxDecoration(
-                                                //       borderRadius: BorderRadius.circular(10),
-                                                //       border: Border.all(color: Colors.grey.shade300),
-                                                //     ),
-                                                //     child: Row(
-                                                //       children: [
-                                                //         const Icon(Icons.access_time, size: 18),
-                                                //         const SizedBox(width: 10),
-                                                //         Text(
-                                                //           selectedTime == null
-                                                //               ? "Select Time"
-                                                //               : selectedTime!.format(context),
-                                                //           style: const TextStyle(fontSize: 14),
-                                                //         ),
-                                                //       ],
-                                                //     ),
-                                                //   ),
-                                                // ),
-
                                                 GestureDetector(
                                                   onTap: () {
                                                     if(selectedDate == null){

@@ -275,8 +275,11 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   double lat = latLng['lat']!;
                   double lng = latLng['lng']!;
                   String city = await _getCityFromLatLng(lat, lng);
+                  if(widget.isPick == true){
+
                   widget.city = city;
                   print('city is address ${widget.city.toString()}');
+                  }
                   setState(() {
                   pickController.text = suggestion['description'];
                   pickupAddress = suggestion['description'];

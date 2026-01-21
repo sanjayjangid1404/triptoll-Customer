@@ -576,7 +576,8 @@ class AuthController extends GetxController implements GetxService
     {
       isShowDriver = true;
 
-      showCustomSnackBar("Booking Process", isError: false);
+      // showCustomSnackBar("Booking Process", isError: false);
+      showCustomSnackBar(response.body["message"].toString(), isError: false);
 
       String newId = response.body["id"].toString();
 
