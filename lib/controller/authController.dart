@@ -19,6 +19,7 @@ import '../model/check_ticket_limit_model.dart';
 import '../model/city_responce.dart';
 import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
+import '../model/my_order_model.dart';
 import '../model/notification_model.dart';
 import '../model/subCategoryVehicle.dart';
 import '../model/vehicle_data.dart';
@@ -44,7 +45,8 @@ class AuthController extends GetxController implements GetxService
   CategoryTypeResponse? categoryTypeResponse = CategoryTypeResponse();
   SubCategoryVehicle? subCategoryVehicle = SubCategoryVehicle();
   BookingDetailsResponse? bookingDetailsResponse = BookingDetailsResponse();
-  List<Orders?> bookingListResponse = [];
+  // List<Orders?> bookingListResponse = [];
+  Rx<MyOrdersModel> bookingListResponse = MyOrdersModel().obs;
   List<Orders?> latestBookingListResponse = [];
   List<FaqModel?> faqLIstResponse = [];
   VehicleData? vehicleData = VehicleData();
@@ -565,7 +567,36 @@ class AuthController extends GetxController implements GetxService
 
 
 
-    Response response = await authRepo.bookMultiple(distance: distance,expectedTime: expectedTime,amount: amount, categoryId: categoryId, categoryName: categoryName, cusId: getUserID()??"", discount: discount, discountPercentage: discountPercentage, dropAddress: dropAddress, dropAddressHeading: dropAddressHeading, dropLat: dropLat, dropLong: dropLong, paymentType: paymentType, pickupAddress: pickupAddress, pickupHeading: pickupHeading, pickupLat: pickupLat, pickupLong: pickupLong, rate: rate, receiverContactNumber: receiverContactNumber, receiverName: receiverName, senderContactNumber: getUserPhone()??"", senderName: getUserName()??"", stopAddress: stopAddress, stopCharge: stopCharge, totalAmount: totalAmount, totalDistance: totalDistance, vehicleId: vehicleId, vehicleImg: vehicleImg, vehicleName: vehicleName,
+    Response response = await authRepo.bookMultiple(
+        distance: distance,
+        expectedTime: expectedTime,
+        amount: amount,
+        categoryId: categoryId,
+        categoryName: categoryName,
+        cusId: getUserID()??"",
+        discount: discount,
+        discountPercentage: discountPercentage,
+        dropAddress: dropAddress,
+        dropAddressHeading: dropAddressHeading,
+        dropLat: dropLat,
+        dropLong: dropLong,
+        paymentType: paymentType,
+        pickupAddress: pickupAddress,
+        pickupHeading: pickupHeading,
+        pickupLat: pickupLat,
+        pickupLong: pickupLong,
+        rate: rate,
+        receiverContactNumber: receiverContactNumber,
+        receiverName: receiverName,
+        senderContactNumber: senderPhone.toString(),
+        senderName: senderNameText.toString(),
+        stopAddress: stopAddress,
+        stopCharge: stopCharge,
+        totalAmount: totalAmount,
+        totalDistance: totalDistance,
+        vehicleId: vehicleId,
+        vehicleImg: vehicleImg,
+        vehicleName: vehicleName,
         stopLocations: stopLocations,scheduleTime: scheduleTime,scheduleDate: scheduleDate,
         senderNameText:senderNameText,senderPhone : senderPhone
     );
@@ -1209,19 +1240,13 @@ class AuthController extends GetxController implements GetxService
    // vehicleData = null;
     Response response = await authRepo.getAllBooking(status: status,limit: limit,offset: offset,userID: getUserID());
 
-
-
-    bookingListResponse = [];
     if(response.statusCode==200 || response.statusCode ==400)
     {
 
 
-      for(int i=0; i<response.body.length; i++){
-        bookingListResponse.add( Orders.fromJson(response.body[i]));
-      }
+      bookingListResponse.value = MyOrdersModel.fromJson(response.body);
 
-
-
+      print('adfdsf${ response.body.toString()}');
      // getAllBookingLoading = false;
       update();
     }
@@ -1351,13 +1376,13 @@ class AuthController extends GetxController implements GetxService
      // getAllBookingLoading = false;
 
       if(isOrder!){
-        getAllBooking(status: "all",limit: "10");
-        Get.back();
+        getAllBooking(status: "all",limit: "100");
+        showCustomSnackBar(response.body['message'].toString(),isError: false,getXSnackBar: true);
+        // Get.back();
       }
       else {
         Get.offAll(HomePage());
       }
-
       update();
     }
     else {

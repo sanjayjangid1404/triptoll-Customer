@@ -90,17 +90,17 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       setDefaultLocation();
     }
   }
-  Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
-    final url =
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&components=country:in";
-    final response = await http.get(Uri.parse(url));
-    final data = json.decode(response.body);
-    if (data['status'] == 'OK') {
-      return List<Map<String, dynamic>>.from(data['predictions']);
-    } else {
-      return [];
-    }
-  }
+  // Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
+  //   final url =
+  //       "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&components=country:in";
+  //   final response = await http.get(Uri.parse(url));
+  //   final data = json.decode(response.body);
+  //   if (data['status'] == 'OK') {
+  //     return List<Map<String, dynamic>>.from(data['predictions']);
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
   Future<void> _setCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -215,6 +215,24 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       );
     }
   }
+  bool _isLatLng(String value) {
+    final regExp = RegExp(r'^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$');
+    return regExp.hasMatch(value);
+  }
+  Future<Map<String, dynamic>> _getAddressFromLatLngSearch(
+      double lat, double lng) async {
+
+    final placemarks = await placemarkFromCoordinates(lat, lng);
+
+    final place = placemarks.first;
+
+    return {
+      'description':
+      '${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}',
+      'lat': lat,
+      'lng': lng,
+    };
+  }
 
   @override
   void initState() {
@@ -257,6 +275,86 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       print("City error: $e");
     }
     return "Unknown City";
+  }
+  Future<void> _handlePlaceSelection(Map<String, dynamic> suggestion) async {
+    final latLng = await _getPlaceLatLng(suggestion['place_id']);
+    double lat = latLng['lat']!;
+    double lng = latLng['lng']!;
+
+    String city = await _getCityFromLatLng(lat, lng);
+
+    if (widget.isPick == true) {
+      widget.city = city;
+      print('city is address ${widget.city}');
+    }
+
+    setState(() {
+      pickController.text = suggestion['description'];
+      pickupAddress = suggestion['description'];
+
+      if (widget.isShare == true) {
+        widget.pickLat = lat;
+        widget.pickLng = lng;
+      } else {
+        pickupLat = lat;
+        pickupLng = lng;
+      }
+    });
+
+    _moveToLocation(lat, lng);
+  }
+  Future<void> _handleLatLngSelection(
+      double lat, double lng, String address) async
+  {
+
+    String city = await _getCityFromLatLng(lat, lng);
+
+    if (widget.isPick == true) {
+      widget.city = city;
+    }
+
+    setState(() {
+      pickController.text = address;
+      pickupAddress = address;
+
+      if (widget.isShare == true) {
+        widget.pickLat = lat;
+        widget.pickLng = lng;
+      } else {
+        pickupLat = lat;
+        pickupLng = lng;
+      }
+    });
+
+    _moveToLocation(lat, lng);
+  }
+
+  Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
+
+    // 🔹 LAT LNG CASE → FAKE SUGGESTION
+    if (_isLatLng(input)) {
+      return [
+        {
+          'description': 'Use this location ($input)',
+          'isLatLng': true,
+          'latLngText': input,
+        }
+      ];
+    }
+
+    // 🔹 NORMAL GOOGLE AUTOCOMPLETE
+    final url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+        "?input=$input&key=$googleApiKey&components=country:in";
+
+    final response = await http.get(Uri.parse(url));
+    final data = json.decode(response.body);
+
+    if (data['status'] == 'OK') {
+      return List<Map<String, dynamic>>.from(data['predictions']);
+    } else {
+      return [];
+    }
   }
 
   @override
@@ -308,6 +406,30 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
                     pickController.text = '';
                     });
                   },
+                  onSubmitted: (value) async {
+                    if (value.isEmpty) return;
+
+                    if (_isLatLng(value)) {
+                      final parts = value.split(',');
+                      final lat = double.parse(parts[0].trim());
+                      final lng = double.parse(parts[1].trim());
+
+                      final address = await _getAddressFromLatLngSearch(lat, lng);
+
+                      _handleLatLngSelection(
+                        lat,
+                        lng,
+                        address['description'],
+                      );
+                    } else {
+                      final suggestions = await _getPlaceSuggestions(value);
+
+                      if (suggestions.isNotEmpty) {
+                        _handlePlaceSelection(suggestions.first);
+                      }
+                    }
+                  },
+                  textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
                     hintText: '${'Enter'.tr} ${widget.title!.tr}',
                     prefixIcon: Icon(Icons.location_on, color: Colors.blue),
@@ -323,7 +445,27 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
                     title: Text(suggestion['description']),
                   );
                 },
+                suggestionsBoxDecoration: SuggestionsBoxDecoration(
+                  color: Colors.white,
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 onSuggestionSelected: (suggestion) async {
+                  if (suggestion['isLatLng'] == true) {
+                    final parts = suggestion['latLngText'].split(',');
+                    final lat = double.parse(parts[0].trim());
+                    final lng = double.parse(parts[1].trim());
+
+                    final address =
+                    await _getAddressFromLatLngSearch(lat, lng);
+
+                    _handleLatLngSelection(
+                      lat,
+                      lng,
+                      address['description'],
+                    );
+                    return;
+                  }
                   final latLng = await _getPlaceLatLng(suggestion['place_id']);
                   double lat = latLng['lat']!;
                   double lng = latLng['lng']!;
@@ -358,31 +500,34 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
             child: Icon(Icons.location_pin, size: 50, color: Colors.red),
           ),
           Positioned(
-            bottom: 30,
+            bottom:  MediaQuery.of(context).padding.bottom + 20,
             left: 20,
             right: 20,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryGradient,
-                padding: EdgeInsets.symmetric(vertical: 16),
+            child: SafeArea(
+              minimum: EdgeInsets.only(bottom: 10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.secondaryGradient,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                onPressed: () {
+                    Get.to(LocationPickerTypeAheadPage(
+                        isShare: false,
+                        isPick: false,
+                        pickLng: pickupLng,
+                        pickLat: pickupLat,
+                        houseNumber: currentAddress.toString(),
+                        street: currentAddress.toString(),
+                        city: currentAddress.toString(),
+                        pickAddress: pickupAddress.toString(),
+                        title: "Drop Location",
+                        date: widget.date,
+                        time: widget.time,
+                      ),
+                    );
+                },
+                child: Text("${'Confirm'.tr} ${widget.title!.tr}", style: TextStyle(fontSize: 18,color: Colors.white)),
               ),
-              onPressed: () {
-                  Get.to(LocationPickerTypeAheadPage(
-                      isShare: false,
-                      isPick: false,
-                      pickLng: pickupLng,
-                      pickLat: pickupLat,
-                      houseNumber: currentAddress.toString(),
-                      street: currentAddress.toString(),
-                      city: currentAddress.toString(),
-                      pickAddress: pickupAddress.toString(),
-                      title: "Drop Location",
-                      date: widget.date,
-                      time: widget.time,
-                    ),
-                  );
-              },
-              child: Text("${'Confirm'.tr} ${widget.title!.tr}", style: TextStyle(fontSize: 18,color: Colors.white)),
             ),
           )
         ],

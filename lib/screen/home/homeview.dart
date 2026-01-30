@@ -1494,6 +1494,12 @@ class _HomePageState extends State<HomePage> {
                          return Column(
                            crossAxisAlignment: CrossAxisAlignment.start,
                            children: [
+                             Padding(
+                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                               child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory.toString(),
+                                 maxLines: 1,
+                                 style: TextStyle(fontSize: 13),),
+                             ),
                              SizedBox(height: 10,),
                              Padding(
                                padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical: 4),

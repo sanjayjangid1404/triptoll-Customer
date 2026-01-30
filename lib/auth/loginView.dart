@@ -29,7 +29,8 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController passwordCt = TextEditingController(text: "");
   TextEditingController otpCon = TextEditingController(text: "");
   String OTP = "";
-  bool isOtpButtonEnabled = true; // by default enabled
+  bool isOtpButtonEnabled = true;
+  bool _isProcessingOtp = false;
   int secondsRemaining = 0;
   Timer? _timer;
   bool otpVerify = false;
@@ -40,6 +41,7 @@ class _LoginViewState extends State<LoginView> {
   void startTimer() {
     setState(() {
       isOtpButtonEnabled = false;
+      _isProcessingOtp = true;
       secondsRemaining = 30;
     });
 
@@ -52,6 +54,7 @@ class _LoginViewState extends State<LoginView> {
         timer.cancel();
         setState(() {
           isOtpButtonEnabled = true;
+          _isProcessingOtp = false;
           secondsRemaining = 0;
         });
       }
@@ -459,16 +462,18 @@ class _LoginViewState extends State<LoginView> {
                               padding: const EdgeInsets.only(right: 8.0),
                               child: GestureDetector(
                                 onTap:isOtpButtonEnabled
-                                    ?  () {
-                                  // TODO: Navigate to signup screen
+                                    ?  () async{
+                                  if (_isProcessingOtp) return;
+                                  _isProcessingOtp = true;
 
                                   if(emailCt.text.isNotEmpty && emailCt.text.length ==10) {
-                                    sendOtp();
+                                    await sendOtp();
                                     setState(() {
                                       otpVerify = false;
                                     });
                                   }
                                   else{
+                                    _isProcessingOtp = false;
                                     showCustomSnackBar("Enter valid phone number".tr);
                                   }
                                 } : null,

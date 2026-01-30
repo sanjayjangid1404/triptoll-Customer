@@ -1232,6 +1232,8 @@ class _BookingInfoState extends State<BookingInfo> {
                         stopLocations[0]['expected_time_to_next'] = timeText;
                         stopLocations[0]['distance_to_next'] = distanceText;
                         print("Distance: $distanceText, Time: $timeText");
+                        print("sender name: ${senderNameController.text.toString()}");
+                        print("sender phone: ${senderPhoneController.text.toString()}");
                         Get.to(() =>CategoryList(
                           dropAddress: widget.dropAddress,
                           // pickAddress: widget.pickAddress,

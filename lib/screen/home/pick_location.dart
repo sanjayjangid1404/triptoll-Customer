@@ -56,11 +56,38 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
   double pickupLng =0;
   final String googleApiKey = "AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk";
 
+  // Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
+  //   final url =
+  //       "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&components=country:in";
+  //   final response = await http.get(Uri.parse(url));
+  //   final data = json.decode(response.body);
+  //   if (data['status'] == 'OK') {
+  //     return List<Map<String, dynamic>>.from(data['predictions']);
+  //   } else {
+  //     return [];
+  //   }
+  // }
+
   Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
+
+    // 🔹 LAT LNG CASE → FAKE SUGGESTION
+    if (_isLatLng(input)) {
+      return [
+        {
+          'description': 'Use this location ($input)',
+          'isLatLng': true,
+          'latLngText': input,
+        }
+      ];
+    }
+
     final url =
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&components=country:in";
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+        "?input=$input&key=$googleApiKey&components=country:in";
+
     final response = await http.get(Uri.parse(url));
     final data = json.decode(response.body);
+
     if (data['status'] == 'OK') {
       return List<Map<String, dynamic>>.from(data['predictions']);
     } else {
@@ -206,6 +233,78 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
   }
   double pickupLatShare = 0.0;
   double pickupLngShare =0.0;
+  Future<void> _handlePlaceSelection(Map<String, dynamic> suggestion) async {
+    final latLng = await _getPlaceLatLng(suggestion['place_id']);
+    double lat = latLng['lat']!;
+    double lng = latLng['lng']!;
+
+    String city = await _getCityFromLatLng(lat, lng);
+
+    if (widget.isPick == true) {
+      widget.city = city;
+      print('city is address ${widget.city}');
+    }
+
+    setState(() {
+      pickController.text = suggestion['description'];
+      pickupAddress = suggestion['description'];
+
+      if (widget.isShare == true) {
+        widget.pickLat = lat;
+        widget.pickLng = lng;
+      } else {
+        pickupLat = lat;
+        pickupLng = lng;
+      }
+    });
+
+    _moveToLocation(lat, lng);
+  }
+  bool _isLatLng(String value) {
+    final regExp = RegExp(r'^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$');
+    return regExp.hasMatch(value);
+  }
+  Future<Map<String, dynamic>> _getAddressFromLatLngSearch(
+      double lat, double lng) async
+  {
+
+    final placemarks = await placemarkFromCoordinates(lat, lng);
+
+    final place = placemarks.first;
+
+    return {
+      'description':
+      '${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}',
+      'lat': lat,
+      'lng': lng,
+    };
+  }
+  Future<void> _handleLatLngSelection(
+      double lat, double lng, String address) async
+  {
+
+    String city = await _getCityFromLatLng(lat, lng);
+
+    if (widget.isPick == true) {
+      widget.city = city;
+    }
+
+    setState(() {
+      pickController.text = address;
+      pickupAddress = address;
+
+      if (widget.isShare == true) {
+        widget.pickLat = lat;
+        widget.pickLng = lng;
+      } else {
+        pickupLat = lat;
+        pickupLng = lng;
+      }
+    });
+
+    _moveToLocation(lat, lng);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -250,6 +349,30 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
               child: TypeAheadField<Map<String, dynamic>>(
                 textFieldConfiguration: TextFieldConfiguration(
                   controller: pickController,
+                  onSubmitted: (value) async {
+                    if (value.isEmpty) return;
+
+                    if (_isLatLng(value)) {
+                      final parts = value.split(',');
+                      final lat = double.parse(parts[0].trim());
+                      final lng = double.parse(parts[1].trim());
+
+                      final address = await _getAddressFromLatLngSearch(lat, lng);
+
+                      _handleLatLngSelection(
+                        lat,
+                        lng,
+                        address['description'],
+                      );
+                    } else {
+                      final suggestions = await _getPlaceSuggestions(value);
+
+                      if (suggestions.isNotEmpty) {
+                        _handlePlaceSelection(suggestions.first);
+                      }
+                    }
+                  },
+                  textInputAction: TextInputAction.search,
                   onTap: (){
                     setState(() {
                       pickController.text = '';
@@ -263,6 +386,11 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                     fillColor: Colors.white,
                   ),
                 ),
+                suggestionsBoxDecoration: SuggestionsBoxDecoration(
+                  color: Colors.white,
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 suggestionsCallback: _getPlaceSuggestions,
                 itemBuilder: (context, suggestion) {
                   return ListTile(
@@ -271,6 +399,21 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                   );
                 },
                 onSuggestionSelected: (suggestion) async {
+                  if (suggestion['isLatLng'] == true) {
+                    final parts = suggestion['latLngText'].split(',');
+                    final lat = double.parse(parts[0].trim());
+                    final lng = double.parse(parts[1].trim());
+
+                    final address =
+                    await _getAddressFromLatLngSearch(lat, lng);
+
+                    _handleLatLngSelection(
+                      lat,
+                      lng,
+                      address['description'],
+                    );
+                    return;
+                  }
                   final latLng = await _getPlaceLatLng(suggestion['place_id']);
                   double lat = latLng['lat']!;
                   double lng = latLng['lng']!;
