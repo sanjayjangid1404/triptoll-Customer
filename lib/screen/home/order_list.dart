@@ -18,10 +18,11 @@ class _OrderListState extends State<OrderList> {
 
   final List<String> orderTypes = [
     "All",
-    "Pending",
+    "New",
+    "Scheduled",
     "Accepted",
-    "Close",
-    "Cancel",
+    "Paid",
+    "Cancelled",
   ];
 
 
@@ -147,6 +148,7 @@ class _OrderListState extends State<OrderList> {
           actions: [
             Text(selectedOrderType,style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),),
             PopupMenuButton<String>(
+              color: Colors.white,
               icon: Icon(Icons.more_vert),
               onSelected: (String value) {
                 setState(() {
