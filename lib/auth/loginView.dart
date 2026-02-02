@@ -39,8 +39,8 @@ class _LoginViewState extends State<LoginView> {
   bool isVerify = false;
   void startTimer() {
     setState(() {
-      isOtpButtonEnabled = false;
       secondsRemaining = 30;
+      isOtpButtonEnabled = false;
     });
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -51,8 +51,8 @@ class _LoginViewState extends State<LoginView> {
       } else {
         timer.cancel();
         setState(() {
-          isOtpButtonEnabled = true;
           secondsRemaining = 0;
+          isOtpButtonEnabled = true;
         });
       }
     });
