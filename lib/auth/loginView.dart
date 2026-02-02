@@ -29,7 +29,7 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController passwordCt = TextEditingController(text: "");
   TextEditingController otpCon = TextEditingController(text: "");
   String OTP = "";
-  bool isOtpButtonEnabled = true; // by default enabled
+  bool isOtpButtonEnabled = true;
   int secondsRemaining = 0;
   Timer? _timer;
   bool otpVerify = false;
@@ -39,8 +39,8 @@ class _LoginViewState extends State<LoginView> {
   bool isVerify = false;
   void startTimer() {
     setState(() {
-      isOtpButtonEnabled = false;
       secondsRemaining = 30;
+      isOtpButtonEnabled = false;
     });
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -51,14 +51,16 @@ class _LoginViewState extends State<LoginView> {
       } else {
         timer.cancel();
         setState(() {
-          isOtpButtonEnabled = true;
           secondsRemaining = 0;
+          isOtpButtonEnabled = true;
         });
       }
     });
   }
   Future<void> sendOtp() async {
+    if (!isOtpButtonEnabled) return;
     setState(() {
+      isOtpButtonEnabled = false;
       isLoading = true;
       apiResponse = "";
     });
@@ -100,12 +102,14 @@ class _LoginViewState extends State<LoginView> {
         showCustomSnackBar(message.toString(),isError: true);
         setState(() {
           apiResponse = "Error: ${response.statusCode}";
+          isOtpButtonEnabled = true;
           isVerify = false;
           isSHowOTP = true;
         });
       }
     } catch (e) {
       setState(() {
+        isOtpButtonEnabled = true;
         apiResponse = "Exception: $e";
       });
     }
@@ -457,31 +461,36 @@ class _LoginViewState extends State<LoginView> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 8.0),
-                              child: GestureDetector(
-                                onTap:isOtpButtonEnabled
-                                    ?  () {
-                                  // TODO: Navigate to signup screen
-
-                                  if(emailCt.text.isNotEmpty && emailCt.text.length ==10) {
+                              child: ElevatedButton(
+                                onPressed: isOtpButtonEnabled
+                                    ? ()  {
+                                  if (emailCt.text.isNotEmpty && emailCt.text.length == 10) {
                                     sendOtp();
                                     setState(() {
                                       otpVerify = false;
                                     });
-                                  }
-                                  else{
+                                  } else {
                                     showCustomSnackBar("Enter valid phone number".tr);
                                   }
-                                } : null,
-                                child:  Text(
+                                }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  backgroundColor: AppColors.secondaryGradient,
+                                  disabledBackgroundColor: Colors.grey.shade300,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                ),
+                                child: Text(
                                   isOtpButtonEnabled
                                       ? "GET OTP".tr
                                       : "${'Retry in'.tr} $secondsRemaining s",
                                   style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.secondaryGradient,
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.bold,
-                                      decorationColor: AppColors.primaryGradient
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: isOtpButtonEnabled ? Colors.white : Colors.grey,
                                   ),
                                 ),
                               ),

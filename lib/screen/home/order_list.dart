@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:triptoll/util/appContants.dart';
-
 import '../order/order_details.dart';
 
 class OrderList extends StatefulWidget {
@@ -19,27 +18,118 @@ class _OrderListState extends State<OrderList> {
 
   final List<String> orderTypes = [
     "All",
-    "Pending",
+    "New",
+    "Scheduled",
     "Accepted",
-    "Close",
+    "Paid",
     "Cancelled",
   ];
 
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
 
-      Get.find<AuthController>().getAllBooking(status: selectedOrderType.toLowerCase(),limit: "10",offset: "10");
+      Get.find<AuthController>().getAllBooking(status: selectedOrderType.toLowerCase(),limit: "100",offset: "10");
 
       setState(() {
 
       });
 
     });
+  }
+  void showCancelDialog(BuildContext context, String bookingId) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(height: 5),
+
+                Text(
+                  'Do you really want to cancel this order?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+
+                SizedBox(height: 24),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'No',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                            Get.find<AuthController>().cancelOrder(
+                              bookingID: bookingId,
+                              reason: "cancel by customer",
+                              comment: "cancelled",
+                              isOrder: true,
+                            );
+                            Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text('Yes, Cancel',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500
+                        ),),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
 
@@ -58,10 +148,12 @@ class _OrderListState extends State<OrderList> {
           actions: [
             Text(selectedOrderType,style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),),
             PopupMenuButton<String>(
+              color: Colors.white,
               icon: Icon(Icons.more_vert),
               onSelected: (String value) {
                 setState(() {
                   selectedOrderType = value;
+                  Get.find<AuthController>().getAllBooking(status: selectedOrderType.toLowerCase(),limit: "100",offset: "10");
                 });
                 print("Selected Order Type: $value");
               },
@@ -79,15 +171,15 @@ class _OrderListState extends State<OrderList> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-
+              authController.bookingListResponse.value.orders != null ?
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: authController.bookingListResponse!.length,
+                itemCount: authController.bookingListResponse.value.orders!.length,
                 itemBuilder: (context, index) {
                 return InkWell(
                   onTap: (){
-                    Get.to(OrderDetails(bookingID: authController.bookingListResponse![index]!.id.toString(),));
+                    Get.to(OrderDetails(bookingID: authController.bookingListResponse.value.orders![index].id.toString(),));
 
                   },
                   child: Container(
@@ -98,74 +190,113 @@ class _OrderListState extends State<OrderList> {
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.white,
                     ),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        // Order Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${'Order'.tr} #: ${authController.bookingListResponse![index]!.orderId}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "${AppContants.changeDateFormat(authController.bookingListResponse![index]!.addDate!, "dd MMM yyyy")}",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              SizedBox(height: 8),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text("${'Payment Type is'.tr} ${authController.bookingListResponse![index]!.paymentType!}", style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300)),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Price and Status
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '${AppContants.rupessSystem}${authController.bookingListResponse![index]!.totalAmount!}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            // Order Info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${'Order'.tr} #: ${authController.bookingListResponse.value.orders![index].orderId}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    AppContants.changeDateFormat(authController.bookingListResponse.value.orders![index].addDate!, "dd MMM yyyy"),
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text("${'Payment Type is'.tr} ${authController.bookingListResponse.value.orders![index].paymentType!}", style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300)),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: _getStatusColor("${authController.bookingListResponse![index]!.paymentType!}"),
-                                border: Border.all(color: _getStatusTextColor("${authController.bookingListResponse![index]!.paymentType!}")),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                "${authController.bookingListResponse![index]!.orderStatus!.toString()}",
-                                style: TextStyle(
-                                  color: _getStatusTextColor("${authController.bookingListResponse![index]!.paymentType!}"),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
+
+                            // Price and Status
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '${AppContants.rupessSystem}${authController.bookingListResponse.value.orders![index].totalAmount!}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: _getStatusColor("${authController.bookingListResponse.value.orders![index].paymentType!}"),
+                                    border: Border.all(color: _getStatusTextColor("${authController.bookingListResponse.value.orders![index].paymentType!}")),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    authController.bookingListResponse.value.orders![index].orderStatus!.toString(),
+                                    style: TextStyle(
+                                      color: _getStatusTextColor("${authController.bookingListResponse.value.orders![index].paymentType!}"),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        if (authController.bookingListResponse.value.orders![index].orderStatus == 'new' ||
+                            authController.bookingListResponse.value.orders![index].orderStatus == 'scheduled')
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: InkWell(
+                              onTap: () {
+                                showCancelDialog(
+                                  context,
+                                  authController.bookingListResponse.value.orders![index].id.toString(),
+                                );
+                              },
+                              child: Container(
+                                width: Get.width,
+                                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade50,
+                                  border: Border.all(color: Colors.red),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ],
-                        )
+                          ),
                       ],
                     ),
                   ),
                 );
-              },)
+              },) :
+                  SizedBox()
             ],
           ),
         ),

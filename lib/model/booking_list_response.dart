@@ -129,7 +129,8 @@ class Orders {
       dynamic pickupLat, 
       dynamic pickupLong, 
       dynamic pickupAddress, 
-      dynamic senderName, 
+      dynamic vehicleCategory,
+      dynamic senderName,
       dynamic senderContactNumber, 
       dynamic dropLat, 
       dynamic dropLong, 
@@ -188,6 +189,7 @@ class Orders {
     _pickupLat = pickupLat;
     _pickupLong = pickupLong;
     _pickupAddress = pickupAddress;
+    _vehicleCategory = vehicleCategory;
     _senderName = senderName;
     _senderContactNumber = senderContactNumber;
     _dropLat = dropLat;
@@ -250,6 +252,7 @@ class Orders {
     _pickupLat = json['pickup_lat'];
     _pickupLong = json['pickup_long'];
     _pickupAddress = json['pickup_address'];
+    _vehicleCategory = json['vehicle_category'];
     _senderName = json['sender_name'];
     _senderContactNumber = json['sender_contact_number'];
     _dropLat = json['drop_lat'];
@@ -315,6 +318,7 @@ class Orders {
   dynamic _pickupLat;
   dynamic _pickupLong;
   dynamic _pickupAddress;
+  dynamic _vehicleCategory;
   dynamic _senderName;
   dynamic _senderContactNumber;
   dynamic _dropLat;
@@ -374,6 +378,7 @@ Orders copyWith({  dynamic id,
   dynamic pickupLat,
   dynamic pickupLong,
   dynamic pickupAddress,
+  dynamic vehicleCategory,
   dynamic senderName,
   dynamic senderContactNumber,
   dynamic dropLat,
@@ -433,6 +438,7 @@ Orders copyWith({  dynamic id,
   pickupLat: pickupLat ?? _pickupLat,
   pickupLong: pickupLong ?? _pickupLong,
   pickupAddress: pickupAddress ?? _pickupAddress,
+  vehicleCategory: vehicleCategory ?? _vehicleCategory,
   senderName: senderName ?? _senderName,
   senderContactNumber: senderContactNumber ?? _senderContactNumber,
   dropLat: dropLat ?? _dropLat,
@@ -493,6 +499,7 @@ Orders copyWith({  dynamic id,
   dynamic get pickupLat => _pickupLat;
   dynamic get pickupLong => _pickupLong;
   dynamic get pickupAddress => _pickupAddress;
+  dynamic get vehicleCategory => _vehicleCategory;
   dynamic get senderName => _senderName;
   dynamic get senderContactNumber => _senderContactNumber;
   dynamic get dropLat => _dropLat;

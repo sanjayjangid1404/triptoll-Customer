@@ -58,7 +58,7 @@ class AppContants
   static String ticketRezURL = "Driver/ticketRezByDriver";
   static String checkTicketLimit = "Driver/checkTicketLimit";
   static String getCityURL = "home/getCity";
-  static String getAllBookingURL = "Booking/getAllBooking";
+  static String getAllBookingURL = "Booking/getCustomerAllBooking";
   static String runningBookingURL = "Booking/check_running_order_customer";
   static String orderRatingURL = "Booking/orderRating";
   static String getBookingDetails = "Booking/getBookingDetail";

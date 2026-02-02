@@ -700,15 +700,28 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Text(
-                                                    (authController.getUserName()??"")+"  ,  "+(authController.getUserPhone()??""),
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black.withOpacity(0.6)
+                                                    Text(
+                                                      (widget.senderNameText !=
+                                                                  null &&
+                                                              widget
+                                                                  .senderNameText!
+                                                                  .isNotEmpty &&
+                                                              widget.senderPhone !=
+                                                                  null &&
+                                                              widget
+                                                                  .senderPhone!
+                                                                  .isNotEmpty)
+                                                          ? "${widget.senderNameText} , ${widget.senderPhone}"
+                                                          : "${authController.getUserName() ?? ""}  ,  ${authController.getUserPhone() ?? ""}",
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.6)),
                                                     ),
-                                                  ),
-                                                 // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                    // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
                                                 ],
                                               ),
                                               Text(widget.pickAddress,maxLines: 2,),
@@ -1108,6 +1121,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                Expanded(
                  child: InkWell(
                    onTap:Get.find<AuthController>().isLoggedIn() ? (){
+                     print('fjdfj${widget.senderNameText.toString()}');
+                     print('fjdfj${widget.senderPhone.toString()}');
                      var lastHouseNoValue;
                      if (widget.houseNoCt.isNotEmpty) {
                        var lastKey = widget.houseNoCt.keys.last;
@@ -1127,27 +1142,15 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      if (widget.stopLocations.isNotEmpty) {
                        lastStopLocation = widget.stopLocations.last;
                      }
-                     Map<String, dynamic> bookingData = {
-                       'pickAddress': widget.pickAddress,
-                       'dropAddress': lastStopLocation["address"],
-                      'sendName': lastSenderName,
-                       'sendMobile': lastSendMobile,
-                       'sendNo': lastSendMobile,
-                       'pickLat': widget.pickLat,
-                       'pickLng': widget.pickLng,
-                       'dropLat': lastStopLocation["address"],
-                       'dropLng': lastStopLocation["address"],
-                       "rate":(cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0),
-
-                       'distanceInKm': calculateDistanceWithPickup(
-                           pickLat:widget.pickLat,
-                           pickLng:  widget.pickLng,
-                           stops:  widget.stopLocations
-                       ),
-                       'vehicleData': authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].toJson():null, // assuming Data has a toJson() method
-                       'totalFare': (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0),
-                     };
                      print('kfjdjfkdfjdkfjk${widget.stopLocations.toString()}');
+                     if(widget.senderNameText == null || widget.senderNameText!.isEmpty){
+                       widget.senderNameText =  Get.find<AuthController>().getUserName();
+                       print('kfjdjfkdfjdkfjk${widget.senderNameText.toString()}');
+                     }if(widget.senderPhone == null || widget.senderPhone!.isEmpty){
+                       widget.senderPhone =  Get.find<AuthController>().getUserPhone();
+                       print('kfjdjfkdfjdkfjk${widget.senderPhone.toString()}');
+                     }
+
                      authController.bookingMultipleNow(
                          distance: widget.distance,
                          expectedTime: widget.expectedTime,
@@ -1183,13 +1186,11 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      print('fdfd${widget.scheduleDate.toString()}');
                      print('fdfd${widget.scheduleTime.toString()}');
                      _startTimer();
-                     print(bookingData);
                      startChecking();
                      if( widget.scheduleDate != null && widget.scheduleTime != null
                          && widget.scheduleDate != '' && widget.scheduleTime  != ''){
                        Future.delayed(Duration(seconds: 0),() =>  Get.offAll(() => HomePage()),);
                      }
-                    // Get.to(ReviewBooking(data: bookingData,));
                    }
                    : (){
                      Get.to(LoginView());
