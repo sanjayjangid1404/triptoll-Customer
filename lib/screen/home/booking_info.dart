@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
@@ -762,11 +763,16 @@ class _BookingInfoState extends State<BookingInfo> {
                         ),
                         const SizedBox(height: 10),
 
-                        /// Receiver Mobile
+
                         TextFormField(
                           controller: senderNameController,
-                          readOnly: false,
-                          style:  TextStyle(
+                          keyboardType: TextInputType.name,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r"[a-zA-Z\s]"), // only alphabets + space
+                            ),
+                          ],
+                          style: TextStyle(
                             fontSize: 14,
                             fontFamily: AppFonts.poppinsRegular,
                           ),
@@ -1004,8 +1010,13 @@ class _BookingInfoState extends State<BookingInfo> {
 
                               TextFormField(
                                 controller: senderController,
+                                keyboardType: TextInputType.name,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r"[a-zA-Z\s]"),
+                                  ),
+                                ],
                                 style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
-                                keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   counter: SizedBox(),
                                   border: OutlineInputBorder(

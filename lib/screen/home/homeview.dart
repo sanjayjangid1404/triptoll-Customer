@@ -692,7 +692,7 @@ class _HomePageState extends State<HomePage> {
                         ),*/
                         const SizedBox(height: 0),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1153,20 +1153,19 @@ class _HomePageState extends State<HomePage> {
                               slider. CarouselSlider.builder(
                                 carouselController: controller,
                                 itemCount: imageList.length,
-          
                                 itemBuilder: (context, index, realIndex) {
                                   return ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Image.asset(
                                       imageList[index],
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                       width: double.infinity,
-                                      height: 185,
+                                      height: 200,
                                     ),
                                   );
                                 },
                                 options: slider.CarouselOptions(
-                                  height: 185,
+                                  height: 200,
                                   autoPlay: true,
                                   viewportFraction: 1,
                                   enlargeCenterPage: true,
