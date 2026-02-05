@@ -110,10 +110,12 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
     );
 
     setState(() {
+      isFromSuggestion = true;
       pickupLat = position.latitude;
       pickupLng = position.longitude;
     });
-
+    log('hello::::::${pickupLat.toString()}');
+    log('hello::::::${pickupLng.toString()}');
     _moveToLocation(pickupLat!, pickupLng!);
     await _getAddressFromLatLng(pickupLat!, pickupLng!, true);
   }
@@ -144,11 +146,11 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
         final place = placemarks.first;
         final address =
             "${place.name}, ${place.subLocality}, ${place.locality}, ${place.country}";
-        // setState(() {
+        setState(() {
           pickController.text = address;
           pickupAddress = address;
           print('address address${address}');
-        // });
+        });
       }
     } catch (e) {
       print("Error in reverse geocoding: $e");
@@ -191,6 +193,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
   }
 
   void _moveToLocation(double lat, double lng) {
+    isFromSuggestion = true;
     mapController?.animateCamera(
       CameraUpdate.newLatLng(LatLng(lat, lng)),
     );
@@ -213,6 +216,8 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
   void initState() {
     // TODO: implement initState
     super.initState();
+
+      isInitialLoad = true;
     print('widget.isShare1 ${widget.isShare}');
     if(widget.isShare == false) {
       _setCurrentLocation();
@@ -246,6 +251,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
     }
 
     setState(() {
+      isFromSuggestion = true;
       pickController.text = suggestion['description'];
       pickupAddress = suggestion['description'];
 
@@ -304,7 +310,8 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
 
     _moveToLocation(lat, lng);
   }
-
+  bool isFromSuggestion = false;
+  bool isInitialLoad = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -329,6 +336,22 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
             },
 
             onCameraIdle: () async {
+              if (isInitialLoad) {
+                isInitialLoad = false;
+                log('⏭ initial load skip $pickupLat,$pickupLng');
+                Future.delayed(Duration(seconds: 1),() async {
+                  await _getAddressFromLatLng(pickupLat, pickupLng,false);
+                  log('⏭ initial load skip $pickupLat,$pickupLng');
+                },);
+                return;
+              }
+
+              if (isFromSuggestion) {
+                isFromSuggestion = false;
+                log('sdsdsdfunc${isFromSuggestion.toString()}');
+                return;
+              }
+              log('sdsdsd${isFromSuggestion.toString()}');
               await _getAddressFromLatLng(pickupLat, pickupLng,false);
             },
 

@@ -48,7 +48,7 @@ void main() async{
   final sharedPreferences = await SharedPreferences.getInstance();
   Get.lazyPut(() => sharedPreferences);
 
-
+  
   await di.init();
   await Firebase.initializeApp();
   await Permission.notification.isDenied.then((value) {

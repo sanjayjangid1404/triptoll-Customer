@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/order_list.dart';
+import '../../auth/loginView.dart';
 import '../../util/appColors.dart';
 import '../home/WalletView.dart';
 import '../payment/payment_list.dart';
@@ -58,37 +59,61 @@ class _NavBarState extends State<NavBar> {
               ),
             ),
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.home_outlined),
               title: Text('Home'.tr),
               onTap: () => Get.back(),
             ),
             Get.find<AuthController>().isLoggedIn() ?
+            Divider(
+              color: Colors.grey,
+              thickness: .2,) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.person_2_outlined),
               title: Text('Profile'.tr),
               onTap: () => Get.to(ProfileView()),
             ) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
+            Divider(
+              color: Colors.grey,
+              thickness: .2,) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.file_present_outlined),
               title: Text('My Order'.tr),
               onTap: () => Get.to(OrderList()),
             ) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
+            Divider(
+              color: Colors.grey,
+              thickness: .2,) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.wallet),
               title: Text('Wallet'.tr),
               onTap: () => Get.to(WalletView()),
             ) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
+            Divider(
+              color: Colors.grey,
+              thickness: .2,) : SizedBox.shrink(),
+            Get.find<AuthController>().isLoggedIn() ?
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.payment_outlined),
               title: Text('Payments'.tr),
               onTap: () => Get.to(PaymentList()),
             ) : SizedBox.shrink(),
 
-            Divider(),
+            Divider(
+              color: Colors.grey,
+              thickness: .2,),
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.language),
               title: Text('Language'.tr),
               onTap: () {
@@ -274,44 +299,63 @@ class _NavBarState extends State<NavBar> {
                     });
               },
             ),
+            Divider(
+              color: Colors.grey,
+              thickness: .2,),
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.info_outline),
               title: Text('FAQ'.tr),
               onTap: () => Get.to(FrequentlyAskedQuestionsScreen()),
             ),
+            Divider(
+              color: Colors.grey,
+              thickness: .2,),
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.contact_page_outlined),
               title: Text('Contact Us'.tr),
               onTap: () => Get.to(ContactUsPage()),
             ),
+            Divider(
+              color: Colors.grey,
+              thickness: .2,),
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.policy_outlined),
               title: Text('Privacy Policy'.tr),
               onTap: () => Get.to(PrivacyPolicyPage()),
             ),
-
+            Divider(
+              color: Colors.grey,
+              thickness: .2,),
             ListTile(
+              visualDensity: VisualDensity.compact,
               leading: Icon(Icons.policy_outlined),
               title: Text('Terms And Conditions'.tr),
               onTap: () => Get.to(TermsAndCondition()),
             ),
-            // ListTile(
-            //   leading: Icon(Icons.policy_outlined),
-            //   title: Text('About Us'),
-            //   onTap: () => null,
-            // ),
-            Divider(),
-            // ListTile(
-            //   title: Text('Refer & Earn'),
-            //   leading: Icon(Icons.share_outlined),
-            //   onTap: () => null,
-            // ),
+            Divider(
+              color: Colors.grey,
+              thickness: .2,),
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
+              visualDensity: VisualDensity.compact,
               title: Text('Logout'.tr),
-              leading: Icon(Icons.login_outlined),
+              leading: Icon(Icons.login_outlined,color: Colors.red),
               onTap: () => authController.logoutUser(),
-            ) : SizedBox(),
+            ) :  ListTile(
+              visualDensity: VisualDensity.compact,
+              title: Text('Login'),
+              leading: Icon(Icons.login_outlined),
+              onTap: () {
+                Get.to(LoginView());
+              },
+            ),
+            Get.find<AuthController>().isLoggedIn() ?
+            Divider(
+              color: Colors.grey,
+              thickness: .2,) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               title: Text('Delete Account'.tr),

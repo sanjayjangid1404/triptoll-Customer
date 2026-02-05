@@ -101,7 +101,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
   //     return [];
   //   }
   // }
-
+  bool isInitialLoad = true;
   Future<void> _setCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
@@ -117,6 +117,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
     );
 
     setState(() {
+      isFromSuggestion = true;
       pickupLat = position.latitude;
       pickupLng = position.longitude;
     });
@@ -151,11 +152,11 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
         final place = placemarks.first;
         final address =
             "${place.name}, ${place.subLocality}, ${place.locality}, ${place.country}";
-        // setState(() {
+        setState(() {
         pickController.text = address;
         pickupAddress = address;
         print('address address${address}');
-        // });
+        });
       }
     } catch (e) {
       print("Error in reverse geocoding: $e");
@@ -176,6 +177,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
           }
           else
           {
+            log('ddddd::::${address}');
             pickController.text = address;
             pickupAddress = address;
           }
@@ -198,6 +200,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
   }
 
   void _moveToLocation(double lat, double lng) {
+    isFromSuggestion = true;
     mapController?.animateCamera(
       CameraUpdate.newLatLng(LatLng(lat, lng)),
     );
@@ -238,6 +241,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
   void initState() {
     // TODO: implement initState
     super.initState();
+    isInitialLoad = true;
     _getCurrentLocation();
     print('widget.isShare1 ${widget.isShare}');
     if(widget.isShare == false) {
@@ -314,6 +318,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
     }
 
     setState(() {
+      isFromSuggestion = true;
       pickController.text = address;
       pickupAddress = address;
 
@@ -356,6 +361,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       return [];
     }
   }
+  bool isFromSuggestion = false;
 
   @override
   Widget build(BuildContext context) {
@@ -381,6 +387,22 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
             },
 
             onCameraIdle: () async {
+
+              if (isInitialLoad) {
+                isInitialLoad = false;
+                log('⏭ initial load skip $pickupLat,$pickupLng');
+                Future.delayed(Duration(seconds: 1),() async {
+                  await _getAddressFromLatLng(pickupLat, pickupLng,false);
+                  log('⏭ initial load skip $pickupLat,$pickupLng');
+                },);
+                return;
+              }
+              if (isFromSuggestion) {
+                isFromSuggestion = false;
+                log('sdsdsdfunc${isFromSuggestion.toString()}');
+                return;
+              }
+              log('sdsdsd${isFromSuggestion.toString()}');
               await _getAddressFromLatLng(pickupLat, pickupLng,false);
             },
 

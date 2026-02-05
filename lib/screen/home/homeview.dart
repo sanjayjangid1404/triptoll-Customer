@@ -887,7 +887,7 @@ class _HomePageState extends State<HomePage> {
 
                                                           DateTime selectedDay = selectedDate ?? now;
 
-                                                          DateTime minTimeToday = now.add(const Duration(hours: 1));
+                                                          DateTime minTimeToday = now.add(const Duration(minutes: 30));
 
                                                           DateTime tempDateTime = selectedDateTimeIos ??
                                                               DateTime(
