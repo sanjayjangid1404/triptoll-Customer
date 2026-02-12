@@ -71,9 +71,10 @@ class _ProfileViewState extends State<ProfileView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
+                            backgroundColor: Colors.white,
                             child: ClipOval(
-                              child: Image.network(
-                                'https://oflutter.com/wp-content/uploads/2021/02/girl-profile.png',
+                              child: Image.asset(
+                                'assets/images/user.png',
                                 fit: BoxFit.cover,
                                 width: 150,
                                 height: 150,

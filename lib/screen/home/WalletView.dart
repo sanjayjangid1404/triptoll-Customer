@@ -251,7 +251,14 @@ class _WalletViewState extends State<WalletView> {
                     ),
                   ),
                 ),
-
+                ( authController.walletResponseList.isEmpty)
+                    ? const Center(
+                  child: Text(
+                    "Wallet history not found",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+                    :
                 ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,

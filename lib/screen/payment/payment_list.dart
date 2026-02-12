@@ -111,7 +111,15 @@ class _PaymentListState extends State<PaymentList> {
               ),
 
               Expanded(
-                child:   ListView.separated(
+                child:   ( authController.walletResponseList.isEmpty)
+                    ? const Center(
+                  child: Text(
+                    "Wallet history not found",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+                    :
+                ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     padding: const EdgeInsets.symmetric(

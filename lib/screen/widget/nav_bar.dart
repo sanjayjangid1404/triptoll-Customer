@@ -40,22 +40,30 @@ class _NavBarState extends State<NavBar> {
               Text('User'),
               accountEmail: Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserEmail()!) :
               Text(''),
-              currentAccountPicture: CircleAvatar(
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/avtor.png',
-                    fit: BoxFit.cover,
-                    width: 90,
-                    height: 90,
+              currentAccountPicture: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 30,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/user.png',
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.orangeAccent,
                 image: DecorationImage(
                     fit: BoxFit.fill,
-                    image: NetworkImage(
-                        'https://oflutter.com/wp-content/uploads/2021/02/profile-bg3.jpg')),
+                    image: AssetImage(
+                      'assets/images/profile-bg3.jpg',)),
               ),
             ),
             ListTile(

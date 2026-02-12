@@ -493,7 +493,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Positioned(
                       bottom: 50,
-                      right: 20,
+                      left: 20,
                       child: FloatingActionButton(
                         heroTag: "btnCurrentLocation",
                         backgroundColor: Colors.white,
@@ -697,67 +697,67 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              InkWell(
-                                onTap: (){
-                                  setState(() {
-                                    select = 0;
-                                  });
-
-                                  Get.to(
-                                    ScheduleDeliveryPickUpScreen(
-                                      isShare: false,
-                                      isPick: true,
-                                      pickLng: pickupLng,
-                                      pickLat: pickupLat,
-                                      houseNumber: currentAddress.toString(),
-                                      street: currentAddress.toString(),
-                                      city: currentAddress.toString(),
-                                      pickAddress: pickController.text,
-                                      title: "PickUp Location",
-                                    ),
-                                  );
-                                  // Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
-                                  //   pickLng: pickupLng,pickLat: pickupLat,
-                                  //   houseNumber: currentAddress.toString(),
-                                  //   street: currentAddress1.toString(),
-                                  //   city: currentAddress2.toString(),
-                                  //   pickAddress: pickController.text,
-                                  //   title: "Drop Location",));
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.35),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.8),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(AppImage.parcelImage,width: 25,),
-                                      SizedBox(width: 4,),
-                                      Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                              // InkWell(
+                              //   onTap: (){
+                              //     setState(() {
+                              //       select = 0;
+                              //     });
+                              //
+                              //     Get.to(
+                              //       ScheduleDeliveryPickUpScreen(
+                              //         isShare: false,
+                              //         isPick: true,
+                              //         pickLng: pickupLng,
+                              //         pickLat: pickupLat,
+                              //         houseNumber: currentAddress.toString(),
+                              //         street: currentAddress.toString(),
+                              //         city: currentAddress.toString(),
+                              //         pickAddress: pickController.text,
+                              //         title: "PickUp Location",
+                              //       ),
+                              //     );
+                              //     // Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
+                              //     //   pickLng: pickupLng,pickLat: pickupLat,
+                              //     //   houseNumber: currentAddress.toString(),
+                              //     //   street: currentAddress1.toString(),
+                              //     //   city: currentAddress2.toString(),
+                              //     //   pickAddress: pickController.text,
+                              //     //   title: "Drop Location",));
+                              //   },
+                              //   child: Container(
+                              //     alignment: Alignment.center,
+                              //     padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
+                              //     decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(8),
+                              //       color: Colors.white,
+                              //       boxShadow: [
+                              //         BoxShadow(
+                              //           color: Colors.black.withOpacity(0.35),
+                              //           blurRadius: 1,
+                              //           spreadRadius: 1,
+                              //           // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                              //         ),
+                              //         BoxShadow(
+                              //           color: Colors.white.withOpacity(0.8),
+                              //           blurRadius: 1,
+                              //           spreadRadius: 1,
+                              //           // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     child: Row(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       children: [
+                              //         Image.asset(AppImage.parcelImage,width: 25,),
+                              //         SizedBox(width: 4,),
+                              //         Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 10,
+                              // ),
                               InkWell(
                                 onTap: () {
                                   setState(() {
@@ -807,7 +807,7 @@ class _HomePageState extends State<HomePage> {
                                                 /// 🔹 Title
                                                 const Center(
                                                   child: Text(
-                                                    "Schedule Delivery",
+                                                    "Delivery",
                                                     style: TextStyle(
                                                       fontSize: 18,
                                                       fontWeight: FontWeight.w600,
@@ -1132,7 +1132,7 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Image.asset(AppImage.scheduleDelivery,width: 25,),
                                       SizedBox(width: 4,),
-                                      Text("Schedule Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                      Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
                                     ],
                                   ),
                                 ),

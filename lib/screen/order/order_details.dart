@@ -245,10 +245,20 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ],
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Payment Type".tr,style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),),
+                      Text("${authController.bookingDetailsResponse!.paymentType!}",style: TextStyle(fontSize: 16,color: Colors.black),),
+                    ],
+                  ),
+                ),
 
                 SizedBox(height: 30,),
 
-                authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "new" || authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "accpeted"  || authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "accepted" ?  InkWell(
+                authController.bookingDetailsResponse!.orderStatus.toString().toLowerCase() == "new"  ?  InkWell(
                   onTap: (){
                     AppContants.showNoteBottomSheet(context,authController,authController.bookingDetailsResponse!.id.toString(),true,Get.back());
 
