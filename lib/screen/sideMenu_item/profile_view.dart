@@ -108,7 +108,6 @@ class _ProfileViewState extends State<ProfileView> {
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-
                 color: AppColors.primaryGradient,
                 child: Text("Edit Profile".tr,style: TextStyle(fontSize: 16,color: Colors.white),),
               ),

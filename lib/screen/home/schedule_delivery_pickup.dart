@@ -522,7 +522,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
             child: Icon(Icons.location_pin, size: 50, color: Colors.red),
           ),
           Positioned(
-            bottom:  MediaQuery.of(context).padding.bottom + 20,
+            bottom:  MediaQuery.of(context).padding.bottom + 35,
             left: 20,
             right: 20,
             child: SafeArea(

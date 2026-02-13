@@ -1564,7 +1564,16 @@ class _HomePageState extends State<HomePage> {
                                  ],
                                ),
                              ),
-
+                             SizedBox(height: 10,),
+                             auhController.latestBookingListResponse![index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
+                             SizedBox.shrink() :
+                             Text('A driver will be assigned to you shortly. Please wait.',
+                               style: TextStyle(
+                                   fontSize: 18,
+                                   fontWeight: FontWeight.w500,
+                                   color: Colors.black
+                               ),
+                             ),
                              auhController.latestBookingListResponse![index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
 
                                  InkWell(
@@ -1589,20 +1598,21 @@ class _HomePageState extends State<HomePage> {
                                    ),
                                  )
                               :
-                             Row(
-                               mainAxisAlignment: MainAxisAlignment.end,
-                               children: [
-                                 InkWell(
-                                   onTap: (){
-                                     // Get.find<AuthController>().getBookingDriver(bookingID:auhController.latestBookingListResponse![index]!.id.toString(),isCall: true);
-                                   },
-                                   child: Padding(
-                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                     child: Text("No Driver Assign".tr,style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
-                                   ),
-                                 )
-                               ],
-                             ),
+                             // Row(
+                             //   mainAxisAlignment: MainAxisAlignment.end,
+                             //   children: [
+                             //     InkWell(
+                             //       onTap: (){
+                             //         // Get.find<AuthController>().getBookingDriver(bookingID:auhController.latestBookingListResponse![index]!.id.toString(),isCall: true);
+                             //       },
+                             //       child: Padding(
+                             //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                             //         child: Text("No Driver Assign".tr,style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                             //       ),
+                             //     )
+                             //   ],
+                             // ),
+                             SizedBox(),
                              SizedBox(height: 10,),
                            ],
                          );

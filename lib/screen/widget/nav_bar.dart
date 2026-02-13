@@ -36,9 +36,29 @@ class _NavBarState extends State<NavBar> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName:  Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserName()!) :
-              Text('User'),
-              accountEmail: Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserEmail()!) :
+              accountName:  Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserName()!,
+          style: TextStyle(
+              fontFamily: "Poppins",
+              color: Colors.white,
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+            height: 1
+          ),) :
+              Text('User',
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15
+                ),),
+              accountEmail: Get.find<AuthController>().isLoggedIn() ? Text(authController.getUserEmail()!,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                  height: 1
+                ),):
               Text(''),
               currentAccountPicture: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,13 +66,13 @@ class _NavBarState extends State<NavBar> {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.white,
-                    radius: 30,
+                    radius: 26,
                     child: ClipOval(
                       child: Image.asset(
                         'assets/images/user.png',
                         fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
+                        width: 45,
+                        height: 45,
                       ),
                     ),
                   ),
@@ -68,8 +88,19 @@ class _NavBarState extends State<NavBar> {
             ),
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.home_outlined),
-              title: Text('Home'.tr),
+              dense: true,
+
+              leading:   Image.asset('assets/images/home.jpeg',
+                  height: 18,
+                  width: 20),
+              title: Text(
+                'Home'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14),
+              ),
               onTap: () => Get.back(),
             ),
             Get.find<AuthController>().isLoggedIn() ?
@@ -79,8 +110,17 @@ class _NavBarState extends State<NavBar> {
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.person_2_outlined),
-              title: Text('Profile'.tr),
+              dense: true,
+              leading:   Image.asset('assets/images/profile.jpeg',
+                  height: 18,
+                  width: 20),
+              title: Text('Profile'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(ProfileView()),
             ) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
@@ -90,8 +130,17 @@ class _NavBarState extends State<NavBar> {
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.file_present_outlined),
-              title: Text('My Order'.tr),
+              dense: true,
+              leading:   Image.asset('assets/images/orders.jpeg',
+                  height: 18,
+                  width: 20),
+              title: Text('My Order'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(OrderList()),
             ) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
@@ -101,8 +150,18 @@ class _NavBarState extends State<NavBar> {
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.wallet),
-              title: Text('Wallet'.tr),
+              dense: true,
+              leading:   Image.asset('assets/images/wallet.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 20),
+              title: Text('Wallet'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(WalletView()),
             ) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
@@ -112,8 +171,18 @@ class _NavBarState extends State<NavBar> {
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.payment_outlined),
-              title: Text('Payments'.tr),
+              dense: true,
+              leading:  Image.asset('assets/images/payment-method.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 20),
+              title: Text('Payments'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(PaymentList()),
             ) : SizedBox.shrink(),
 
@@ -122,8 +191,18 @@ class _NavBarState extends State<NavBar> {
               thickness: .2,),
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.language),
-              title: Text('Language'.tr),
+              dense: true,
+              leading: Image.asset('assets/images/languages.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 20),
+              title: Text('Language'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () {
                 showModalBottomSheet<void>(
                     context: context,
@@ -312,8 +391,18 @@ class _NavBarState extends State<NavBar> {
               thickness: .2,),
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.info_outline),
-              title: Text('FAQ'.tr),
+              dense: true,
+              leading: Image.asset('assets/images/faq.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 20),
+              title: Text('FAQ'.tr,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(FrequentlyAskedQuestionsScreen()),
             ),
             Divider(
@@ -321,8 +410,18 @@ class _NavBarState extends State<NavBar> {
               thickness: .2,),
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.contact_page_outlined),
-              title: Text('Contact Us'.tr),
+              dense: true,
+              leading:  Image.asset('assets/images/customer-service.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 20),
+              title: Text('Contact Us'.tr,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(ContactUsPage()),
             ),
             Divider(
@@ -330,8 +429,18 @@ class _NavBarState extends State<NavBar> {
               thickness: .2,),
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.policy_outlined),
-              title: Text('Privacy Policy'.tr),
+              dense: true,
+              leading:  Image.asset('assets/images/pri.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 20),
+              title: Text('Privacy Policy'.tr,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(PrivacyPolicyPage()),
             ),
             Divider(
@@ -339,8 +448,18 @@ class _NavBarState extends State<NavBar> {
               thickness: .2,),
             ListTile(
               visualDensity: VisualDensity.compact,
-              leading: Icon(Icons.policy_outlined),
-              title: Text('Terms And Conditions'.tr),
+              dense: true,
+              leading:  Image.asset('assets/images/file.png',
+                  color: Colors.black,
+                  height: 18,
+                  width: 18),
+              title: Text('Terms And Conditions'.tr,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
               onTap: () => Get.to(TermsAndCondition()),
             ),
             Divider(
@@ -349,13 +468,33 @@ class _NavBarState extends State<NavBar> {
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
               visualDensity: VisualDensity.compact,
-              title: Text('Logout'.tr),
-              leading: Icon(Icons.login_outlined,color: Colors.red),
+              dense: true,
+              title: Text('Logout'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
+              leading: Image.asset('assets/images/logout.png',
+                color: Colors.red,
+                height: 16,
+                width: 16),
               onTap: () => authController.logoutUser(),
             ) :  ListTile(
               visualDensity: VisualDensity.compact,
-              title: Text('Login'),
-              leading: Icon(Icons.login_outlined),
+              dense: true,
+              title: Text('Login',
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
+              leading:  Image.asset('assets/images/logout.png',
+                  color: Colors.black,
+                  height: 16,
+                  width: 16),
               onTap: () {
                 Get.to(LoginView());
               },
@@ -366,8 +505,19 @@ class _NavBarState extends State<NavBar> {
               thickness: .2,) : SizedBox.shrink(),
             Get.find<AuthController>().isLoggedIn() ?
             ListTile(
-              title: Text('Delete Account'.tr),
-              leading: Icon(Icons.delete,color: Colors.red,),
+              visualDensity: VisualDensity.compact,
+              dense: true,
+              title: Text('Delete Account'.tr,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14
+                ),),
+              leading: Image.asset('assets/images/trash.png',
+              color: Colors.red,
+              height: 20,
+              width: 20),
               onTap: () {
                 showCupertinoDialog(
                   context: context,

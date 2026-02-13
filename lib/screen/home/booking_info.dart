@@ -1338,7 +1338,9 @@ class _BookingInfoState extends State<BookingInfo> {
                     ),
                   ),
                 ),
-
+               SizedBox(
+                 height: 20,
+               )
 
               ],
             ),

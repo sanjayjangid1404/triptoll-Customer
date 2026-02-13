@@ -622,7 +622,7 @@ class AuthController extends GetxController implements GetxService
       // सिर्फ activeBookingID वाली call ही चलानी है
       getBookingDriver(bookingID: activeBookingID);
 
-
+      latestBooking(status: "all", limit: "1", offset: "10");
 
       update();
     }

@@ -1109,7 +1109,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
               ],
             ),
           ),
-           bottomSheet: authController.isShowDriver ?  _buildBottomSheet(authController): Row(
+           bottomSheet: authController.isShowDriver ?  _buildBottomSheet(authController):
+           Row(
              children: [
 
                IconButton(onPressed: (){
@@ -1215,7 +1216,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                    backgroundColor: AppColors.secondaryGradient,
                    child: Icon(Icons.note_alt_outlined,color: Colors.white,))),
              ],
-           ),
+           ).paddingOnly(bottom: MediaQuery.of(context).size.height * .02),
                ),
        );},
     );

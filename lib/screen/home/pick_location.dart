@@ -474,7 +474,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
             child: Icon(Icons.location_pin, size: 50, color: Colors.red),
           ),
           Positioned(
-            bottom: 30,
+            bottom:  MediaQuery.of(context).padding.bottom + 35,
             left: 20,
             right: 20,
             child: ElevatedButton(
