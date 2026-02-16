@@ -782,325 +782,328 @@ class _HomePageState extends State<HomePage> {
                                               left: 20,
                                               right: 20,
                                               top: 12,
-                                              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                                              bottom: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 20,
                                             ),
                                             decoration: const BoxDecoration(
                                               color: Colors.white,
                                               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                             ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Center(
-                                                  child: Container(
-                                                    width: 40,
-                                                    height: 4,
-                                                    margin: const EdgeInsets.only(bottom: 14),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey.shade300,
-                                                      borderRadius: BorderRadius.circular(10),
+                                            child: SafeArea(
+                                              top: false,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Center(
+                                                    child: Container(
+                                                      width: 40,
+                                                      height: 4,
+                                                      margin: const EdgeInsets.only(bottom: 14),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey.shade300,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
 
-                                                /// 🔹 Title
-                                                const Center(
-                                                  child: Text(
-                                                    "Delivery",
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.w600,
+                                                  /// 🔹 Title
+                                                  const Center(
+                                                    child: Text(
+                                                      "Delivery",
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
 
-                                                const SizedBox(height: 20),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    setState(() {
-                                                    selectedDateTimeIos = null;
-                                                    });
-                                                    DateTime? picked = await showDatePicker(
-                                                      context: context,
-                                                      initialDate: DateTime.now(),
-                                                      firstDate: DateTime.now(),
-                                                      lastDate: DateTime.now().add(const Duration(days: 1)), // 🔒 max tomorrow
-                                                      builder: (context, child) {
-                                                        return Theme(
-                                                          data: Theme.of(context).copyWith(
-                                                            colorScheme: const ColorScheme.light(
-                                                              primary: Colors.black,
-                                                              onPrimary: Colors.white,
-                                                              onSurface: Colors.black,
-                                                            ),
-                                                            dialogBackgroundColor: Colors.white,
-                                                          ),
-                                                          child: child!,
-                                                        );
-                                                      },
-                                                    );
-
-                                                    if (picked != null) {
-                                                      setModalState(() {
-                                                        selectedDate = picked;
+                                                  const SizedBox(height: 20),
+                                                  GestureDetector(
+                                                    onTap: () async {
+                                                      setState(() {
+                                                      selectedDateTimeIos = null;
                                                       });
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      border: Border.all(color: Colors.grey.shade300),
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.calendar_today, size: 18),
-                                                        const SizedBox(width: 10),
-                                                        Text(
-                                                          selectedDate == null
-                                                              ? "Select Date"
-                                                              : DateFormat('dd MMM yyyy').format(selectedDate!),
-                                                          style: const TextStyle(fontSize: 14),
-                                                        ),
-                                                      ],
+                                                      DateTime? picked = await showDatePicker(
+                                                        context: context,
+                                                        initialDate: DateTime.now(),
+                                                        firstDate: DateTime.now(),
+                                                        lastDate: DateTime.now().add(const Duration(days: 1)), // 🔒 max tomorrow
+                                                        builder: (context, child) {
+                                                          return Theme(
+                                                            data: Theme.of(context).copyWith(
+                                                              colorScheme: const ColorScheme.light(
+                                                                primary: Colors.black,
+                                                                onPrimary: Colors.white,
+                                                                onSurface: Colors.black,
+                                                              ),
+                                                              dialogBackgroundColor: Colors.white,
+                                                            ),
+                                                            child: child!,
+                                                          );
+                                                        },
+                                                      );
+
+                                                      if (picked != null) {
+                                                        setModalState(() {
+                                                          selectedDate = picked;
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        border: Border.all(color: Colors.grey.shade300),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          const Icon(Icons.calendar_today, size: 18),
+                                                          const SizedBox(width: 10),
+                                                          Text(
+                                                            selectedDate == null
+                                                                ? "Select Date"
+                                                                : DateFormat('dd MMM yyyy').format(selectedDate!),
+                                                            style: const TextStyle(fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 12),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    if(selectedDate == null){
-                                                      Get.snackbar(
-                                                          "Error",
-                                                          "Please select date first",
-                                                          backgroundColor: Colors.red,
-                                                          colorText: Colors.white
-                                                      );
-                                                      return;
-                                                    }
-                                                    else {
-                                                      showCupertinoModalPopup(
-                                                        context: context,
-                                                        builder: (_) {
-                                                          DateTime now = DateTime.now();
+                                                  const SizedBox(height: 12),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      if(selectedDate == null){
+                                                        Get.snackbar(
+                                                            "Error",
+                                                            "Please select date first",
+                                                            backgroundColor: Colors.red,
+                                                            colorText: Colors.white
+                                                        );
+                                                        return;
+                                                      }
+                                                      else {
+                                                        showCupertinoModalPopup(
+                                                          context: context,
+                                                          builder: (_) {
+                                                            DateTime now = DateTime.now();
 
-                                                          DateTime selectedDay = selectedDate ?? now;
+                                                            DateTime selectedDay = selectedDate ?? now;
 
-                                                          DateTime minTimeToday = now.add(const Duration(minutes: 30));
+                                                            DateTime minTimeToday = now.add(const Duration(minutes: 30));
 
-                                                          DateTime tempDateTime = selectedDateTimeIos ??
-                                                              DateTime(
-                                                                selectedDay.year,
-                                                                selectedDay.month,
-                                                                selectedDay.day,
-                                                                minTimeToday.hour,
-                                                                minTimeToday.minute,
-                                                              );
+                                                            DateTime tempDateTime = selectedDateTimeIos ??
+                                                                DateTime(
+                                                                  selectedDay.year,
+                                                                  selectedDay.month,
+                                                                  selectedDay.day,
+                                                                  minTimeToday.hour,
+                                                                  minTimeToday.minute,
+                                                                );
 
-                                                          bool isToday = isSameDay(selectedDay, now);
+                                                            bool isToday = isSameDay(selectedDay, now);
 
-                                                          return Container(
-                                                            height: 300,
-                                                            color: Colors.white,
-                                                            child: Column(
-                                                              children: [
-                                                                Container(
-                                                                  alignment: Alignment.centerRight,
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                                                  child: CupertinoButton(
-                                                                    padding: EdgeInsets.zero,
-                                                                    onPressed: () {
-                                                                      setModalState(() {
-                                                                        selectedDateTimeIos = tempDateTime;
-                                                                      });
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    child: const Text(
-                                                                      "Done",
-                                                                      style: TextStyle(
-                                                                        fontSize: 18,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: CupertinoColors.activeBlue,
+                                                            return Container(
+                                                              height: 300,
+                                                              color: Colors.white,
+                                                              child: Column(
+                                                                children: [
+                                                                  Container(
+                                                                    alignment: Alignment.centerRight,
+                                                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                                    child: CupertinoButton(
+                                                                      padding: EdgeInsets.zero,
+                                                                      onPressed: () {
+                                                                        setModalState(() {
+                                                                          selectedDateTimeIos = tempDateTime;
+                                                                        });
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                      child: const Text(
+                                                                        "Done",
+                                                                        style: TextStyle(
+                                                                          fontSize: 18,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          color: CupertinoColors.activeBlue,
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: CupertinoDatePicker(
-                                                                    mode: CupertinoDatePickerMode.time,
-                                                                    use24hFormat: false,
-                                                                    initialDateTime: tempDateTime,
-                                                                    minimumDate: isToday
-                                                                        ? DateTime(
-                                                                      selectedDay.year,
-                                                                      selectedDay.month,
-                                                                      selectedDay.day,
-                                                                      minTimeToday.hour,
-                                                                      minTimeToday.minute,
-                                                                    )
-                                                                        : null,
-
-                                                                    onDateTimeChanged: (DateTime newTime) {
-                                                                      HapticFeedback.selectionClick();
-
-                                                                      tempDateTime = DateTime(
+                                                                  Expanded(
+                                                                    child: CupertinoDatePicker(
+                                                                      mode: CupertinoDatePickerMode.time,
+                                                                      use24hFormat: false,
+                                                                      initialDateTime: tempDateTime,
+                                                                      minimumDate: isToday
+                                                                          ? DateTime(
                                                                         selectedDay.year,
                                                                         selectedDay.month,
                                                                         selectedDay.day,
-                                                                        newTime.hour,
-                                                                        newTime.minute,
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
+                                                                        minTimeToday.hour,
+                                                                        minTimeToday.minute,
+                                                                      )
+                                                                          : null,
 
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      border: Border.all(color: Colors.grey.shade300),
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.access_time, size: 18),
-                                                        const SizedBox(width: 10),
-                                                        Text(
-                                                          selectedDateTimeIos == null
-                                                              ? "Select Time"
-                                                              : TimeOfDay.fromDateTime(selectedDateTimeIos!).format(context),
-                                                          style: const TextStyle(fontSize: 14),
-                                                        ),
-                                                      ],
+                                                                      onDateTimeChanged: (DateTime newTime) {
+                                                                        HapticFeedback.selectionClick();
+
+                                                                        tempDateTime = DateTime(
+                                                                          selectedDay.year,
+                                                                          selectedDay.month,
+                                                                          selectedDay.day,
+                                                                          newTime.hour,
+                                                                          newTime.minute,
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        border: Border.all(color: Colors.grey.shade300),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          const Icon(Icons.access_time, size: 18),
+                                                          const SizedBox(width: 10),
+                                                          Text(
+                                                            selectedDateTimeIos == null
+                                                                ? "Select Time"
+                                                                : TimeOfDay.fromDateTime(selectedDateTimeIos!).format(context),
+                                                            style: const TextStyle(fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 14),
-                                                Text('* You can schedule your delivery within the next 24 hours only.'.tr,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w500
-                                                ),
-                                                ),
-                                                const SizedBox(height: 24),
+                                                  const SizedBox(height: 14),
+                                                  Text('* You can schedule your delivery within the next 24 hours only.'.tr,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500
+                                                  ),
+                                                  ),
+                                                  const SizedBox(height: 24),
 
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child:ElevatedButton(
-                                                        onPressed: () => Navigator.pop(context),
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Colors.grey,
-                                                          padding: EdgeInsets.symmetric(vertical: 12),
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                          ),
-                                                        ),
-
-                                                        child: const Text(
-                                                          "Cancel",
-                                                          style: TextStyle(color: Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 12),
-                                                    Expanded(
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          if (selectedDate == null || selectedDateTimeIos == null) {
-                                                            Get.snackbar(
-                                                              "Error",
-                                                              "Please select date & time",
-                                                                backgroundColor: Colors.red,
-                                                                colorText: Colors.white
-                                                            );
-                                                            return;
-                                                          }
-
-                                                          final selectedDateTime = DateTime(
-                                                            selectedDate!.year,
-                                                            selectedDate!.month,
-                                                            selectedDate!.day,
-                                                            selectedDateTimeIos!.hour,
-                                                            selectedDateTimeIos!.minute,
-                                                          );
-
-                                                          final now = DateTime.now();
-                                                          final maxTime = now.add(const Duration(hours: 24));
-
-                                                          if (selectedDateTime.isBefore(now)) {
-                                                            Get.snackbar(
-                                                              "Invalid Time",
-                                                              "Please select a future time",
-                                                              backgroundColor: Colors.red,
-                                                              colorText: Colors.white
-                                                            );
-                                                            return;
-                                                          }
-                                                          if (selectedDateTime.isAfter(maxTime)) {
-                                                            Get.snackbar(
-                                                              "Invalid Schedule",
-                                                              "You can schedule only within next 24 hours",
-                                                                backgroundColor: Colors.red,
-                                                                colorText: Colors.white
-                                                            );
-                                                            return;
-                                                          }
-                                                          final Duration difference = selectedDateTime.difference(now);
-
-                                                          final int hours = difference.inHours;
-                                                          final int minutes = difference.inMinutes.remainder(60);
-
-                                                          // 🔹 PRINT
-                                                          print("Scheduled After: $hours hours $minutes minutes");
-                                                          Get.back();
-
-                                                          String formattedTime =
-                                                              '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
-                                                          String onlyDate =
-                                                          DateFormat('yyyy-MM-dd').format(selectedDate!);
-
-                                                          Get.to(
-                                                            ScheduleDeliveryPickUpScreen(
-                                                              isShare: false,
-                                                              isPick: true,
-                                                              pickLng: pickupLng,
-                                                              pickLat: pickupLat,
-                                                              houseNumber: currentAddress.toString(),
-                                                              street: currentAddress.toString(),
-                                                              city: currentAddress.toString(),
-                                                              pickAddress: pickController.text,
-                                                              title: "PickUp Location",
-                                                              date: onlyDate,
-                                                              time: formattedTime,
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child:ElevatedButton(
+                                                          onPressed: () => Navigator.pop(context),
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor: Colors.grey,
+                                                            padding: EdgeInsets.symmetric(vertical: 12),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(10),
                                                             ),
-                                                          );
-                                                        },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Colors.blue,
-                                                          padding: EdgeInsets.symmetric(vertical: 12),
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+
+                                                          child: const Text(
+                                                            "Cancel",
+                                                            style: TextStyle(color: Colors.white),
                                                           ),
                                                         ),
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Expanded(
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            if (selectedDate == null || selectedDateTimeIos == null) {
+                                                              Get.snackbar(
+                                                                "Error",
+                                                                "Please select date & time",
+                                                                  backgroundColor: Colors.red,
+                                                                  colorText: Colors.white
+                                                              );
+                                                              return;
+                                                            }
 
-                                                        child: const Text(
-                                                          "Confirm",
-                                                          style: TextStyle(color: Colors.white),
+                                                            final selectedDateTime = DateTime(
+                                                              selectedDate!.year,
+                                                              selectedDate!.month,
+                                                              selectedDate!.day,
+                                                              selectedDateTimeIos!.hour,
+                                                              selectedDateTimeIos!.minute,
+                                                            );
+
+                                                            final now = DateTime.now();
+                                                            final maxTime = now.add(const Duration(hours: 24));
+
+                                                            if (selectedDateTime.isBefore(now)) {
+                                                              Get.snackbar(
+                                                                "Invalid Time",
+                                                                "Please select a future time",
+                                                                backgroundColor: Colors.red,
+                                                                colorText: Colors.white
+                                                              );
+                                                              return;
+                                                            }
+                                                            if (selectedDateTime.isAfter(maxTime)) {
+                                                              Get.snackbar(
+                                                                "Invalid Schedule",
+                                                                "You can schedule only within next 24 hours",
+                                                                  backgroundColor: Colors.red,
+                                                                  colorText: Colors.white
+                                                              );
+                                                              return;
+                                                            }
+                                                            final Duration difference = selectedDateTime.difference(now);
+
+                                                            final int hours = difference.inHours;
+                                                            final int minutes = difference.inMinutes.remainder(60);
+
+                                                            // 🔹 PRINT
+                                                            print("Scheduled After: $hours hours $minutes minutes");
+                                                            Get.back();
+
+                                                            String formattedTime =
+                                                                '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
+                                                            String onlyDate =
+                                                            DateFormat('yyyy-MM-dd').format(selectedDate!);
+
+                                                            Get.to(
+                                                              ScheduleDeliveryPickUpScreen(
+                                                                isShare: false,
+                                                                isPick: true,
+                                                                pickLng: pickupLng,
+                                                                pickLat: pickupLat,
+                                                                houseNumber: currentAddress.toString(),
+                                                                street: currentAddress.toString(),
+                                                                city: currentAddress.toString(),
+                                                                pickAddress: pickController.text,
+                                                                title: "PickUp Location",
+                                                                date: onlyDate,
+                                                                time: formattedTime,
+                                                              ),
+                                                            );
+                                                          },
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor: Colors.blue,
+                                                            padding: EdgeInsets.symmetric(vertical: 12),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                          ),
+
+                                                          child: const Text(
+                                                            "Confirm",
+                                                            style: TextStyle(color: Colors.white),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
