@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/util/appColors.dart';
@@ -549,8 +551,34 @@ class _BookingInfoState extends State<BookingInfo> {
 
   void _updateStop(int index, String key, dynamic value) {
     setState(() {
-      stopLocations[index][key] = value; // update specific field
+      stopLocations[index][key] = value;
     });
+  }
+
+  Future<void> pickContact() async {
+    if (await Permission.contacts.request().isGranted) {
+
+      final Contact? contact = await FlutterContacts.openExternalPick();
+
+      if (contact != null) {
+        senderNameController.text = contact.displayName;
+
+        if (contact.phones.isNotEmpty) {
+          String number = contact.phones.first.number;
+
+          // Clean number (remove spaces, +91 etc)
+          number = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+          if (number.length > 10) {
+            number = number.substring(number.length - 10);
+          }
+
+          senderPhoneController.text = number;
+        }
+      }
+    } else {
+      print("Permission Denied");
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -803,6 +831,12 @@ class _BookingInfoState extends State<BookingInfo> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
+                            suffixIcon:  IconButton(
+                              icon: Icon(Icons.contacts),
+                              onPressed: () {
+                                pickContact();
+                              },
+                            ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: const BorderSide(color: Colors.grey),
                               borderRadius: BorderRadius.circular(4),
@@ -1040,6 +1074,35 @@ class _BookingInfoState extends State<BookingInfo> {
                                 ],
                                 style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
                                 decoration: InputDecoration(
+                                  suffixIcon:  IconButton(
+                                    icon: Icon(Icons.contacts),
+                                      onPressed: () async {
+                                        if (await Permission.contacts.request().isGranted) {
+                                          final Contact? contact = await FlutterContacts.openExternalPick();
+                                          if (contact != null) {
+                                            stopLocations[index]['name'] = contact.displayName;
+                                            senderController.text = contact.displayName;
+                                            getUserName = contact.displayName;
+
+                                            if (contact.phones.isNotEmpty) {
+                                              String number = contact.phones.first.number;
+                                              number = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+                                              if (number.length > 10) {
+                                                number = number.substring(
+                                                    number.length - 10);
+                                              }
+
+                                              senderMobileController.text = number;
+                                              stopLocations[index]['contact_number'] = number;
+                                              getUserPhone = number;
+                                            }
+                                          }
+                                        } else {
+                                          print("Permission Denied");
+                                        }
+                                      },
+                                    ),
                                   counter: SizedBox(),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(4),
@@ -1063,6 +1126,7 @@ class _BookingInfoState extends State<BookingInfo> {
                                     height: 0,
                                   ),
                                 ),
+
                                   onChanged: (value) {
                                   stopLocations[index]['name'] = senderController.text.trim();
                                   getUserName = senderController.text.trim();

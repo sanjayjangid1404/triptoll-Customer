@@ -177,6 +177,99 @@ class _HomePageState extends State<HomePage> {
     await _getAddressFromLatLng(pickupLat!, pickupLng! );
   }
   AppUpdateInfo? _updateInfo;
+  void showCancelDialog(BuildContext context, String bookingId) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(height: 5),
+
+                Text(
+                  'Do you really want to cancel this order?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+
+                SizedBox(height: 24),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'No',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.find<AuthController>().cancelOrder(
+                            bookingID: bookingId,
+                            reason: "cancel by customer",
+                            comment: "cancelled",
+                            isOrder: true,
+                          );
+                          Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text('Yes, Cancel',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500
+                          ),),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -1577,7 +1670,39 @@ class _HomePageState extends State<HomePage> {
                                    color: Colors.black
                                ),
                              ),
-                             auhController.latestBookingListResponse![index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
+                             if (authController.latestBookingListResponse[index]?.orderStatus == 'new' ||
+                                 authController.latestBookingListResponse[index]?.orderStatus == 'scheduled')
+                               Padding(
+                                 padding: const EdgeInsets.only(top: 8),
+                                 child: InkWell(
+                                   onTap: () {
+                                     showCancelDialog(
+                                       context,
+                                       authController.latestBookingListResponse[index]!.id.toString(),
+                                     );
+                                   },
+                                   child: Container(
+                                     width: Get.width,
+                                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                     decoration: BoxDecoration(
+                                       color: Colors.red.shade50,
+                                       border: Border.all(color: Colors.red),
+                                       borderRadius: BorderRadius.circular(20),
+                                     ),
+                                     child: Center(
+                                       child: Text(
+                                         'Cancel',
+                                         style: TextStyle(
+                                           color: Colors.red,
+                                           fontSize: 15,
+                                           fontWeight: FontWeight.w500,
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             auhController.latestBookingListResponse[index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
 
                                  InkWell(
                                    onTap: (){
