@@ -1124,10 +1124,8 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                    onTap:Get.find<AuthController>().isLoggedIn() ? (){
                      print('fjdfj${widget.senderNameText.toString()}');
                      print('fjdfj${widget.senderPhone.toString()}');
-                     var lastHouseNoValue;
                      if (widget.houseNoCt.isNotEmpty) {
                        var lastKey = widget.houseNoCt.keys.last;
-                       lastHouseNoValue = widget.houseNoCt[lastKey]?.text;
                      }
                      var lastSenderName;
                      if (widget.senderName.isNotEmpty) {

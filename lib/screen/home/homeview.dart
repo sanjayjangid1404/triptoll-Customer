@@ -13,11 +13,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/screen/home/schedule_delivery_pickup.dart';
+import 'package:triptoll/screen/home/whatsapp_sharelocation.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart' as slider;
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/appImage.dart';
+import 'package:app_links/app_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widget/nav_bar.dart';
@@ -37,6 +39,9 @@ class _HomePageState extends State<HomePage> {
   TextEditingController houseNoCt = TextEditingController();
   TextEditingController senderName = TextEditingController();
   TextEditingController sendMobile = TextEditingController();
+
+  late final AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
   String currentAddress = "";
   String currentAddress1 = "";
   String currentAddress2 = "";
@@ -45,6 +50,45 @@ class _HomePageState extends State<HomePage> {
   double? pickupLat;
   double? pickupLng;
   int activeIndex = 0;
+
+
+  void initDeepLinks() async {
+    _appLinks = AppLinks();
+    final Uri? initialUri = await _appLinks.getInitialLink();
+    if (initialUri != null) {
+      handleUri(initialUri);
+    }
+    _linkSubscription = _appLinks.uriLinkStream.listen((Uri uri) {
+      handleUri(uri);
+    });
+  }
+
+  void handleUri(Uri uri) {
+
+    print("Full URI: $uri");
+
+    double? latitude;
+    double? longitude;
+
+    if (uri.scheme == 'geo') {
+      final coords = uri.path.split(',');
+      latitude = double.tryParse(coords[0]);
+      longitude = double.tryParse(coords[1]);
+    }
+
+    else if (uri.queryParameters.containsKey('q')) {
+      final coords = uri.queryParameters['q']!.split(',');
+      latitude = double.tryParse(coords[0]);
+      longitude = double.tryParse(coords[1]);
+    }
+
+    print("Latitude: $latitude");
+    print("Longitude: $longitude");
+
+    if (latitude != null && longitude != null) {
+        Get.to(()=> LocationSelectionScreen(lat: latitude,long: longitude,));
+    }
+  }
 
   Future<void> logUpdateError(String message) async {
     try {
@@ -273,7 +317,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
+    initDeepLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForUpdate();
       _setCurrentLocation();
@@ -304,7 +348,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    stopBookingRefresh(); // Stop when widget is disposed
+    stopBookingRefresh();
+    _linkSubscription?.cancel();
     super.dispose();
   }
 
@@ -1163,9 +1208,8 @@ class _HomePageState extends State<HomePage> {
                                                             String onlyDate =
                                                             DateFormat('yyyy-MM-dd').format(selectedDate!);
 
-                                                            Get.to(
-                                                              ScheduleDeliveryPickUpScreen(
-                                                                isShare: false,
+                                                            Get.to(ScheduleDeliveryPickUpScreen(
+                                                                isShare: true,
                                                                 isPick: true,
                                                                 pickLng: pickupLng,
                                                                 pickLat: pickupLat,

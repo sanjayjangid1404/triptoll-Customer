@@ -175,7 +175,7 @@ class _MyApp extends State<MyApp> {
       ),
       getPages: RouteHelper.routes,
       home: AnimatedSplashScreen(
-        duration: 3000,
+        duration: 1000,
         splash: AppImage.splashLogo,
         // nextScreen: Get.find<AuthController>().isLoggedIn() ? HomePage() : LoginView(),
         nextScreen: HomePage() ,

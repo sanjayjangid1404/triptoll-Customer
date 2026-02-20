@@ -68,6 +68,7 @@ dependencies:
   in_app_update: ^4.2.3
   cloud_firestore: ^6.1.1
   flutter_contacts: ^1.1.7
+  app_links: ^6.4.1
 
   google_maps_webservice :
 

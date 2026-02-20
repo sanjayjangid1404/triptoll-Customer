@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:triptoll/util/appContants.dart';
+import '../../util/app_fonts.dart';
 import '../order/order_details.dart';
 
 class OrderList extends StatefulWidget {
@@ -177,6 +179,7 @@ class _OrderListState extends State<OrderList> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: authController.bookingListResponse.value.orders!.length,
                 itemBuilder: (context, index) {
+                  final item = authController.bookingListResponse.value.orders![index];
                 return InkWell(
                   onTap: (){
                     Get.to(OrderDetails(bookingID: authController.bookingListResponse.value.orders![index].id.toString(),));
@@ -291,6 +294,70 @@ class _OrderListState extends State<OrderList> {
                               ),
                             ),
                           ),
+                        SizedBox(height: 10,),
+                        authController.bookingListResponse.value.orders![index].orderStatus == 'cancelled'  ||
+                            authController.bookingListResponse.value.orders![index].orderStatus == 'paid'
+                            ?
+                        SizedBox(
+                          width: Get.width,
+                          height: 35,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                            ),
+                            onPressed: () {
+                              Get.find<AuthController>().getBookingDetails(bookingID: item.id.toString());
+                              DateTime now = DateTime.now();
+                              DateTime updatedDateTime = now.add(const Duration(minutes: 30));
+                              String formattedTime =
+                                  '${updatedDateTime.hour.toString().padLeft(2, '0')}:${updatedDateTime.minute.toString().padLeft(2, '0')}';
+                              String onlyDate =
+                              DateFormat('yyyy-MM-dd').format(updatedDateTime);
+                              // authController.bookingMultipleNow(
+                              //     distance: item.pickup!.distanceToNext.toString(),
+                              //     expectedTime:item.pickup!.expectedTimeToNext.toString(),
+                              //     amount: item.amount.toString(),
+                              //     totalAmount: item.totalAmount.toString(),
+                              //     categoryId: item.categoryId.toString(),
+                              //     categoryName: "",
+                              //     scheduleTime: formattedTime.toString(),
+                              //     scheduleDate: onlyDate.toString(),
+                              //     senderNameText : authController.getUserName()!,
+                              //     senderPhone : authController.getUserPhone()!,
+                              //     discount: "0",
+                              //     discountPercentage: "0",
+                              //     dropAddress: item.dropoffs,
+                              //     dropAddressHeading: "",
+                              //     dropLat: lastStopLocation["lat"].toString(),
+                              //     dropLong: lastStopLocation["lng"].toString(),
+                              //     paymentType: item.paymentType.toString(),
+                              //     pickupAddress: item.pickup!.address.toString(),
+                              //     pickupHeading: "",
+                              //     pickupLat: item.pickup!.lat.toString(),
+                              //     pickupLong: item.pickup!.lng.toString(),
+                              //     rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
+                              //     receiverContactNumber: lastSendMobile,
+                              //     receiverName: lastSenderName,
+                              //     stopAddress: lastStopLocation["address"],
+                              //     stopCharge: "",
+                              //     totalDistance: calculateDistanceWithPickup(
+                              //         pickLat:widget.pickLat,
+                              //         pickLng:  widget.pickLng,
+                              //         stops:  widget.stopLocations
+                              //     ).toStringAsFixed(0),
+                              //     vehicleId: authController.vehicleData!.data![selectIndex].id??"",
+                              //     vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
+                              //     vehicleName: authController.vehicleData!.data![selectIndex].name??"",
+                              //     stopLocations: widget.stopLocations);
+                            },
+                            child: Text("Re Order",
+                                style:  TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: AppFonts.poppinsRegular,
+                                    fontWeight: FontWeight.w600)),
+                          ),
+                        ) :
+                        SizedBox.shrink(),
                       ],
                     ),
                   ),

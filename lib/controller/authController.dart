@@ -1535,6 +1535,38 @@ class AuthController extends GetxController implements GetxService
   }
 
 
+  Future<void>getBookingDetailsReorder({String? bookingID}) async {
+
+    update();
+    print(getUserDeviceID());
+
+    Response response = await authRepo.getBookingDetails(bookingID: bookingID,userID: getUserID());
+
+
+
+    print('::::::::::${response.body.toString()}');
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+
+      update();
+    }
+    else {
+
+
+      // dynamic data = jsonDecode(response.body);
+
+      ApiChecker.checkApi(response);
+
+
+
+
+    }
+
+    update();
+
+
+
+  }
 
   BookingDetailsResponse? detailsResponse = BookingDetailsResponse();
   Future<void>checkBookingComplete({String? bookingID})
