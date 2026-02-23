@@ -65,7 +65,9 @@ class ApiClient extends GetxService {
     try {
       if(Foundation.kDebugMode) {
         print('====> API Call: ${appBaseUrl!+uri}\nHeader: $_mainHeaders');
-        print('====> API Body: ${jsonEncode(body)}');
+        debugPrint('====> API Body: ${jsonEncode(body)} end data',
+          wrapWidth: 1024,
+        );
       }
       Http.Response _response = await Http.post(
         Uri.parse(appBaseUrl!+uri),

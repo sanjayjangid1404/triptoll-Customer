@@ -902,7 +902,7 @@ class _HomePageState extends State<HomePage> {
                                     select = 0;
                                   });
 
-                                  DateTime? selectedDate;
+                                  DateTime? selectedDate = DateTime.now();
                                   TimeOfDay? selectedTime;
 
                                   showModalBottomSheet(

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -5,7 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
-
+import 'package:http/http.dart' as http;
+import '../../util/appColors.dart';
 import '../../util/app_fonts.dart';
 import 'booking_info.dart';
 
@@ -76,38 +78,49 @@ class _LocationSelectionScreenState
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    if(widget.lat != null && widget.long != null) {
-
-       selectedLocation = LatLng(widget.lat!, widget.long!);
-    }
-    getUserCurrentLocation();
-    updateMarker();
-    getAddressFromLatLng();
-  }
-
   Future<void> getAddressFromLatLng() async {
+    final lat = selectedLocation.latitude;
+    final lng = selectedLocation.longitude;
+
+    final apiKey = "AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk";
+
+    final url =
+        "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey";
+
     try {
-      List<Placemark> placemarks =
-      await placemarkFromCoordinates(
-        selectedLocation.latitude,
-        selectedLocation.longitude,
-      );
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
 
-      Placemark place = placemarks.first;
+      if (data['status'] == 'OK') {
+        String address = data['results'][0]['formatted_address'];
 
-      setState(() {
-        currentAddressWhatsapp =
-        "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
-      });
+        setState(() {
+          currentAddressWhatsapp = address;
+        });
+      } else {
+        setState(() {
+          currentAddressWhatsapp = "Unable to fetch address";
+        });
+      }
     } catch (e) {
       setState(() {
         currentAddressWhatsapp = "Unable to fetch address";
       });
     }
   }
+  @override
+  void initState() {
+    super.initState();
+    if(widget.lat != null && widget.long != null) {
+
+       selectedLocation = LatLng(widget.lat!, widget.long!);
+       _center = selectedLocation;
+    }
+    getUserCurrentLocation();
+    updateMarker();
+    getAddressFromLatLng();
+  }
+
 
   void updateMarker() {
     setState(() {
@@ -129,6 +142,8 @@ class _LocationSelectionScreenState
       ),
     );
   }
+  bool _isCameraMoving = false;
+  late LatLng _center;
 
   @override
   Widget build(BuildContext context) {
@@ -140,17 +155,43 @@ class _LocationSelectionScreenState
           GoogleMap(
             initialCameraPosition: CameraPosition(
               target: selectedLocation,
-              zoom: 18, // 🔥 More zoom
+              zoom: 18,
             ),
+
             markers: currentMarker != null ? {currentMarker!} : {},
+
             onMapCreated: (controller) {
               _mapController = controller;
             },
-            onTap: (latLng) {
+
+            // ✅ TAP WORKING
+            onTap: (latLng) async {
               selectedLocation = latLng;
+              _center = latLng;
+
               updateMarker();
-              getAddressFromLatLng(); // 🔥 address update
+              await _mapController!.animateCamera(
+                CameraUpdate.newLatLng(latLng),
+              );
+
+              getAddressFromLatLng();
             },
+
+            // ✅ DRAG WORKING
+            onCameraMove: (position) {
+              _isCameraMoving = true;
+              _center = position.target;
+            },
+
+            onCameraIdle: () {
+              if (_isCameraMoving) {
+                selectedLocation = _center!;
+                updateMarker();
+                getAddressFromLatLng();
+                _isCameraMoving = false;
+              }
+            },
+
             myLocationEnabled: true,
           ),
 
@@ -223,7 +264,7 @@ class _LocationSelectionScreenState
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: AppColors.secondaryGradient,
                       ),
                       onPressed: () {
                         DateTime now = DateTime.now();

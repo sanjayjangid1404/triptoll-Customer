@@ -336,7 +336,11 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
 
   Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
 
-    // 🔹 LAT LNG CASE → FAKE SUGGESTION
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    String city = await _getCityFromLatLng(
+        position.latitude, position.longitude);
     if (_isLatLng(input)) {
       return [
         {
@@ -350,8 +354,9 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
     // 🔹 NORMAL GOOGLE AUTOCOMPLETE
     final url =
         "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-        "?input=$input&key=$googleApiKey&components=country:in";
+        "?input=${Uri.encodeComponent('$input $city')}&location=${position.latitude},${position.longitude}&radius=50000&key=$googleApiKey&components=country:in";
 
+    print('data search ${url.toString()}');
     final response = await http.get(Uri.parse(url));
     final data = json.decode(response.body);
 

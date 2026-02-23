@@ -19,6 +19,7 @@ import '../model/check_ticket_limit_model.dart';
 import '../model/city_responce.dart';
 import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
+import '../model/get_reorder_model.dart';
 import '../model/my_order_model.dart';
 import '../model/notification_model.dart';
 import '../model/subCategoryVehicle.dart';
@@ -1534,11 +1535,9 @@ class AuthController extends GetxController implements GetxService
 
   }
 
-
+  Rx<GetReorderDataModel> getReorderDataModel = GetReorderDataModel().obs;
   Future<void>getBookingDetailsReorder({String? bookingID}) async {
 
-    update();
-    print(getUserDeviceID());
 
     Response response = await authRepo.getBookingDetails(bookingID: bookingID,userID: getUserID());
 
@@ -1547,25 +1546,12 @@ class AuthController extends GetxController implements GetxService
     print('::::::::::${response.body.toString()}');
     if(response.statusCode==200 || response.statusCode ==400)
     {
-
-      update();
+      getReorderDataModel.value = GetReorderDataModel.fromJson(response.body[0]);
     }
     else {
-
-
-      // dynamic data = jsonDecode(response.body);
-
+      getReorderDataModel.value = GetReorderDataModel.fromJson(response.body[0]);
       ApiChecker.checkApi(response);
-
-
-
-
     }
-
-    update();
-
-
-
   }
 
   BookingDetailsResponse? detailsResponse = BookingDetailsResponse();

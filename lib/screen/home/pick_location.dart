@@ -70,7 +70,12 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
 
   Future<List<Map<String, dynamic>>> _getPlaceSuggestions(String input) async {
 
-    // 🔹 LAT LNG CASE → FAKE SUGGESTION
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    String city = await _getCityFromLatLng(
+        position.latitude, position.longitude);
     if (_isLatLng(input)) {
       return [
         {
@@ -83,7 +88,7 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
 
     final url =
         "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-        "?input=$input&key=$googleApiKey&components=country:in";
+        "?input=${Uri.encodeComponent('$input $city')}&location=${position.latitude},${position.longitude}&radius=50000&key=$googleApiKey&components=country:in";
 
     final response = await http.get(Uri.parse(url));
     final data = json.decode(response.body);
@@ -219,19 +224,19 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
 
       isInitialLoad = true;
     print('widget.isShare1 ${widget.isShare}');
-    if(widget.isShare == false) {
+    // if(widget.isShare == false) {
       _setCurrentLocation();
       log('widget.isShare1 ${widget.isShare}');
-    }
-    if(widget.isShare == true){
-      pickupLatShare = widget.pickLat ?? 0;
-      pickupLngShare = widget.pickLng ?? 0;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _updateMapLocation(pickupLatShare, pickupLngShare);
-      });
+    // }
+    // if(widget.isShare == true){
+    //   pickupLatShare = widget.pickLat ?? 0;
+    //   pickupLngShare = widget.pickLng ?? 0;
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _updateMapLocation(pickupLatShare, pickupLngShare);
+    //   });
 
-      log('widget.isShare212 ${widget.isShare}');
-    }
+      // log('widget.isShare212 ${widget.isShare}');
+    // }
     setState(() {
 
     });
@@ -500,17 +505,18 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                      Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) =>
-                          BookingInfo(scheduleDate: widget.date,
+                          BookingInfo(
+                              scheduleDate: widget.date,
                               scheduleTime: widget.time,
-                              pickAddress: pickupAddress,
-                              pickLat: pickupLat,
+                              pickAddress: widget.pickAddress.toString(),
+                              pickLat: widget.pickLat!,
+                              pickLng: widget.pickLng!,
                               houseNumber: widget.houseNumber.toString(),
                               street: widget.street.toString(),
                               city: widget.city.toString(),
-                              pickLng: pickupLng,
-                              dropAddress: widget.pickAddress!,
-                              dropLat: widget.pickLat!,
-                              dropLng: widget.pickLng!)),
+                              dropAddress: pickupAddress,
+                              dropLat: pickupLat,
+                              dropLng: pickupLng)),
                     );
                   }
                   else{
