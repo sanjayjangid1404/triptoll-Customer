@@ -1,14 +1,11 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui' as ui;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,7 +15,6 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:triptoll/model/booking_details_response.dart';
 import 'package:triptoll/screen/home/homeview.dart';
 import 'package:triptoll/util/appColors.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:triptoll/util/appImage.dart';
 import '../../controller/authController.dart';
@@ -60,7 +56,226 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
   BitmapDescriptor? _driverIcon;
   int call = 0;
 
+  void showWalletPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
 
+              /// Main Container
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF4F6F8),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF1E5BFF),
+                    width: 2,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+
+                            /// Wallet Icon
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF1E5BFF),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.account_balance_wallet_outlined,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+
+                            /// Title + Subtitle
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text(
+                                    "WALLET",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Pay with wallet & get 10%\nOFF every payment",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF1E5BFF),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Icon(Icons.info_outline,
+                                size: 18, color: Colors.black54),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "Discount applied automatically at checkout. ",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+                        (double.parse(widget.bookingID.totalAmount.toString()) <= totalAmount && totalAmount != 0.00) ?
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1E5BFF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              isChecked = true;
+                              originalAmount = double.parse(widget.bookingID.totalAmount.toString());
+                              discountedAmount = isChecked
+                                  ? originalAmount - (originalAmount * 0.10)
+                                  : originalAmount;
+                              discountedPercentage = (originalAmount * 10) / 100;
+                              print('discount percantage ${discountedPercentage.toString()}');
+                              setState(() {
+
+                              });
+                            },
+                            child: const Text(
+                              "Pay With Wallet",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ) :
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1E5BFF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                            ),
+                            onPressed: () {},
+                            child: const Text(
+                              "Recharge Wallet",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 14),
+                      ],
+                    ),
+
+                    /// Best Value Badge
+                    Positioned(
+                      top: -6,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFF8A00),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(18),
+                            bottomLeft: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Best Value",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -15,
+                right: -15,
+                child: GestureDetector(
+                  onTap: () {
+                   Get.back();
+                  },
+                  child: Container(
+                    height: 32,
+                    width: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF1E5BFF),
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 18,
+                      color: Color(0xFF1E5BFF),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
   Future<void> _loadCustomMarker() async {
     _driverIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(20, 20)), // Adjust size as needed
@@ -74,7 +289,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Get.find<AuthController>().getWalletHistory();
-
+      showWalletPopup(context);
       print(jsonEncode(widget.bookingID!));
 
       print("${widget.driverInitialLocation}");
@@ -183,6 +398,9 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
   }
   bool isChecked = false;
+  double discountedAmount = 0.0;
+  double discountedPercentage = 0.0;
+  double originalAmount  = 0.0;
   void isCompleted()async{
 
    // isComplete = await Get.find<AuthController>().checkBookingComplete(bookingID: widget.bookingID.id.toString());
@@ -436,10 +654,9 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
       ),
     );
   }
-
+  double totalAmount = 0;
   @override
   Widget build(BuildContext context) {
-
     return PopScope(
       canPop: false, // Disables default back navigation
       onPopInvoked: (bool didPop) async {
@@ -455,9 +672,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
       child: GetBuilder<AuthController>(
         builder: (authController) {
-
           widget.bookingID = authController.detailsResponse??widget.bookingID;
-          double totalAmount = 0;
           if (authController.walletResponseList.isNotEmpty) {
             totalAmount = authController.walletResponseList
                 .map((e) {
@@ -472,7 +687,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
             // _initializeLocations();
             // _startTracking();
           }
-
+          originalAmount = double.parse(widget.bookingID.totalAmount.toString());
 
           return Scaffold(
               appBar: AppBar(
@@ -733,6 +948,12 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       onChanged: (value) {
                         setState(() {
                           isChecked = value ?? false;
+                          originalAmount = double.parse(widget.bookingID.totalAmount.toString());
+                          discountedAmount = isChecked
+                              ? originalAmount - (originalAmount * 0.10)
+                              : originalAmount;
+                          discountedPercentage = (originalAmount * 10) / 100;
+                          print('discount percantage ${discountedPercentage.toString()}');
                         });
                       },
                     ),
@@ -763,17 +984,70 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       });
                       isChecked == false ?
                       createRazorpayOrderId(amount: (double.parse(widget.bookingID.totalAmount.toString()) * 100).round()) :
-                      Get.find<AuthController>().orderPaymentWithWallet(widget.bookingID!.id.toString(),widget.bookingID!.driverId.toString(),randomNumber.toString(),"success",context,customOrderId);
+                      Get.find<AuthController>().orderPaymentWithWallet(
+                          widget.bookingID!.id.toString(),
+                          widget.bookingID!.driverId.toString(),
+                          randomNumber.toString(),""
+                          "success",
+                          context,
+                          customOrderId,
+                          discountedPercentage.toString(),
+                          widget.bookingID.totalAmount.toString(),
+                          widget.bookingID.amount.toString()
+                          );
                       },
-                    child: Container(height: 45,
+                    child: Container(
+                      height: 55,
                       width: double.infinity,
                       alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
+                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: AppColors.secondaryGradient
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.secondaryGradient,
                       ),
-                      child: Text("${'Pay'.tr} ${AppContants.rupessSystem} ${widget.bookingID.totalAmount}",style: TextStyle(fontSize: 16,color: Colors.white),),
+                      child: AnimatedSwitcher(
+                        duration: Duration(milliseconds: 400),
+                        transitionBuilder: (child, animation) {
+                          return ScaleTransition(scale: animation, child: child);
+                        },
+                        child: isChecked
+                            ? Row(
+                          key: ValueKey("discounted"),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${AppContants.rupessSystem} ${originalAmount.toStringAsFixed(2)}",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              "${AppContants.rupessSystem} ${discountedAmount.toStringAsFixed(2)}",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              "(10% OFF)",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.yellow,
+                              ),
+                            ),
+                          ],
+                        )
+                            : Text(
+                          "${'Pay'.tr} ${AppContants.rupessSystem} ${originalAmount.toStringAsFixed(2)}",
+                          key: ValueKey("original"),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
                 ],

@@ -1077,7 +1077,7 @@ class AuthController extends GetxController implements GetxService
 
 
   }
-  Future<void>orderPaymentWithWallet(String id,String driverID,String key,String status,BuildContext context,String orderID)
+  Future<void>orderPaymentWithWallet(String id,String driverID,String key,String status,BuildContext context,String orderID,String discountAmount,String totalAmount,String amount)
   async {
 
     isVehicle = true;
@@ -1088,7 +1088,7 @@ class AuthController extends GetxController implements GetxService
 
 
 
-    Response response = await authRepo.orderPaymentWallet(id: id,status: status,driverID: driverID,key: key,orderID: orderID);
+    Response response = await authRepo.orderPaymentWallet(id: id,status: status,driverID: driverID,key: key,orderID: orderID,discountAmount: discountAmount,amount: amount,totalAmount: totalAmount);
 
   //  LoginResponse? loginResponse;
 

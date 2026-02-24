@@ -254,48 +254,18 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     return double.parse(totalDistance.toStringAsFixed(2)); // Round 2 decimals
   }
 
-  // Map<String, double> calculateFare({
-  //   required double distanceInKm,
-  //   required Data vehicleData,
-  // }) {
-  //   final double baseFare = double.parse(vehicleData.baseFare.toString());
-  //   final double baseFareUpto = double.parse(vehicleData.baseFareUpto.toString());
-  //
-  //   final rates = [
-  //     double.parse(vehicleData.rate1PerKm.toString()),
-  //     double.parse(vehicleData.rate2PerKm.toString()),
-  //     double.parse(vehicleData.rate3PerKm.toString()),
-  //     double.parse(vehicleData.rate4PerKm.toString()),
-  //   ];
-  //
-  //   if (distanceInKm <= baseFareUpto) {
-  //     return {
-  //       'totalFare': baseFare,
-  //       'randomRate': 0, // no random rate used
-  //     };
-  //   }
-  //
-  //
-  //
-  //   final double extraDistance = distanceInKm - baseFareUpto;
-  //   final double randomRate = rates[Random().nextInt(rates.length)];
-  //   final double extraFare = extraDistance * randomRate;
-  //    totalFare = baseFare + extraFare;
-  //
-  //    print(totalFare);
-  //
-  //   return {
-  //     'totalFare': totalFare,
-  //     'randomRate': randomRate,
-  //   };
-  // }
   Map<String, double> calculateFare({
     required double distanceInKm,
     required Data vehicleData,
+    required int stopCount, // 👈 add this
   }) {
     final double baseFare = double.parse(vehicleData.baseFare.toString());
-    final double baseFareUpto = double.parse(vehicleData.baseFareUpto.toString());
-    final double extraPrice = double.parse(vehicleData.extraPrice.toString());
+    final double baseFareUpto =
+    double.parse(vehicleData.baseFareUpto.toString());
+    final double extraPrice =
+    double.parse(vehicleData.extraPrice.toString());
+    final double perLocationCharge =
+    double.parse(vehicleData.perLocationCharge.toString());
 
     final rates = [
       double.parse(vehicleData.rate1PerKm.toString()),
@@ -304,27 +274,35 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       double.parse(vehicleData.rate4PerKm.toString()),
     ];
 
+    double totalFare = 0;
+    double randomRate = 0;
+
     if (distanceInKm <= baseFareUpto) {
       final double extraPercent = (baseFare * extraPrice) / 100;
-      final double finalFare = baseFare + extraPercent;
+      totalFare = baseFare + extraPercent;
+    } else {
+      final double extraDistance = distanceInKm - baseFareUpto;
+      randomRate = rates[Random().nextInt(rates.length)];
+      final double extraFare = extraDistance * randomRate;
 
-      return {
-        'totalFare': finalFare,
-        'randomRate': 0,
-      };
+      totalFare = baseFare + extraFare;
+
+      // add percentage
+      final double extraPercent = (totalFare * extraPrice) / 100;
+      totalFare += extraPercent;
     }
 
-    final double extraDistance = distanceInKm - baseFareUpto;
-    final double randomRate = rates[Random().nextInt(rates.length)];
-    final double extraFare = extraDistance * randomRate;
+    // ✅ PER LOCATION CHARGE LOGIC
+    if (stopCount > 2) {
+      int extraStops = stopCount - 2;
+      double locationCharge = extraStops * perLocationCharge;
+      totalFare += locationCharge;
 
-    double totalFare = baseFare + extraFare;
+      print("Extra Stops: $extraStops");
+      print("Location Charge Added: $locationCharge");
+    }
 
-    // add percentage
-    final double extraPercent = (totalFare * extraPrice) / 100;
-    totalFare += extraPercent;
-
-    print(totalFare);
+    print("Final Fare: $totalFare");
 
     return {
       'totalFare': totalFare,
@@ -345,6 +323,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       return calculateFare(
         distanceInKm: distance,
         vehicleData: vehicle,
+        stopCount: widget.stopLocations.length,
       );
     }).toList();
   }

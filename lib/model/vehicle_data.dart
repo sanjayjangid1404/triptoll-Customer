@@ -69,7 +69,8 @@ class Data {
       dynamic loadUnit, 
       dynamic baseFare, 
       dynamic baseFareUpto, 
-      dynamic rate1PerKm, 
+      dynamic perLocationCharge,
+      dynamic rate1PerKm,
       dynamic rate2PerKm, 
       dynamic rate3PerKm, 
       dynamic rate4PerKm, 
@@ -80,6 +81,7 @@ class Data {
     _maxLoad = maxLoad;
     _loadUnit = loadUnit;
     _baseFare = baseFare;
+    _perLocationCharge = perLocationCharge;
     _baseFareUpto = baseFareUpto;
     _rate1PerKm = rate1PerKm;
     _rate2PerKm = rate2PerKm;
@@ -95,6 +97,7 @@ class Data {
     _maxLoad = json['max_load'];
     _loadUnit = json['load_unit'];
     _baseFare = json['base_fare'];
+    _perLocationCharge = json['per_location_charge'];
     _baseFareUpto = json['base_fare_upto'];
     _rate1PerKm = json['rate1_per_km'];
     _rate2PerKm = json['rate2_per_km'];
@@ -114,6 +117,7 @@ class Data {
   dynamic _rate3PerKm;
   dynamic _rate4PerKm;
   dynamic _extraPrice;
+  dynamic _perLocationCharge;
   dynamic _fileName;
 Data copyWith({  dynamic id,
   dynamic name,
@@ -121,6 +125,7 @@ Data copyWith({  dynamic id,
   dynamic loadUnit,
   dynamic baseFare,
   dynamic baseFareUpto,
+  dynamic perLocationCharge,
   dynamic rate1PerKm,
   dynamic rate2PerKm,
   dynamic rate3PerKm,
@@ -138,6 +143,7 @@ Data copyWith({  dynamic id,
   rate3PerKm: rate3PerKm ?? _rate3PerKm,
   rate4PerKm: rate4PerKm ?? _rate4PerKm,
   extraPrice: extraPrice ?? _extraPrice,
+  perLocationCharge: perLocationCharge ?? _perLocationCharge,
   fileName: fileName ?? _fileName,
 );
   dynamic get id => _id;
@@ -152,6 +158,7 @@ Data copyWith({  dynamic id,
   dynamic get rate4PerKm => _rate4PerKm;
   dynamic get extraPrice => _extraPrice;
   dynamic get fileName => _fileName;
+  dynamic get perLocationCharge => _perLocationCharge;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -161,6 +168,7 @@ Data copyWith({  dynamic id,
     map['load_unit'] = _loadUnit;
     map['base_fare'] = _baseFare;
     map['base_fare_upto'] = _baseFareUpto;
+    map['per_location_charge'] = _perLocationCharge;
     map['rate1_per_km'] = _rate1PerKm;
     map['rate2_per_km'] = _rate2PerKm;
     map['rate3_per_km'] = _rate3PerKm;

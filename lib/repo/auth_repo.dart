@@ -168,7 +168,7 @@ class AuthRepo{
           "order_id":orderID,
     });
   }
-  Future<Response> orderPaymentWallet({String? id,String? driverID,String? key,String? status,String? orderID}) async {
+  Future<Response> orderPaymentWallet({String? id,String? driverID,String? key,String? status,String? orderID,String? discountAmount,String? totalAmount,String? amount}) async {
     return await apiClient.postData(
         AppContants.orderPaymentURL,{
           "booking_id":id,
@@ -177,6 +177,9 @@ class AuthRepo{
           "payment_status":status,
           "payment_type":'wallet',
           "order_id":orderID,
+          "discount_amount":discountAmount,
+          "total_amount":totalAmount,
+          "amount":amount,
     });
   }
   Future<Response> addWalletPayment({String? customerID,String? amount,String? trnId}) async {
