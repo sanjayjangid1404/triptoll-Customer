@@ -19,6 +19,7 @@ import '../model/check_ticket_limit_model.dart';
 import '../model/city_responce.dart';
 import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
+import '../model/get_reorder_model.dart';
 import '../model/my_order_model.dart';
 import '../model/notification_model.dart';
 import '../model/subCategoryVehicle.dart';
@@ -153,7 +154,7 @@ class AuthController extends GetxController implements GetxService
 
   @override
   void onInit() {
-  //  startBookingRefresh();
+    //  startBookingRefresh();
     super.onInit();
   }
 
@@ -179,7 +180,7 @@ class AuthController extends GetxController implements GetxService
 
   @override
   void onClose() {
-   // stopBookingRefresh(); // Cancel timer when controller is disposed
+    // stopBookingRefresh(); // Cancel timer when controller is disposed
     super.onClose();
   }
   updateGetIndex(int index){
@@ -216,7 +217,7 @@ class AuthController extends GetxController implements GetxService
     Response response = await authRepo.login(phone: email,password:
     password,token: token);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode== 200 || response.statusCode ==400)
     {
@@ -290,7 +291,7 @@ class AuthController extends GetxController implements GetxService
     Response response = await authRepo.loginVerifyOtp(phone: phoneNumber,otp:
     otp,token: token);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode== 200 || response.statusCode ==400)
     {
@@ -356,7 +357,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.getCategoryTYPE();
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -479,7 +480,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.bookNow(distance: distance,expectedTime: expectedTime,amount: amount, categoryId: categoryId, categoryName: categoryName, cusId: getUserID()??"", discount: discount, discountPercentage: discountPercentage, dropAddress: dropAddress, dropAddressHeading: dropAddressHeading, dropLat: dropLat, dropLong: dropLong, paymentType: paymentType, pickupAddress: pickupAddress, pickupHeading: pickupHeading, pickupLat: pickupLat, pickupLong: pickupLong, rate: rate, receiverContactNumber: receiverContactNumber, receiverName: receiverName, senderContactNumber: getUserPhone()??"", senderName: getUserName()??"", stopAddress: stopAddress, stopCharge: stopCharge, totalAmount: totalAmount, totalDistance: totalDistance, vehicleId: vehicleId, vehicleImg: vehicleImg, vehicleName: vehicleName);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -553,6 +554,7 @@ class AuthController extends GetxController implements GetxService
     String? scheduleTime,
     String? senderPhone,
     String? senderNameText,
+    String? pickupOtp,
     required List<Map<String, dynamic>> stopLocations,
   })
   async {
@@ -571,6 +573,7 @@ class AuthController extends GetxController implements GetxService
         distance: distance,
         expectedTime: expectedTime,
         amount: amount,
+        pickupOtp: pickupOtp,
         categoryId: categoryId,
         categoryName: categoryName,
         cusId: getUserID()??"",
@@ -601,7 +604,7 @@ class AuthController extends GetxController implements GetxService
         senderNameText:senderNameText,senderPhone : senderPhone
     );
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -622,7 +625,7 @@ class AuthController extends GetxController implements GetxService
       // सिर्फ activeBookingID वाली call ही चलानी है
       getBookingDriver(bookingID: activeBookingID);
 
-
+      latestBooking(status: "all", limit: "1", offset: "10");
 
       update();
     }
@@ -684,7 +687,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.getCategorySub(id);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -726,7 +729,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.notifyDriver(id);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -783,7 +786,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.createCustomer(body);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -860,7 +863,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.createCustomerNew(body);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -923,7 +926,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.updatePassword(body);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -966,7 +969,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.forgetPassword(body);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     print(response.body);
 
@@ -1039,7 +1042,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.orderPayment(id: id,status: status,driverID: driverID,key: key,orderID: orderID);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -1076,7 +1079,8 @@ class AuthController extends GetxController implements GetxService
 
 
   }
-  Future<void>orderPaymentWithWallet(String id,String driverID,String key,String status,BuildContext context,String orderID)
+  bool isSuccess = false;
+  Future<void>orderPaymentWithWallet(String id,String driverID,String key,String status,BuildContext context,String orderID,String discountAmount,String totalAmount,String amount)
   async {
 
     isVehicle = true;
@@ -1087,29 +1091,25 @@ class AuthController extends GetxController implements GetxService
 
 
 
-    Response response = await authRepo.orderPaymentWallet(id: id,status: status,driverID: driverID,key: key,orderID: orderID);
+    Response response = await authRepo.orderPaymentWallet(id: id,status: status,driverID: driverID,key: key,orderID: orderID,discountAmount: discountAmount,amount: amount,totalAmount: totalAmount);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
-
+      isSuccess = true;
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
           text: 'Payment Completed Successfully!'.tr,
           onConfirmBtnTap: (){
-            Get.offAll(HomePage());
+            Get.back();
           }
       );
-
-      // subCategoryVehicle = SubCategoryVehicle.fromJson(response.body);
-      //
-      // isVehicle = false;
       update();
     }
     else {
-
+      isSuccess = false;
 
       // dynamic data = jsonDecode(response.body);
 
@@ -1139,7 +1139,7 @@ class AuthController extends GetxController implements GetxService
 
     Response response = await authRepo.addWalletPayment(customerID: getUserID(),amount: amount,trnId: transitionId);
 
-  //  LoginResponse? loginResponse;
+    //  LoginResponse? loginResponse;
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
@@ -1237,7 +1237,7 @@ class AuthController extends GetxController implements GetxService
 
 
 
-   // vehicleData = null;
+    // vehicleData = null;
     Response response = await authRepo.getAllBooking(status: status,limit: limit,offset: offset,userID: getUserID());
 
     if(response.statusCode==200 || response.statusCode ==400)
@@ -1247,7 +1247,7 @@ class AuthController extends GetxController implements GetxService
       bookingListResponse.value = MyOrdersModel.fromJson(response.body);
 
       print('adfdsf${ response.body.toString()}');
-     // getAllBookingLoading = false;
+      // getAllBookingLoading = false;
       update();
     }
     else {
@@ -1313,7 +1313,7 @@ class AuthController extends GetxController implements GetxService
 
     }
 
-   // vehicleData = null;
+    // vehicleData = null;
 
 
 
@@ -1326,7 +1326,7 @@ class AuthController extends GetxController implements GetxService
     update();
     print(getUserDeviceID());
 
-   // vehicleData = null;
+    // vehicleData = null;
     Response response = await authRepo.checkPayment(bookingID: status);
 
 
@@ -1335,7 +1335,7 @@ class AuthController extends GetxController implements GetxService
     if(response.statusCode==200 || response.statusCode ==400)
     {
 
-     // getAllBookingLoading = false;
+      // getAllBookingLoading = false;
       update();
     }
     else {
@@ -1364,7 +1364,7 @@ class AuthController extends GetxController implements GetxService
     update();
     print(getUserDeviceID());
 
-   // vehicleData = null;
+    // vehicleData = null;
     Response response = await authRepo.cancelOrder(bookingID: bookingID,userID: getUserDeviceID(),comment: comment,reason: reason);
 
 
@@ -1373,7 +1373,7 @@ class AuthController extends GetxController implements GetxService
     if(response.statusCode==200 || response.statusCode ==400)
     {
 
-     // getAllBookingLoading = false;
+      // getAllBookingLoading = false;
 
       if(isOrder!){
         getAllBooking(status: "all",limit: "100");
@@ -1463,7 +1463,7 @@ class AuthController extends GetxController implements GetxService
 
 
 
-   // vehicleData = null;
+    // vehicleData = null;
     Response response = await authRepo.getBookingDetails(bookingID: bookingID,userID: getUserID());
 
 
@@ -1512,7 +1512,7 @@ class AuthController extends GetxController implements GetxService
       }
 
 
-     // getAllBookingLoading = false;
+      // getAllBookingLoading = false;
       update();
     }
     else {
@@ -1534,7 +1534,24 @@ class AuthController extends GetxController implements GetxService
 
   }
 
+  Rx<GetReorderDataModel> getReorderDataModel = GetReorderDataModel().obs;
+  Future<void>getBookingDetailsReorder({String? bookingID}) async {
 
+
+    Response response = await authRepo.getBookingDetails(bookingID: bookingID,userID: getUserID());
+
+
+
+    print('::::::::::${response.body.toString()}');
+    if(response.statusCode==200 || response.statusCode ==400)
+    {
+      getReorderDataModel.value = GetReorderDataModel.fromJson(response.body[0]);
+    }
+    else {
+      getReorderDataModel.value = GetReorderDataModel.fromJson(response.body[0]);
+      ApiChecker.checkApi(response);
+    }
+  }
 
   BookingDetailsResponse? detailsResponse = BookingDetailsResponse();
   Future<void>checkBookingComplete({String? bookingID})
@@ -1806,7 +1823,7 @@ class AuthController extends GetxController implements GetxService
   {
     return authRepo.sharedPreferences.getString(AppContants.userDeviceID);
   }
- String? getCityID()
+  String? getCityID()
   {
     return authRepo.sharedPreferences.getString(AppContants.cityID);
   }

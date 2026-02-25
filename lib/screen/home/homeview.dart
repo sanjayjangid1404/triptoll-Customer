@@ -13,11 +13,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/screen/home/schedule_delivery_pickup.dart';
+// import 'package:triptoll/screen/home/whatsapp_sharelocation.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart' as slider;
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/appImage.dart';
+// import 'package:app_links/app_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widget/nav_bar.dart';
@@ -37,6 +39,9 @@ class _HomePageState extends State<HomePage> {
   TextEditingController houseNoCt = TextEditingController();
   TextEditingController senderName = TextEditingController();
   TextEditingController sendMobile = TextEditingController();
+
+  // late final AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
   String currentAddress = "";
   String currentAddress1 = "";
   String currentAddress2 = "";
@@ -45,6 +50,45 @@ class _HomePageState extends State<HomePage> {
   double? pickupLat;
   double? pickupLng;
   int activeIndex = 0;
+
+
+  // void initDeepLinks() async {
+  //   _appLinks = AppLinks();
+  //   final Uri? initialUri = await _appLinks.getInitialLink();
+  //   if (initialUri != null) {
+  //     handleUri(initialUri);
+  //   }
+  //   _linkSubscription = _appLinks.uriLinkStream.listen((Uri uri) {
+  //     handleUri(uri);
+  //   });
+  // }
+
+  // void handleUri(Uri uri) {
+  //
+  //   print("Full URI: $uri");
+  //
+  //   double? latitude;
+  //   double? longitude;
+  //
+  //   if (uri.scheme == 'geo') {
+  //     final coords = uri.path.split(',');
+  //     latitude = double.tryParse(coords[0]);
+  //     longitude = double.tryParse(coords[1]);
+  //   }
+  //
+  //   else if (uri.queryParameters.containsKey('q')) {
+  //     final coords = uri.queryParameters['q']!.split(',');
+  //     latitude = double.tryParse(coords[0]);
+  //     longitude = double.tryParse(coords[1]);
+  //   }
+  //
+  //   print("Latitude: $latitude");
+  //   print("Longitude: $longitude");
+  //
+  //   if (latitude != null && longitude != null) {
+  //     Get.to(()=> LocationSelectionScreen(lat: latitude,long: longitude,));
+  //   }
+  // }
 
   Future<void> logUpdateError(String message) async {
     try {
@@ -87,7 +131,7 @@ class _HomePageState extends State<HomePage> {
   AuthController authController = Get.find<AuthController>();
   LatLng? currentLocation;
   GoogleMapController? _mapController;
-   Set<Marker> markers = {};
+  Set<Marker> markers = {};
 
 
   // 🔸 Jaipur fallback location
@@ -177,10 +221,103 @@ class _HomePageState extends State<HomePage> {
     await _getAddressFromLatLng(pickupLat!, pickupLng! );
   }
   AppUpdateInfo? _updateInfo;
+  void showCancelDialog(BuildContext context, String bookingId) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(height: 5),
+
+                Text(
+                  'Do you really want to cancel this order?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+
+                SizedBox(height: 24),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'No',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.find<AuthController>().cancelOrder(
+                            bookingID: bookingId,
+                            reason: "cancel by customer",
+                            comment: "cancelled",
+                            isOrder: true,
+                          );
+                          Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text('Yes, Cancel',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500
+                          ),),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   @override
   void initState() {
     super.initState();
-
+    // initDeepLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForUpdate();
       _setCurrentLocation();
@@ -211,7 +348,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    stopBookingRefresh(); // Stop when widget is disposed
+    stopBookingRefresh();
+    _linkSubscription?.cancel();
     super.dispose();
   }
 
@@ -336,275 +474,275 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
       builder: (auhController) =>
-       Scaffold(
-        key: _scaffoldKey,
-        backgroundColor:Colors.white,
-        extendBodyBehindAppBar: true,
+          Scaffold(
+            key: _scaffoldKey,
+            backgroundColor:Colors.white,
+            extendBodyBehindAppBar: true,
 
-        appBar: AppBar(
-            // backgroundColor: Colors.white.withOpacity(0.4),
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: false,
-            // actions: [
-            //   Padding(
-            //     padding: const EdgeInsets.all(2.0),
-            //     child: Image.asset(AppImage.splashLogo),
-            //   ),
-            //
-            //   SizedBox(width: 10,)
-            // ],
-            leading: IconButton(onPressed: (){
+            appBar: AppBar(
+              // backgroundColor: Colors.white.withOpacity(0.4),
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: false,
+              // actions: [
+              //   Padding(
+              //     padding: const EdgeInsets.all(2.0),
+              //     child: Image.asset(AppImage.splashLogo),
+              //   ),
+              //
+              //   SizedBox(width: 10,)
+              // ],
+              leading: IconButton(onPressed: (){
 
-              _scaffoldKey.currentState?.openDrawer();
-            },
-                icon: CircleAvatar(
-                    backgroundColor: AppColors.primaryGradient,
-                    child: ImageIcon(AssetImage(AppImage.menuImage,),color: Colors.white,))),
-            title:Padding(
-              padding: const EdgeInsets.only(left: 0.0,right: 8,top: 0),
-              child: GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Pick Location",isShare: false,)),
-                  );
+                _scaffoldKey.currentState?.openDrawer();
+              },
+                  icon: CircleAvatar(
+                      backgroundColor: AppColors.primaryGradient,
+                      child: ImageIcon(AssetImage(AppImage.menuImage,),color: Colors.white,))),
+              title:Padding(
+                padding: const EdgeInsets.only(left: 0.0,right: 8,top: 0),
+                child: GestureDetector(
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,title: "Pick Location",isShare: false,)),
+                    );
 
-                  if (result != null) {
+                    if (result != null) {
 
 
-                    print("Selected Lat: ${result['lat']}");
-                    print("Selected Lng: ${result['lng']}");
-                    print("Selected Address: ${result['address']}");
+                      print("Selected Lat: ${result['lat']}");
+                      print("Selected Lng: ${result['lng']}");
+                      print("Selected Address: ${result['address']}");
 
-                    setState(() {
-                      pickupLng = result['lng'];
-                      pickupLat = result['lat'];
-                      pickController.text = result['address'];
-                    });
-                  }
+                      setState(() {
+                        pickupLng = result['lng'];
+                        pickupLat = result['lat'];
+                        pickController.text = result['address'];
+                      });
+                    }
 
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
-                    Expanded(child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                             Text(
-                              'Pickup Location'.tr,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                      Expanded(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Pickup Location'.tr,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                           Row(
-                             crossAxisAlignment: CrossAxisAlignment.center,
-                             children: [
-                               Icon(Icons.search,color: AppColors.primaryGradient,),
-                               SizedBox(
-                                 width: 20,
-                               ),
-                               InkWell(
-                                 onTap: (){
-                                   Get.to(const NotificationScreen());
-                                 },
-                                 child: Icon(Icons.notifications_active,color: AppColors.primaryGradient,),
-                               ),
-                             ],
-                           ),
-                          ],
-                        ),
-                        Text(pickController.text,maxLines: 2,style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6)),),
-                      ],
-                    ))
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.search,color: AppColors.primaryGradient,),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    onTap: (){
+                                      Get.to(const NotificationScreen());
+                                    },
+                                    child: Icon(Icons.notifications_active,color: AppColors.primaryGradient,),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text(pickController.text,maxLines: 2,style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.6)),),
+                        ],
+                      ))
 
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-        ),
-        drawer: NavBar(),
+            drawer: NavBar(),
 
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: AppColors.secondaryGradient.withOpacity(0.08),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height*0.6,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey[200],
-                ),
-                child: Stack(
-                  children: [
-                    currentLocation == null
-                        ? const Center(child: CircularProgressIndicator())
-                        : GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: currentLocation ?? const LatLng(0, 0), // fallback for null
-                        zoom: 15,
-                      ),
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId("moving_marker"),
-                          position: currentLocation ?? const LatLng(0, 0),
-          
-                          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                          anchor: const Offset(0.5, 0.5), // Center the marker
-                        ),
-                      },
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      onMapCreated: (controller) {
-                        _mapController = controller;
-                        // Optional: Animate to current location when map loads
-                        if (currentLocation != null) {
-                          _mapController?.animateCamera(
-                            CameraUpdate.newLatLng(currentLocation!),
-                          );
-                        }
-                      },
-                      onCameraMove: (CameraPosition position) {
-                        // Update marker position smoothly during movement
-                        setState(() {
-                          currentLocation = position.target;
-                        });
-                      },
-                      onCameraIdle: () {
-                        // Final position after movement stops
-                        if (currentLocation != null) {
-                          setState(() {
-                            pickupLat = currentLocation!.latitude;
-                            pickupLng = currentLocation!.longitude;
-                          });
-                          _getAddressFromLatLng(pickupLat!, pickupLng!);
-                        }
-                      },
+            body: Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: AppColors.secondaryGradient.withOpacity(0.08),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height*0.6,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey[200],
                     ),
-                    Positioned(
-                      bottom: 50,
-                      right: 20,
-                      child: FloatingActionButton(
-                        heroTag: "btnCurrentLocation",
-                        backgroundColor: Colors.white,
-                        onPressed: _getCurrentLocation2,
-                        child: const Icon(
-                          Icons.my_location,
-                          color: Colors.blue,
+                    child: Stack(
+                      children: [
+                        currentLocation == null
+                            ? const Center(child: CircularProgressIndicator())
+                            : GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: currentLocation ?? const LatLng(0, 0), // fallback for null
+                            zoom: 15,
+                          ),
+                          markers: {
+                            Marker(
+                              markerId: const MarkerId("moving_marker"),
+                              position: currentLocation ?? const LatLng(0, 0),
+
+                              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                              anchor: const Offset(0.5, 0.5), // Center the marker
+                            ),
+                          },
+                          myLocationEnabled: true,
+                          myLocationButtonEnabled: false,
+                          onMapCreated: (controller) {
+                            _mapController = controller;
+                            // Optional: Animate to current location when map loads
+                            if (currentLocation != null) {
+                              _mapController?.animateCamera(
+                                CameraUpdate.newLatLng(currentLocation!),
+                              );
+                            }
+                          },
+                          onCameraMove: (CameraPosition position) {
+                            // Update marker position smoothly during movement
+                            setState(() {
+                              currentLocation = position.target;
+                            });
+                          },
+                          onCameraIdle: () {
+                            // Final position after movement stops
+                            if (currentLocation != null) {
+                              setState(() {
+                                pickupLat = currentLocation!.latitude;
+                                pickupLng = currentLocation!.longitude;
+                              });
+                              _getAddressFromLatLng(pickupLat!, pickupLng!);
+                            }
+                          },
                         ),
-                      ),
-                    ),
-          
-                    // Positioned(
-                    //   bottom: 0, // distance from bottom
-                    //   left: 0,
-                    //   right: 0,
-                    //   child: SizedBox(
-                    //     height: 60,
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
-                    //       child: Row(
-                    //         mainAxisAlignment: MainAxisAlignment.center,
-                    //         children: [
-                    //           InkWell(
-                    //             onTap: (){
-                    //               setState(() {
-                    //                 select = 0;
-                    //               });
-                    //
-                    //               Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
-                    //             },
-                    //             child: Container(
-                    //             //  margin: EdgeInsets.only(right: 15),
-                    //
-                    //               alignment: Alignment.center,
-                    //               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-                    //               decoration: BoxDecoration(
-                    //                 borderRadius: BorderRadius.circular(15),
-                    //                 color: Colors.white,
-                    //                 boxShadow: [
-                    //                   BoxShadow(
-                    //                     color: Colors.black.withOpacity(0.35),
-                    //                     blurRadius: 1,
-                    //                     spreadRadius: 1,
-                    //                     // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                    //                   ),
-                    //                   BoxShadow(
-                    //                     color: Colors.white.withOpacity(0.8),
-                    //                     blurRadius: 1,
-                    //                     spreadRadius: 1,
-                    //                     // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //               child: Row(
-                    //                 mainAxisAlignment: MainAxisAlignment.center,
-                    //                 children: [
-                    //                   Image.asset(AppImage.parcelImage,width: 25,),
-                    //                   SizedBox(width: 4,),
-                    //                   Text("Delivery",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           ),
-                    //           /*Expanded(
-                    //               flex:1,
-                    //               child: InkWell(
-                    //                 onTap: (){
-                    //                   setState(() {
-                    //                     select = 1;
-                    //                   });
-                    //                   Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
-                    //                 },
-                    //                 child: Container(
-                    //                   margin: EdgeInsets.only(right: 15),
-                    //                   alignment: Alignment.center,
-                    //                   padding: EdgeInsets.symmetric(vertical: 5),
-                    //                   decoration: BoxDecoration(
-                    //                     borderRadius: BorderRadius.circular(15),
-                    //                     color: Colors.white,
-                    //                     boxShadow: [
-                    //                       BoxShadow(
-                    //                         color: Colors.black.withOpacity(0.35),
-                    //                         blurRadius: 1,
-                    //                         spreadRadius: 1,
-                    //                         // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                    //                       ),
-                    //                       BoxShadow(
-                    //                         color: Colors.white.withOpacity(0.8),
-                    //                         blurRadius: 1,
-                    //                         spreadRadius: 1,
-                    //                         // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                   child: Row(
-                    //                     mainAxisAlignment: MainAxisAlignment.center,
-                    //                     children: [
-                    //                       Image.asset(AppImage.logisticImage,width: 25,),
-                    //                       SizedBox(width: 4,),
-                    //                       Text("Taxi",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                    //                     ],
-                    //                   ),
-                    //                 )
-                    //               ))*/
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-          
-                    /*Padding(
+                        Positioned(
+                          bottom: 50,
+                          left: 20,
+                          child: FloatingActionButton(
+                            heroTag: "btnCurrentLocation",
+                            backgroundColor: Colors.white,
+                            onPressed: _getCurrentLocation2,
+                            child: const Icon(
+                              Icons.my_location,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+
+                        // Positioned(
+                        //   bottom: 0, // distance from bottom
+                        //   left: 0,
+                        //   right: 0,
+                        //   child: SizedBox(
+                        //     height: 60,
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
+                        //       child: Row(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         children: [
+                        //           InkWell(
+                        //             onTap: (){
+                        //               setState(() {
+                        //                 select = 0;
+                        //               });
+                        //
+                        //               Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                        //             },
+                        //             child: Container(
+                        //             //  margin: EdgeInsets.only(right: 15),
+                        //
+                        //               alignment: Alignment.center,
+                        //               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                        //               decoration: BoxDecoration(
+                        //                 borderRadius: BorderRadius.circular(15),
+                        //                 color: Colors.white,
+                        //                 boxShadow: [
+                        //                   BoxShadow(
+                        //                     color: Colors.black.withOpacity(0.35),
+                        //                     blurRadius: 1,
+                        //                     spreadRadius: 1,
+                        //                     // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                        //                   ),
+                        //                   BoxShadow(
+                        //                     color: Colors.white.withOpacity(0.8),
+                        //                     blurRadius: 1,
+                        //                     spreadRadius: 1,
+                        //                     // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                        //                   ),
+                        //                 ],
+                        //               ),
+                        //               child: Row(
+                        //                 mainAxisAlignment: MainAxisAlignment.center,
+                        //                 children: [
+                        //                   Image.asset(AppImage.parcelImage,width: 25,),
+                        //                   SizedBox(width: 4,),
+                        //                   Text("Delivery",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                        //                 ],
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           /*Expanded(
+                        //               flex:1,
+                        //               child: InkWell(
+                        //                 onTap: (){
+                        //                   setState(() {
+                        //                     select = 1;
+                        //                   });
+                        //                   Get.to(LocationPickerTypeAheadPage(isPick: false,pickLng: pickupLng,pickLat: pickupLat,pickAddress: pickController.text,title: "Drop Location",));
+                        //                 },
+                        //                 child: Container(
+                        //                   margin: EdgeInsets.only(right: 15),
+                        //                   alignment: Alignment.center,
+                        //                   padding: EdgeInsets.symmetric(vertical: 5),
+                        //                   decoration: BoxDecoration(
+                        //                     borderRadius: BorderRadius.circular(15),
+                        //                     color: Colors.white,
+                        //                     boxShadow: [
+                        //                       BoxShadow(
+                        //                         color: Colors.black.withOpacity(0.35),
+                        //                         blurRadius: 1,
+                        //                         spreadRadius: 1,
+                        //                         // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                        //                       ),
+                        //                       BoxShadow(
+                        //                         color: Colors.white.withOpacity(0.8),
+                        //                         blurRadius: 1,
+                        //                         spreadRadius: 1,
+                        //                         // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                   child: Row(
+                        //                     mainAxisAlignment: MainAxisAlignment.center,
+                        //                     children: [
+                        //                       Image.asset(AppImage.logisticImage,width: 25,),
+                        //                       SizedBox(width: 4,),
+                        //                       Text("Taxi",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                        //                     ],
+                        //                   ),
+                        //                 )
+                        //               ))*/
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+
+                        /*Padding(
                       padding: const EdgeInsets.only(left: 30.0,right: 8,top: 25),
                       child: GestureDetector(
                         onTap: () async {
@@ -613,21 +751,21 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
                           );
-          
+
                           if (result != null) {
-          
-          
+
+
                             print("Selected Lat: ${result['lat']}");
                             print("Selected Lng: ${result['lng']}");
                             print("Selected Address: ${result['address']}");
-          
+
                             setState(() {
                               pickupLng = result['lng'];
                               pickupLat = result['lat'];
                               pickController.text = result['address'];
                             });
                           }
-          
+
                         },
                         child: Container(
                           height: 80,
@@ -661,534 +799,535 @@ class _HomePageState extends State<HomePage> {
                                   Text(pickController.text,maxLines: 2,),
                                 ],
                               ))
-          
+
                             ],
                           ),
                         ),
                       ),
                     ),*/
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Current Location
-          
-          
-                       /* Row(
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Current Location
+
+
+                            /* Row(
                           children: [
                             Text("Hello",style: TextStyle(fontSize: 22,color: AppColors.primaryGradient),),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Text("${auhController.getUserName()}",style: TextStyle(fontSize: 22,color: AppColors.secondaryGradient),),
                             ),
-          
+
                           ],
                         ),*/
-                        const SizedBox(height: 0),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  setState(() {
-                                    select = 0;
-                                  });
+                            const SizedBox(height: 0),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // InkWell(
+                                  //   onTap: (){
+                                  //     setState(() {
+                                  //       select = 0;
+                                  //     });
+                                  //
+                                  //     Get.to(
+                                  //       ScheduleDeliveryPickUpScreen(
+                                  //         isShare: false,
+                                  //         isPick: true,
+                                  //         pickLng: pickupLng,
+                                  //         pickLat: pickupLat,
+                                  //         houseNumber: currentAddress.toString(),
+                                  //         street: currentAddress.toString(),
+                                  //         city: currentAddress.toString(),
+                                  //         pickAddress: pickController.text,
+                                  //         title: "PickUp Location",
+                                  //       ),
+                                  //     );
+                                  //     // Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
+                                  //     //   pickLng: pickupLng,pickLat: pickupLat,
+                                  //     //   houseNumber: currentAddress.toString(),
+                                  //     //   street: currentAddress1.toString(),
+                                  //     //   city: currentAddress2.toString(),
+                                  //     //   pickAddress: pickController.text,
+                                  //     //   title: "Drop Location",));
+                                  //   },
+                                  //   child: Container(
+                                  //     alignment: Alignment.center,
+                                  //     padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
+                                  //     decoration: BoxDecoration(
+                                  //       borderRadius: BorderRadius.circular(8),
+                                  //       color: Colors.white,
+                                  //       boxShadow: [
+                                  //         BoxShadow(
+                                  //           color: Colors.black.withOpacity(0.35),
+                                  //           blurRadius: 1,
+                                  //           spreadRadius: 1,
+                                  //           // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                                  //         ),
+                                  //         BoxShadow(
+                                  //           color: Colors.white.withOpacity(0.8),
+                                  //           blurRadius: 1,
+                                  //           spreadRadius: 1,
+                                  //           // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //     child: Row(
+                                  //       mainAxisAlignment: MainAxisAlignment.center,
+                                  //       children: [
+                                  //         Image.asset(AppImage.parcelImage,width: 25,),
+                                  //         SizedBox(width: 4,),
+                                  //         Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 10,
+                                  // ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        select = 0;
+                                      });
 
-                                  Get.to(
-                                    ScheduleDeliveryPickUpScreen(
-                                      isShare: false,
-                                      isPick: true,
-                                      pickLng: pickupLng,
-                                      pickLat: pickupLat,
-                                      houseNumber: currentAddress.toString(),
-                                      street: currentAddress.toString(),
-                                      city: currentAddress.toString(),
-                                      pickAddress: pickController.text,
-                                      title: "PickUp Location",
-                                    ),
-                                  );
-                                  // Get.to(LocationPickerTypeAheadPage(isShare: false,isPick: false,
-                                  //   pickLng: pickupLng,pickLat: pickupLat,
-                                  //   houseNumber: currentAddress.toString(),
-                                  //   street: currentAddress1.toString(),
-                                  //   city: currentAddress2.toString(),
-                                  //   pickAddress: pickController.text,
-                                  //   title: "Drop Location",));
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.35),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.8),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(AppImage.parcelImage,width: 25,),
-                                      SizedBox(width: 4,),
-                                      Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    select = 0;
-                                  });
+                                      DateTime? selectedDate = DateTime.now();
+                                      TimeOfDay? selectedTime;
 
-                                  DateTime? selectedDate;
-                                  TimeOfDay? selectedTime;
-
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                    ),
-                                    builder: (context) {
-                                      return StatefulBuilder(
-                                        builder: (context, setModalState) {
-                                          return Container(
-                                            padding: EdgeInsets.only(
-                                              left: 20,
-                                              right: 20,
-                                              top: 12,
-                                              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                                            ),
-                                            decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                            ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Center(
-                                                  child: Container(
-                                                    width: 40,
-                                                    height: 4,
-                                                    margin: const EdgeInsets.only(bottom: 14),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey.shade300,
-                                                      borderRadius: BorderRadius.circular(10),
-                                                    ),
-                                                  ),
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        backgroundColor: Colors.transparent,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                        ),
+                                        builder: (context) {
+                                          return StatefulBuilder(
+                                            builder: (context, setModalState) {
+                                              return Container(
+                                                padding: EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 20,
+                                                  top: 12,
+                                                  bottom: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 20,
                                                 ),
-
-                                                /// 🔹 Title
-                                                const Center(
-                                                  child: Text(
-                                                    "Schedule Delivery",
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.w600,
-                                                    ),
-                                                  ),
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                                 ),
-
-                                                const SizedBox(height: 20),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    setState(() {
-                                                    selectedDateTimeIos = null;
-                                                    });
-                                                    DateTime? picked = await showDatePicker(
-                                                      context: context,
-                                                      initialDate: DateTime.now(),
-                                                      firstDate: DateTime.now(),
-                                                      lastDate: DateTime.now().add(const Duration(days: 1)), // 🔒 max tomorrow
-                                                      builder: (context, child) {
-                                                        return Theme(
-                                                          data: Theme.of(context).copyWith(
-                                                            colorScheme: const ColorScheme.light(
-                                                              primary: Colors.black,
-                                                              onPrimary: Colors.white,
-                                                              onSurface: Colors.black,
-                                                            ),
-                                                            dialogBackgroundColor: Colors.white,
+                                                child: SafeArea(
+                                                  top: false,
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Center(
+                                                        child: Container(
+                                                          width: 40,
+                                                          height: 4,
+                                                          margin: const EdgeInsets.only(bottom: 14),
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.grey.shade300,
+                                                            borderRadius: BorderRadius.circular(10),
                                                           ),
-                                                          child: child!,
-                                                        );
-                                                      },
-                                                    );
-
-                                                    if (picked != null) {
-                                                      setModalState(() {
-                                                        selectedDate = picked;
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      border: Border.all(color: Colors.grey.shade300),
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.calendar_today, size: 18),
-                                                        const SizedBox(width: 10),
-                                                        Text(
-                                                          selectedDate == null
-                                                              ? "Select Date"
-                                                              : DateFormat('dd MMM yyyy').format(selectedDate!),
-                                                          style: const TextStyle(fontSize: 14),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 12),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    if(selectedDate == null){
-                                                      Get.snackbar(
-                                                          "Error",
-                                                          "Please select date first",
-                                                          backgroundColor: Colors.red,
-                                                          colorText: Colors.white
-                                                      );
-                                                      return;
-                                                    }
-                                                    else {
-                                                      showCupertinoModalPopup(
-                                                        context: context,
-                                                        builder: (_) {
-                                                          DateTime now = DateTime.now();
+                                                      ),
 
-                                                          DateTime selectedDay = selectedDate ?? now;
+                                                      /// 🔹 Title
+                                                      const Center(
+                                                        child: Text(
+                                                          "Delivery",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
 
-                                                          DateTime minTimeToday = now.add(const Duration(hours: 1));
-
-                                                          DateTime tempDateTime = selectedDateTimeIos ??
-                                                              DateTime(
-                                                                selectedDay.year,
-                                                                selectedDay.month,
-                                                                selectedDay.day,
-                                                                minTimeToday.hour,
-                                                                minTimeToday.minute,
-                                                              );
-
-                                                          bool isToday = isSameDay(selectedDay, now);
-
-                                                          return Container(
-                                                            height: 300,
-                                                            color: Colors.white,
-                                                            child: Column(
-                                                              children: [
-                                                                Container(
-                                                                  alignment: Alignment.centerRight,
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                                                  child: CupertinoButton(
-                                                                    padding: EdgeInsets.zero,
-                                                                    onPressed: () {
-                                                                      setModalState(() {
-                                                                        selectedDateTimeIos = tempDateTime;
-                                                                      });
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    child: const Text(
-                                                                      "Done",
-                                                                      style: TextStyle(
-                                                                        fontSize: 18,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: CupertinoColors.activeBlue,
-                                                                      ),
-                                                                    ),
+                                                      const SizedBox(height: 20),
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          setState(() {
+                                                            selectedDateTimeIos = null;
+                                                          });
+                                                          DateTime? picked = await showDatePicker(
+                                                            context: context,
+                                                            initialDate: DateTime.now(),
+                                                            firstDate: DateTime.now(),
+                                                            lastDate: DateTime.now().add(const Duration(days: 1)), // 🔒 max tomorrow
+                                                            builder: (context, child) {
+                                                              return Theme(
+                                                                data: Theme.of(context).copyWith(
+                                                                  colorScheme: const ColorScheme.light(
+                                                                    primary: Colors.black,
+                                                                    onPrimary: Colors.white,
+                                                                    onSurface: Colors.black,
                                                                   ),
+                                                                  dialogBackgroundColor: Colors.white,
                                                                 ),
-                                                                Expanded(
-                                                                  child: CupertinoDatePicker(
-                                                                    mode: CupertinoDatePickerMode.time,
-                                                                    use24hFormat: false,
-                                                                    initialDateTime: tempDateTime,
-                                                                    minimumDate: isToday
-                                                                        ? DateTime(
+                                                                child: child!,
+                                                              );
+                                                            },
+                                                          );
+
+                                                          if (picked != null) {
+                                                            setModalState(() {
+                                                              selectedDate = picked;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            border: Border.all(color: Colors.grey.shade300),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(Icons.calendar_today, size: 18),
+                                                              const SizedBox(width: 10),
+                                                              Text(
+                                                                selectedDate == null
+                                                                    ? "Select Date"
+                                                                    : DateFormat('dd MMM yyyy').format(selectedDate!),
+                                                                style: const TextStyle(fontSize: 14),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 12),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          if(selectedDate == null){
+                                                            Get.snackbar(
+                                                                "Error",
+                                                                "Please select date first",
+                                                                backgroundColor: Colors.red,
+                                                                colorText: Colors.white
+                                                            );
+                                                            return;
+                                                          }
+                                                          else {
+                                                            showCupertinoModalPopup(
+                                                              context: context,
+                                                              builder: (_) {
+                                                                DateTime now = DateTime.now();
+
+                                                                DateTime selectedDay = selectedDate ?? now;
+
+                                                                DateTime minTimeToday = now.add(const Duration(minutes: 30));
+
+                                                                DateTime tempDateTime = selectedDateTimeIos ??
+                                                                    DateTime(
                                                                       selectedDay.year,
                                                                       selectedDay.month,
                                                                       selectedDay.day,
                                                                       minTimeToday.hour,
                                                                       minTimeToday.minute,
-                                                                    )
-                                                                        : null,
+                                                                    );
 
-                                                                    onDateTimeChanged: (DateTime newTime) {
-                                                                      HapticFeedback.selectionClick();
+                                                                bool isToday = isSameDay(selectedDay, now);
 
-                                                                      tempDateTime = DateTime(
-                                                                        selectedDay.year,
-                                                                        selectedDay.month,
-                                                                        selectedDay.day,
-                                                                        newTime.hour,
-                                                                        newTime.minute,
-                                                                      );
-                                                                    },
+                                                                return Container(
+                                                                  height: 300,
+                                                                  color: Colors.white,
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Container(
+                                                                        alignment: Alignment.centerRight,
+                                                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                                        child: CupertinoButton(
+                                                                          padding: EdgeInsets.zero,
+                                                                          onPressed: () {
+                                                                            setModalState(() {
+                                                                              selectedDateTimeIos = tempDateTime;
+                                                                            });
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                          child: const Text(
+                                                                            "Done",
+                                                                            style: TextStyle(
+                                                                              fontSize: 18,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              color: CupertinoColors.activeBlue,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        child: CupertinoDatePicker(
+                                                                          mode: CupertinoDatePickerMode.time,
+                                                                          use24hFormat: false,
+                                                                          initialDateTime: tempDateTime,
+                                                                          minimumDate: isToday
+                                                                              ? DateTime(
+                                                                            selectedDay.year,
+                                                                            selectedDay.month,
+                                                                            selectedDay.day,
+                                                                            minTimeToday.hour,
+                                                                            minTimeToday.minute,
+                                                                          )
+                                                                              : null,
+
+                                                                          onDateTimeChanged: (DateTime newTime) {
+                                                                            HapticFeedback.selectionClick();
+
+                                                                            tempDateTime = DateTime(
+                                                                              selectedDay.year,
+                                                                              selectedDay.month,
+                                                                              selectedDay.day,
+                                                                              newTime.hour,
+                                                                              newTime.minute,
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
+                                                                );
+                                                              },
+                                                            );
 
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      border: Border.all(color: Colors.grey.shade300),
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.access_time, size: 18),
-                                                        const SizedBox(width: 10),
-                                                        Text(
-                                                          selectedDateTimeIos == null
-                                                              ? "Select Time"
-                                                              : TimeOfDay.fromDateTime(selectedDateTimeIos!).format(context),
-                                                          style: const TextStyle(fontSize: 14),
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            border: Border.all(color: Colors.grey.shade300),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(Icons.access_time, size: 18),
+                                                              const SizedBox(width: 10),
+                                                              Text(
+                                                                selectedDateTimeIos == null
+                                                                    ? "Select Time"
+                                                                    : TimeOfDay.fromDateTime(selectedDateTimeIos!).format(context),
+                                                                style: const TextStyle(fontSize: 14),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      const SizedBox(height: 14),
+                                                      Text('* You can schedule your delivery within the next 24 hours only.'.tr,
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.w500
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 24),
+
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child:ElevatedButton(
+                                                              onPressed: () => Navigator.pop(context),
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor: Colors.grey,
+                                                                padding: EdgeInsets.symmetric(vertical: 12),
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                ),
+                                                              ),
+
+                                                              child: const Text(
+                                                                "Cancel",
+                                                                style: TextStyle(color: Colors.white),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(width: 12),
+                                                          Expanded(
+                                                            child: ElevatedButton(
+                                                              onPressed: () {
+                                                                if (selectedDate == null || selectedDateTimeIos == null) {
+                                                                  Get.snackbar(
+                                                                      "Error",
+                                                                      "Please select date & time",
+                                                                      backgroundColor: Colors.red,
+                                                                      colorText: Colors.white
+                                                                  );
+                                                                  return;
+                                                                }
+
+                                                                final selectedDateTime = DateTime(
+                                                                  selectedDate!.year,
+                                                                  selectedDate!.month,
+                                                                  selectedDate!.day,
+                                                                  selectedDateTimeIos!.hour,
+                                                                  selectedDateTimeIos!.minute,
+                                                                );
+
+                                                                final now = DateTime.now();
+                                                                final maxTime = now.add(const Duration(hours: 24));
+
+                                                                if (selectedDateTime.isBefore(now)) {
+                                                                  Get.snackbar(
+                                                                      "Invalid Time",
+                                                                      "Please select a future time",
+                                                                      backgroundColor: Colors.red,
+                                                                      colorText: Colors.white
+                                                                  );
+                                                                  return;
+                                                                }
+                                                                if (selectedDateTime.isAfter(maxTime)) {
+                                                                  Get.snackbar(
+                                                                      "Invalid Schedule",
+                                                                      "You can schedule only within next 24 hours",
+                                                                      backgroundColor: Colors.red,
+                                                                      colorText: Colors.white
+                                                                  );
+                                                                  return;
+                                                                }
+                                                                final Duration difference = selectedDateTime.difference(now);
+
+                                                                final int hours = difference.inHours;
+                                                                final int minutes = difference.inMinutes.remainder(60);
+
+                                                                // 🔹 PRINT
+                                                                print("Scheduled After: $hours hours $minutes minutes");
+                                                                Get.back();
+
+                                                                String formattedTime =
+                                                                    '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
+                                                                String onlyDate =
+                                                                DateFormat('yyyy-MM-dd').format(selectedDate!);
+
+                                                                Get.to(ScheduleDeliveryPickUpScreen(
+                                                                  isShare: true,
+                                                                  isPick: true,
+                                                                  pickLng: pickupLng,
+                                                                  pickLat: pickupLat,
+                                                                  houseNumber: currentAddress.toString(),
+                                                                  street: currentAddress.toString(),
+                                                                  city: currentAddress.toString(),
+                                                                  pickAddress: pickController.text,
+                                                                  title: "PickUp Location",
+                                                                  date: onlyDate,
+                                                                  time: formattedTime,
+                                                                ),
+                                                                );
+                                                              },
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor: Colors.blue,
+                                                                padding: EdgeInsets.symmetric(vertical: 12),
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                ),
+                                                              ),
+
+                                                              child: const Text(
+                                                                "Confirm",
+                                                                style: TextStyle(color: Colors.white),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                const SizedBox(height: 14),
-                                                Text('* You can schedule your delivery within the next 24 hours only.'.tr,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w500
-                                                ),
-                                                ),
-                                                const SizedBox(height: 24),
-
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child:ElevatedButton(
-                                                        onPressed: () => Navigator.pop(context),
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Colors.grey,
-                                                          padding: EdgeInsets.symmetric(vertical: 12),
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                          ),
-                                                        ),
-
-                                                        child: const Text(
-                                                          "Cancel",
-                                                          style: TextStyle(color: Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 12),
-                                                    Expanded(
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          if (selectedDate == null || selectedDateTimeIos == null) {
-                                                            Get.snackbar(
-                                                              "Error",
-                                                              "Please select date & time",
-                                                                backgroundColor: Colors.red,
-                                                                colorText: Colors.white
-                                                            );
-                                                            return;
-                                                          }
-
-                                                          final selectedDateTime = DateTime(
-                                                            selectedDate!.year,
-                                                            selectedDate!.month,
-                                                            selectedDate!.day,
-                                                            selectedDateTimeIos!.hour,
-                                                            selectedDateTimeIos!.minute,
-                                                          );
-
-                                                          final now = DateTime.now();
-                                                          final maxTime = now.add(const Duration(hours: 24));
-
-                                                          if (selectedDateTime.isBefore(now)) {
-                                                            Get.snackbar(
-                                                              "Invalid Time",
-                                                              "Please select a future time",
-                                                              backgroundColor: Colors.red,
-                                                              colorText: Colors.white
-                                                            );
-                                                            return;
-                                                          }
-                                                          if (selectedDateTime.isAfter(maxTime)) {
-                                                            Get.snackbar(
-                                                              "Invalid Schedule",
-                                                              "You can schedule only within next 24 hours",
-                                                                backgroundColor: Colors.red,
-                                                                colorText: Colors.white
-                                                            );
-                                                            return;
-                                                          }
-                                                          final Duration difference = selectedDateTime.difference(now);
-
-                                                          final int hours = difference.inHours;
-                                                          final int minutes = difference.inMinutes.remainder(60);
-
-                                                          // 🔹 PRINT
-                                                          print("Scheduled After: $hours hours $minutes minutes");
-                                                          Get.back();
-
-                                                          String formattedTime =
-                                                              '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
-                                                          String onlyDate =
-                                                          DateFormat('yyyy-MM-dd').format(selectedDate!);
-
-                                                          Get.to(
-                                                            ScheduleDeliveryPickUpScreen(
-                                                              isShare: false,
-                                                              isPick: true,
-                                                              pickLng: pickupLng,
-                                                              pickLat: pickupLat,
-                                                              houseNumber: currentAddress.toString(),
-                                                              street: currentAddress.toString(),
-                                                              city: currentAddress.toString(),
-                                                              pickAddress: pickController.text,
-                                                              title: "PickUp Location",
-                                                              date: onlyDate,
-                                                              time: formattedTime,
-                                                            ),
-                                                          );
-                                                        },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Colors.blue,
-                                                          padding: EdgeInsets.symmetric(vertical: 12),
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                          ),
-                                                        ),
-
-                                                        child: const Text(
-                                                          "Confirm",
-                                                          style: TextStyle(color: Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                              );
+                                            },
                                           );
                                         },
                                       );
                                     },
-                                  );
-                                },
-                                child: Container(
-                                   alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.35),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        ),
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.8),
-                                        blurRadius: 1,
-                                        spreadRadius: 1,
-                                        ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(AppImage.scheduleDelivery,width: 25,),
-                                      SizedBox(width: 4,),
-                                      Text("Schedule Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-
-                        // Pickup Location
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-          
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-          
-                              slider. CarouselSlider.builder(
-                                carouselController: controller,
-                                itemCount: imageList.length,
-          
-                                itemBuilder: (context, index, realIndex) {
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.asset(
-                                      imageList[index],
-                                      fit: BoxFit.contain,
-                                      width: double.infinity,
-                                      height: 185,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.symmetric(vertical: 7,horizontal: 15),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.35),
+                                            blurRadius: 1,
+                                            spreadRadius: 1,
+                                          ),
+                                          BoxShadow(
+                                            color: Colors.white.withOpacity(0.8),
+                                            blurRadius: 1,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(AppImage.scheduleDelivery,width: 25,),
+                                          SizedBox(width: 4,),
+                                          Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                        ],
+                                      ),
                                     ),
-                                  );
-                                },
-                                options: slider.CarouselOptions(
-                                  height: 185,
-                                  autoPlay: true,
-                                  viewportFraction: 1,
-                                  enlargeCenterPage: true,
-                                  onPageChanged: (index, reason) => setState(() => activeIndex = index),
-                                ),
-                              ),
-          
-                              const SizedBox(height: 16),
-                              Center(
-                                child: AnimatedSmoothIndicator(
-                                  activeIndex: activeIndex,
-                                  count: imageList.length,
-                                  effect:  ExpandingDotsEffect(
-                                    activeDotColor: AppColors.primaryGradient,
-                                    dotHeight: 5,
-                                    dotWidth: 5,
                                   ),
-                                  onDotClicked: (index) => controller.animateToPage(index),
-                                ),
+                                ],
                               ),
-          
-                              /*const SizedBox(height: 8),
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Pickup Location
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  slider. CarouselSlider.builder(
+                                    carouselController: controller,
+                                    itemCount: imageList.length,
+                                    itemBuilder: (context, index, realIndex) {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          imageList[index],
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: 200,
+                                        ),
+                                      );
+                                    },
+                                    options: slider.CarouselOptions(
+                                      height: 200,
+                                      autoPlay: true,
+                                      viewportFraction: 1,
+                                      enlargeCenterPage: true,
+                                      onPageChanged: (index, reason) => setState(() => activeIndex = index),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 16),
+                                  Center(
+                                    child: AnimatedSmoothIndicator(
+                                      activeIndex: activeIndex,
+                                      count: imageList.length,
+                                      effect:  ExpandingDotsEffect(
+                                        activeDotColor: AppColors.primaryGradient,
+                                        dotHeight: 5,
+                                        dotWidth: 5,
+                                      ),
+                                      onDotClicked: (index) => controller.animateToPage(index),
+                                    ),
+                                  ),
+
+                                  /*const SizedBox(height: 8),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: GestureDetector(
@@ -1198,21 +1337,21 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
                                     );
-          
+
                                     if (result != null) {
-          
-          
+
+
                                       print("Selected Lat: ${result['lat']}");
                                       print("Selected Lng: ${result['lng']}");
                                       print("Selected Address: ${result['address']}");
-          
+
                                       setState(() {
                                         pickupLng = result['lng'];
                                         pickupLat = result['lat'];
                                         pickController.text = result['address'];
                                       });
                                     }
-          
+
                                   },
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1238,27 +1377,27 @@ class _HomePageState extends State<HomePage> {
                                           Text(pickController.text,maxLines: 2,),
                                         ],
                                       ))
-          
+
                                     ],
                                   ),
                                 ),
                               ),
                           */
-          
-                              //SizedBox(height: 20,),
-          
-          
-          
-                              SizedBox(height: 20,),
-          
-                          //    const SizedBox(height: 24),
-          
-                              // Drop Location
-          
-          
-          
-                            //  const SizedBox(height: 8),
-                             /* Padding(
+
+                                  //SizedBox(height: 20,),
+
+
+
+                                  SizedBox(height: 20,),
+
+                                  //    const SizedBox(height: 24),
+
+                                  // Drop Location
+
+
+
+                                  //  const SizedBox(height: 8),
+                                  /* Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: GestureDetector(
                                   onTap: () async {
@@ -1267,21 +1406,21 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage()),
                                     );
-          
+
                                     if (result != null) {
-          
-          
+
+
                                       print("Selected Lat: ${result['lat']}");
                                       print("Selected Lng: ${result['lng']}");
                                       print("Selected Address: ${result['address']}");
-          
+
                                       setState(() {
                                         dropLng = result['lng'];
                                         dropLat = result['lat'];
                                         dropController.text = result['address'];
                                       });
                                     }
-          
+
                                   },
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1307,85 +1446,85 @@ class _HomePageState extends State<HomePage> {
                                           Text(dropController.text,maxLines: 2,),
                                         ],
                                       ))
-          
+
                                     ],
                                   ),
                                 ),
                               ),
-          
-          
+
+
                               SizedBox(height: 10,),*/
-          
-          
-          
-          
-          
-                              // SizedBox(height: 20,),
-                              //
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //         flex:1,
-                              //         child: InkWell(
-                              //           onTap: (){
-                              //             setState(() {
-                              //               select = 0;
-                              //             });
-                              //           },
-                              //           child: Container(
-                              //             margin: EdgeInsets.symmetric(horizontal: 15),
-                              //             alignment: Alignment.center,
-                              //             padding: EdgeInsets.symmetric(vertical: 6),
-                              //             decoration: BoxDecoration(
-                              //               borderRadius: BorderRadius.circular(4),
-                              //               border: Border.all(
-                              //                 color: select ==0 ? AppColors.primaryGradient:Colors.grey,
-                              //                 width: 0.8
-                              //               )
-                              //             ),
-                              //             child: Row(
-                              //               mainAxisAlignment: MainAxisAlignment.center,
-                              //               children: [
-                              //                 ImageIcon(AssetImage(AppImage.parcelImage),color: select ==0 ? AppColors.secondaryGradient:Colors.grey,),
-                              //                 SizedBox(width: 4,),
-                              //                 Text("Parcel",style: TextStyle(fontSize: 14,color: Colors.black),)
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         )),
-                              //     Expanded(
-                              //         flex:1,
-                              //         child: InkWell(
-                              //           onTap: (){
-                              //             setState(() {
-                              //               select = 1;
-                              //             });
-                              //           },
-                              //           child: Container(
-                              //             margin: EdgeInsets.symmetric(horizontal: 15),
-                              //             alignment: Alignment.center,
-                              //             padding: EdgeInsets.symmetric(vertical: 6),
-                              //             decoration: BoxDecoration(
-                              //                 borderRadius: BorderRadius.circular(4),
-                              //                 border: Border.all(
-                              //                     color: select ==1 ? AppColors.primaryGradient:Colors.grey,
-                              //                     width: 0.8
-                              //                 )
-                              //             ),
-                              //             child: Row(
-                              //               mainAxisAlignment: MainAxisAlignment.center,
-                              //               children: [
-                              //                 ImageIcon(AssetImage(AppImage.logisticImage),color: select ==1 ? AppColors.secondaryGradient:Colors.grey,),
-                              //                 SizedBox(width: 4,),
-                              //                 Text("Transport",style: TextStyle(fontSize: 14,color: Colors.black),)
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ))
-                              //   ],
-                              // ),
-                             /* const SizedBox(height: 32),
-          
+
+
+
+
+
+                                  // SizedBox(height: 20,),
+                                  //
+                                  // Row(
+                                  //   children: [
+                                  //     Expanded(
+                                  //         flex:1,
+                                  //         child: InkWell(
+                                  //           onTap: (){
+                                  //             setState(() {
+                                  //               select = 0;
+                                  //             });
+                                  //           },
+                                  //           child: Container(
+                                  //             margin: EdgeInsets.symmetric(horizontal: 15),
+                                  //             alignment: Alignment.center,
+                                  //             padding: EdgeInsets.symmetric(vertical: 6),
+                                  //             decoration: BoxDecoration(
+                                  //               borderRadius: BorderRadius.circular(4),
+                                  //               border: Border.all(
+                                  //                 color: select ==0 ? AppColors.primaryGradient:Colors.grey,
+                                  //                 width: 0.8
+                                  //               )
+                                  //             ),
+                                  //             child: Row(
+                                  //               mainAxisAlignment: MainAxisAlignment.center,
+                                  //               children: [
+                                  //                 ImageIcon(AssetImage(AppImage.parcelImage),color: select ==0 ? AppColors.secondaryGradient:Colors.grey,),
+                                  //                 SizedBox(width: 4,),
+                                  //                 Text("Parcel",style: TextStyle(fontSize: 14,color: Colors.black),)
+                                  //               ],
+                                  //             ),
+                                  //           ),
+                                  //         )),
+                                  //     Expanded(
+                                  //         flex:1,
+                                  //         child: InkWell(
+                                  //           onTap: (){
+                                  //             setState(() {
+                                  //               select = 1;
+                                  //             });
+                                  //           },
+                                  //           child: Container(
+                                  //             margin: EdgeInsets.symmetric(horizontal: 15),
+                                  //             alignment: Alignment.center,
+                                  //             padding: EdgeInsets.symmetric(vertical: 6),
+                                  //             decoration: BoxDecoration(
+                                  //                 borderRadius: BorderRadius.circular(4),
+                                  //                 border: Border.all(
+                                  //                     color: select ==1 ? AppColors.primaryGradient:Colors.grey,
+                                  //                     width: 0.8
+                                  //                 )
+                                  //             ),
+                                  //             child: Row(
+                                  //               mainAxisAlignment: MainAxisAlignment.center,
+                                  //               children: [
+                                  //                 ImageIcon(AssetImage(AppImage.logisticImage),color: select ==1 ? AppColors.secondaryGradient:Colors.grey,),
+                                  //                 SizedBox(width: 4,),
+                                  //                 Text("Transport",style: TextStyle(fontSize: 14,color: Colors.black),)
+                                  //               ],
+                                  //             ),
+                                  //           ),
+                                  //         ))
+                                  //   ],
+                                  // ),
+                                  /* const SizedBox(height: 32),
+
                               InkWell(
                                 onTap: (){
                                   if(pickController.text.isEmpty){
@@ -1396,7 +1535,7 @@ class _HomePageState extends State<HomePage> {
                                   }else {
                                    // Get.to(LocationPickerTypeAheadPage());
                                     Get.to(BookingInfo(dropAddress: dropController.text,dropLat: dropLat!,dropLng: dropLng!,pickAddress: pickController.text,pickLat: pickupLat!,pickLng: pickupLng!));
-          
+
                                   }
                                 },
                                 child: Container(
@@ -1410,215 +1549,256 @@ class _HomePageState extends State<HomePage> {
                                   child: Text("Next",style: TextStyle(fontSize: 18,color: Colors.white),),
                                 ),
                               )*/
-                            ],
-                          ),
-                        )
-                      ],
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
+            bottomSheet: Get.find<AuthController>().isLoggedIn() &&
+                auhController.latestBookingListResponse!=null && auhController.latestBookingListResponse!.isNotEmpty &&  auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="paid" && auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="cancelled" ?
+            Container(
+              padding: const EdgeInsets.only(top: 20),
+              // Space for the drag handle
+              margin: EdgeInsets.symmetric(horizontal: 10),
+
+              decoration:  BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: AppColors.primaryGradient),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
               ),
-            ],
+              child: DraggableScrollableSheet(
+                expand: false,
+                shouldCloseOnMinExtent: false,
+
+                initialChildSize: 0.2, // Initial height (40% of screen)
+                minChildSize: 0.2, // Minimum height when dragged down
+                maxChildSize: 0.6, // Maximum height when dragged up
+                builder: (context, scrollController) {
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height * 0.2, // Match minChildSize
+                        ),child: Container(
+
+
+                      padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
+
+
+
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(6),topLeft: Radius.circular(6)),
+
+                        color:Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryGradient.withOpacity(0.1), // Very light grey
+                            blurRadius: 20.0,
+                            spreadRadius: 8.0,
+                            offset: Offset(0, 5),),
+                          BoxShadow(
+                            color: AppColors.secondaryGradient.withOpacity(0.9), // Inner white glow
+                            blurRadius: 10.0,
+                            spreadRadius: -5.0, // Negative spread for inner effect
+                            offset: Offset(0, 0),
+                          ),
+                        ],
+
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Current Order".tr,style: TextStyle(fontSize: 18,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.start,)),
+                          ),
+
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: auhController.latestBookingListResponse.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory.toString(),
+                                      maxLines: 1,
+                                      style: TextStyle(fontSize: 13),),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical: 4),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(Icons.location_on_outlined,color: Colors.green,size: 25,),
+                                        SizedBox(width: 5,),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(auhController
+                                                  .latestBookingListResponse[index]!
+                                                  .pickup!.address.toString(),
+                                                maxLines: 2,
+                                                style: TextStyle(fontSize: 13),),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if (auhController.latestBookingListResponse[index]!.dropoffs != null && auhController.latestBookingListResponse[index]!.dropoffs!.isNotEmpty)
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                itemCount:auhController.latestBookingListResponse[index]!.dropoffs!.length,
+                                                itemBuilder: (context, dropIndex) {
+                                                  final drop = auhController.latestBookingListResponse[index]!.dropoffs![dropIndex];
+                                                  return Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2),
+                                                    child: Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        const Icon(Icons.location_on_outlined, color: Colors.red, size: 25),
+                                                        const SizedBox(width: 5),
+                                                        Expanded(
+                                                          child: Text(
+                                                            drop.address ?? "No drop address",
+                                                            maxLines: 2,
+                                                            style: const TextStyle(fontSize: 13),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          ],
+                                        ))
+
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  auhController.latestBookingListResponse![index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
+                                  SizedBox.shrink() :
+                                  Text('A driver will be assigned to you shortly. Please wait.',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black
+                                    ),
+                                  ),
+                                  if (authController.latestBookingListResponse[index]?.orderStatus == 'new' ||
+                                      authController.latestBookingListResponse[index]?.orderStatus == 'scheduled')
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: InkWell(
+                                        onTap: () {
+                                          showCancelDialog(
+                                            context,
+                                            authController.latestBookingListResponse[index]!.id.toString(),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: Get.width,
+                                          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.shade50,
+                                            border: Border.all(color: Colors.red),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  auhController.latestBookingListResponse[index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
+
+                                  InkWell(
+                                    onTap: (){
+                                      Get.find<AuthController>().getBookingDriverHome(driverID:auhController.latestBookingListResponse[index]!.driverId.toString(),isCall: true,
+                                          bookingID: auhController.latestBookingListResponse[index]!.id.toString());
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
+                                      child: Container(
+                                          width:double.infinity,
+                                          height:35,
+                                          alignment:Alignment.center,
+
+                                          decoration:BoxDecoration(
+                                              color: AppColors.secondaryGradient,
+                                              borderRadius: BorderRadius.circular(10)
+                                          ),
+                                          child: Text(
+                                            auhController.latestBookingListResponse![index]!.orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
+                                            "${'Pay'.tr} ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![index]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                    ),
+                                  )
+                                      :
+                                  // Row(
+                                  //   mainAxisAlignment: MainAxisAlignment.end,
+                                  //   children: [
+                                  //     InkWell(
+                                  //       onTap: (){
+                                  //         // Get.find<AuthController>().getBookingDriver(bookingID:auhController.latestBookingListResponse![index]!.id.toString(),isCall: true);
+                                  //       },
+                                  //       child: Padding(
+                                  //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  //         child: Text("No Driver Assign".tr,style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                                  //       ),
+                                  //     )
+                                  //   ],
+                                  // ),
+                                  SizedBox(),
+                                  SizedBox(height: 10,),
+                                ],
+                              );
+                            },)
+                        ],
+                      ),
+                    )),
+                  );
+                },
+              ),
+
+            ):SizedBox(),
           ),
-        ),
-         bottomSheet: Get.find<AuthController>().isLoggedIn() &&
-         auhController.latestBookingListResponse!=null && auhController.latestBookingListResponse!.isNotEmpty &&  auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="paid" && auhController.latestBookingListResponse![0]!.orderStatus.toString().toLowerCase() !="cancelled" ?
-         Container(
-           padding: const EdgeInsets.only(top: 20),
-           // Space for the drag handle
-           margin: EdgeInsets.symmetric(horizontal: 10),
-
-           decoration:  BoxDecoration(
-             color: Colors.white,
-             border: Border.all(color: AppColors.primaryGradient),
-             borderRadius: BorderRadius.only(
-               topLeft: Radius.circular(20),
-               topRight: Radius.circular(20),
-             ),
-           ),
-           child: DraggableScrollableSheet(
-             expand: false,
-             shouldCloseOnMinExtent: false,
-
-             initialChildSize: 0.2, // Initial height (40% of screen)
-             minChildSize: 0.2, // Minimum height when dragged down
-             maxChildSize: 0.6, // Maximum height when dragged up
-             builder: (context, scrollController) {
-               return SingleChildScrollView(
-                 controller: scrollController,
-                 child: ConstrainedBox(
-                     constraints: BoxConstraints(
-                       minHeight: MediaQuery.of(context).size.height * 0.2, // Match minChildSize
-                     ),child: Container(
-
-
-                   padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-
-
-
-                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.only(topRight: Radius.circular(6),topLeft: Radius.circular(6)),
-
-                     color:Colors.white,
-                     boxShadow: [
-                       BoxShadow(
-                         color: AppColors.primaryGradient.withOpacity(0.1), // Very light grey
-                         blurRadius: 20.0,
-                         spreadRadius: 8.0,
-                         offset: Offset(0, 5),),
-                       BoxShadow(
-                         color: AppColors.secondaryGradient.withOpacity(0.9), // Inner white glow
-                         blurRadius: 10.0,
-                         spreadRadius: -5.0, // Negative spread for inner effect
-                         offset: Offset(0, 0),
-                       ),
-                     ],
-
-                   ),
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     mainAxisSize: MainAxisSize.min,
-                     children: [
-                       Padding(
-                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                         child: Align(
-                             alignment: Alignment.centerLeft,
-                             child: Text("Current Order".tr,style: TextStyle(fontSize: 18,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.start,)),
-                       ),
-
-                       ListView.builder(
-                         shrinkWrap: true,
-                         physics: NeverScrollableScrollPhysics(),
-                         itemCount: auhController.latestBookingListResponse.length,
-                         itemBuilder: (context, index) {
-                         return Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             Padding(
-                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                               child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory.toString(),
-                                 maxLines: 1,
-                                 style: TextStyle(fontSize: 13),),
-                             ),
-                             SizedBox(height: 10,),
-                             Padding(
-                               padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical: 4),
-                               child: Row(
-                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                 children: [
-                                   Icon(Icons.location_on_outlined,color: Colors.green,size: 25,),
-                                   SizedBox(width: 5,),
-                               Expanded(
-                                 child: Column(
-                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                   children: [
-                                     Text(auhController
-                                         .latestBookingListResponse[index]!
-                                         .pickup!.address.toString(),
-                                       maxLines: 2,
-                                       style: TextStyle(fontSize: 13),),
-                                   ],
-                                 ),
-                                 ),
-
-                                 ],
-                               ),
-                             ),
-
-                             Padding(
-                               padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                               child: Row(
-                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                 children: [
-                                   Expanded(child: Column(
-                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                     children: [
-                                       if (auhController.latestBookingListResponse[index]!.dropoffs != null && auhController.latestBookingListResponse[index]!.dropoffs!.isNotEmpty)
-                                         ListView.builder(
-                                           shrinkWrap: true,
-                                           physics: const NeverScrollableScrollPhysics(),
-                                           itemCount:auhController.latestBookingListResponse[index]!.dropoffs!.length,
-                                           itemBuilder: (context, dropIndex) {
-                                             final drop = auhController.latestBookingListResponse[index]!.dropoffs![dropIndex];
-                                             return Padding(
-                                               padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2),
-                                               child: Row(
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   const Icon(Icons.location_on_outlined, color: Colors.red, size: 25),
-                                                   const SizedBox(width: 5),
-                                                   Expanded(
-                                                     child: Text(
-                                                       drop.address ?? "No drop address",
-                                                       maxLines: 2,
-                                                       style: const TextStyle(fontSize: 13),
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                             );
-                                           },
-                                         ),
-                                     ],
-                                   ))
-
-                                 ],
-                               ),
-                             ),
-
-                             auhController.latestBookingListResponse![index]!.driverId!=null && auhController.latestBookingListResponse![index]!.driverId!.isNotEmpty ?
-
-                                 InkWell(
-                                   onTap: (){
-                                     Get.find<AuthController>().getBookingDriverHome(driverID:auhController.latestBookingListResponse[index]!.driverId.toString(),isCall: true,
-                                     bookingID: auhController.latestBookingListResponse[index]!.id.toString());
-                                   },
-                                   child: Padding(
-                                     padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
-                                     child: Container(
-                                       width:double.infinity,
-                                         height:35,
-                                         alignment:Alignment.center,
-
-                                         decoration:BoxDecoration(
-                                           color: AppColors.secondaryGradient,
-                                           borderRadius: BorderRadius.circular(10)
-                                         ),
-                                         child: Text(
-                                           auhController.latestBookingListResponse![index]!.orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
-                                           "${'Pay'.tr} ${AppContants.rupessSystem} ${ auhController.latestBookingListResponse![index]!.totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
-                                   ),
-                                 )
-                              :
-                             Row(
-                               mainAxisAlignment: MainAxisAlignment.end,
-                               children: [
-                                 InkWell(
-                                   onTap: (){
-                                     // Get.find<AuthController>().getBookingDriver(bookingID:auhController.latestBookingListResponse![index]!.id.toString(),isCall: true);
-                                   },
-                                   child: Padding(
-                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                     child: Text("No Driver Assign".tr,style: TextStyle(fontSize: 18,color: AppColors.primaryGradient,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
-                                   ),
-                                 )
-                               ],
-                             ),
-                             SizedBox(height: 10,),
-                           ],
-                         );
-                       },)
-                     ],
-                   ),
-                 )),
-               );
-             },
-           ),
-
-         ):SizedBox(),
-      ),
     );
   }
 
 }
-

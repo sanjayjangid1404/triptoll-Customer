@@ -217,7 +217,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     final discount = await fetchDiscountPercentage();
     if (discount != null) {
       setState(() {
-       // discountPercentage = double.tryParse(discount) ?? 0;
+        // discountPercentage = double.tryParse(discount) ?? 0;
       });
     }
   }
@@ -254,48 +254,18 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     return double.parse(totalDistance.toStringAsFixed(2)); // Round 2 decimals
   }
 
-  // Map<String, double> calculateFare({
-  //   required double distanceInKm,
-  //   required Data vehicleData,
-  // }) {
-  //   final double baseFare = double.parse(vehicleData.baseFare.toString());
-  //   final double baseFareUpto = double.parse(vehicleData.baseFareUpto.toString());
-  //
-  //   final rates = [
-  //     double.parse(vehicleData.rate1PerKm.toString()),
-  //     double.parse(vehicleData.rate2PerKm.toString()),
-  //     double.parse(vehicleData.rate3PerKm.toString()),
-  //     double.parse(vehicleData.rate4PerKm.toString()),
-  //   ];
-  //
-  //   if (distanceInKm <= baseFareUpto) {
-  //     return {
-  //       'totalFare': baseFare,
-  //       'randomRate': 0, // no random rate used
-  //     };
-  //   }
-  //
-  //
-  //
-  //   final double extraDistance = distanceInKm - baseFareUpto;
-  //   final double randomRate = rates[Random().nextInt(rates.length)];
-  //   final double extraFare = extraDistance * randomRate;
-  //    totalFare = baseFare + extraFare;
-  //
-  //    print(totalFare);
-  //
-  //   return {
-  //     'totalFare': totalFare,
-  //     'randomRate': randomRate,
-  //   };
-  // }
   Map<String, double> calculateFare({
     required double distanceInKm,
     required Data vehicleData,
+    required int stopCount, // 👈 add this
   }) {
     final double baseFare = double.parse(vehicleData.baseFare.toString());
-    final double baseFareUpto = double.parse(vehicleData.baseFareUpto.toString());
-    final double extraPrice = double.parse(vehicleData.extraPrice.toString());
+    final double baseFareUpto =
+    double.parse(vehicleData.baseFareUpto.toString());
+    final double extraPrice =
+    double.parse(vehicleData.extraPrice.toString());
+    final double perLocationCharge =
+    double.parse(vehicleData.perLocationCharge.toString());
 
     final rates = [
       double.parse(vehicleData.rate1PerKm.toString()),
@@ -304,27 +274,35 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       double.parse(vehicleData.rate4PerKm.toString()),
     ];
 
+    double totalFare = 0;
+    double randomRate = 0;
+
     if (distanceInKm <= baseFareUpto) {
       final double extraPercent = (baseFare * extraPrice) / 100;
-      final double finalFare = baseFare + extraPercent;
+      totalFare = baseFare + extraPercent;
+    } else {
+      final double extraDistance = distanceInKm - baseFareUpto;
+      randomRate = rates[Random().nextInt(rates.length)];
+      final double extraFare = extraDistance * randomRate;
 
-      return {
-        'totalFare': finalFare,
-        'randomRate': 0,
-      };
+      totalFare = baseFare + extraFare;
+
+      // add percentage
+      final double extraPercent = (totalFare * extraPrice) / 100;
+      totalFare += extraPercent;
     }
 
-    final double extraDistance = distanceInKm - baseFareUpto;
-    final double randomRate = rates[Random().nextInt(rates.length)];
-    final double extraFare = extraDistance * randomRate;
+    // ✅ PER LOCATION CHARGE LOGIC
+    if (stopCount > 2) {
+      int extraStops = stopCount - 2;
+      double locationCharge = extraStops * perLocationCharge;
+      totalFare += locationCharge;
 
-    double totalFare = baseFare + extraFare;
+      print("Extra Stops: $extraStops");
+      print("Location Charge Added: $locationCharge");
+    }
 
-    // add percentage
-    final double extraPercent = (totalFare * extraPrice) / 100;
-    totalFare += extraPercent;
-
-    print(totalFare);
+    print("Final Fare: $totalFare");
 
     return {
       'totalFare': totalFare,
@@ -345,6 +323,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       return calculateFare(
         distanceInKm: distance,
         vehicleData: vehicle,
+        stopCount: widget.stopLocations.length,
       );
     }).toList();
   }
@@ -531,7 +510,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
             cachedFaresAndRates == null ||
             cachedFaresAndRates!.isEmpty) {
           print('data is${cachedFaresAndRates.toString()}');
-         return Center(
+          return Center(
             child: CircularProgressIndicator(color: AppColors.primaryGradient),
           );
         }
@@ -555,268 +534,268 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
               if (didPop) return;
               if(authController.isShowDriver) {
                 Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-                    (route) => false,
-              );
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                      (route) => false,
+                );
               }
               else {
                 Get.back();
               }
             },
-         child: Scaffold(
-          backgroundColor: Colors.white,
-          extendBodyBehindAppBar: true,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              extendBodyBehindAppBar: true,
 
-          appBar: AppBar(
-            centerTitle: false,
-            iconTheme: IconThemeData(color: AppColors.primaryGradient),
-            backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                centerTitle: false,
+                iconTheme: IconThemeData(color: AppColors.primaryGradient),
+                backgroundColor: Colors.transparent,
 
-           // title: Text("Choose Vehicle",style: TextStyle(color: Colors.white),),
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height*0.7,
-                  width: double.infinity,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 40.0),
-                        child: GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(widget.pickLat, widget.pickLng),
-                            zoom: 10.5,
-                          ),
-                          markers: _markers,
-                          polylines: _polylines,
-                          myLocationEnabled: true,
-                          myLocationButtonEnabled: false,
-                          zoomGesturesEnabled: true,
-                          scrollGesturesEnabled: true,
-                          tiltGesturesEnabled: true,
-                          rotateGesturesEnabled: true,
-                          zoomControlsEnabled: true,
-
-                          // Smooth map movement handling
-                          onCameraMove: (position) {
-                            // Optional: Update marker position during movement if needed
-                            // setState(() {
-                            //   _currentPosition = position.target;
-                            // });
-                          },
-                          onCameraIdle: () {
-                            // Optional: Perform actions when map stops moving
-                            // _handleMapIdle();
-                          },
-
-                          onMapCreated: (controller) {
-                            _mapController = controller;
-
-                            // Improved delayed route drawing
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              if (mounted && !_isRouteDrawn) {
-                                _getRouteBetweenPoints(
-                                  stopLocations: widget.stopLocations,
-                                  pickLat: widget.pickLat,
-                                  pickLng: widget.pickLng,
-                                );
-                              }
-                            });
-                          },
-                        ),
-                      ),
-
-                      Positioned(
-                        bottom: 0, // distance from bottom
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          children: [
-                            TollInfoBanner(),
-                            Container(
-                              margin: EdgeInsets.symmetric(horizontal: 15,vertical: 0),
-                              padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.35),
-                                    blurRadius: 1,
-                                    spreadRadius: 1,
-                                    // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.8),
-                                    blurRadius: 1,
-                                    spreadRadius: 1,
-                                    // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
-                                  ),
-                                ],
+                // title: Text("Choose Vehicle",style: TextStyle(color: Colors.white),),
+              ),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height*0.7,
+                      width: double.infinity,
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 40.0),
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(widget.pickLat, widget.pickLng),
+                                zoom: 10.5,
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        // TODO: Navigate to forget password screen
-                                        // final result = await Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
-                                        // );
-                                        //
-                                        // if (result != null) {
-                                        //
-                                        //
-                                        //   print("Selected Lat: ${result['lat']}");
-                                        //   print("Selected Lng: ${result['lng']}");
-                                        //   print("Selected Address: ${result['address']}");
-                                        //
-                                        //   setState(() {
-                                        //     widget.pickLng = result['lng'];
-                                        //     widget.pickLat = result['lat'];
-                                        //     widget.pickAddress = result['address'];
-                                        //
-                                        //     // _addMarkers();
-                                        //     // _getRouteBetweenPoints(dropLat: widget.dropLat,dropLng: widget.dropLng,pickLat: result['lat'],pickLng: result['lng']);
-                                        //   });
-                                        // }
+                              markers: _markers,
+                              polylines: _polylines,
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: false,
+                              zoomGesturesEnabled: true,
+                              scrollGesturesEnabled: true,
+                              tiltGesturesEnabled: true,
+                              rotateGesturesEnabled: true,
+                              zoomControlsEnabled: true,
 
-                                      },
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Icon(Icons.location_on_outlined,color: Colors.green,size: 30,),
-                                          SizedBox(width: 5,),
-                                          Expanded(child: Column(
+                              // Smooth map movement handling
+                              onCameraMove: (position) {
+                                // Optional: Update marker position during movement if needed
+                                // setState(() {
+                                //   _currentPosition = position.target;
+                                // });
+                              },
+                              onCameraIdle: () {
+                                // Optional: Perform actions when map stops moving
+                                // _handleMapIdle();
+                              },
+
+                              onMapCreated: (controller) {
+                                _mapController = controller;
+
+                                // Improved delayed route drawing
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                  if (mounted && !_isRouteDrawn) {
+                                    _getRouteBetweenPoints(
+                                      stopLocations: widget.stopLocations,
+                                      pickLat: widget.pickLat,
+                                      pickLng: widget.pickLng,
+                                    );
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+
+                          Positioned(
+                            bottom: 0, // distance from bottom
+                            left: 0,
+                            right: 0,
+                            child: Column(
+                              children: [
+                                TollInfoBanner(),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 15,vertical: 0),
+                                  padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.35),
+                                        blurRadius: 1,
+                                        spreadRadius: 1,
+                                        // offset: Offset(-2, -2), // 👉 ye shadow bottom-right mein dikh raha hai
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.8),
+                                        blurRadius: 1,
+                                        spreadRadius: 1,
+                                        // offset: Offset(-2, -2), // 👉 ye shadow top-left mein light effect de raha hai
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            // TODO: Navigate to forget password screen
+                                            // final result = await Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(builder: (context) => LocationPickerTypeAheadPage(isPick: true,)),
+                                            // );
+                                            //
+                                            // if (result != null) {
+                                            //
+                                            //
+                                            //   print("Selected Lat: ${result['lat']}");
+                                            //   print("Selected Lng: ${result['lng']}");
+                                            //   print("Selected Address: ${result['address']}");
+                                            //
+                                            //   setState(() {
+                                            //     widget.pickLng = result['lng'];
+                                            //     widget.pickLat = result['lat'];
+                                            //     widget.pickAddress = result['address'];
+                                            //
+                                            //     // _addMarkers();
+                                            //     // _getRouteBetweenPoints(dropLat: widget.dropLat,dropLng: widget.dropLng,pickLat: result['lat'],pickLng: result['lng']);
+                                            //   });
+                                            // }
+
+                                          },
+                                          child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              Icon(Icons.location_on_outlined,color: Colors.green,size: 30,),
+                                              SizedBox(width: 5,),
+                                              Expanded(child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                    Text(
-                                                      (widget.senderNameText !=
-                                                                  null &&
-                                                              widget
-                                                                  .senderNameText!
-                                                                  .isNotEmpty &&
-                                                              widget.senderPhone !=
-                                                                  null &&
-                                                              widget
-                                                                  .senderPhone!
-                                                                  .isNotEmpty)
-                                                          ? "${widget.senderNameText} , ${widget.senderPhone}"
-                                                          : "${authController.getUserName() ?? ""}  ,  ${authController.getUserPhone() ?? ""}",
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  0.6)),
-                                                    ),
-                                                    // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        (widget.senderNameText !=
+                                                            null &&
+                                                            widget
+                                                                .senderNameText!
+                                                                .isNotEmpty &&
+                                                            widget.senderPhone !=
+                                                                null &&
+                                                            widget
+                                                                .senderPhone!
+                                                                .isNotEmpty)
+                                                            ? "${widget.senderNameText} , ${widget.senderPhone}"
+                                                            : "${authController.getUserName() ?? ""}  ,  ${authController.getUserPhone() ?? ""}",
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                0.6)),
+                                                      ),
+                                                      // Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                    ],
+                                                  ),
+                                                  Text(widget.pickAddress,maxLines: 2,),
                                                 ],
-                                              ),
-                                              Text(widget.pickAddress,maxLines: 2,),
+                                              ))
+
                                             ],
-                                          ))
-
-                                        ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10,),
+                                      SizedBox(height: 10,),
 
-                                  //   const SizedBox(height: 24),
+                                      //   const SizedBox(height: 24),
 
-                                  // Drop Location
+                                      // Drop Location
 
-                                  const SizedBox(height: 8),
+                                      const SizedBox(height: 8),
 
-                                  ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(), // अगर ScrollView के अंदर है
-                                    itemCount: widget.stopLocations.length,
-                                    itemBuilder: (context, index) {
-                                      final stop = widget.stopLocations[index];
+                                      ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        shrinkWrap: true,
+                                        physics: const NeverScrollableScrollPhysics(), // अगर ScrollView के अंदर है
+                                        itemCount: widget.stopLocations.length,
+                                        itemBuilder: (context, index) {
+                                          final stop = widget.stopLocations[index];
 
-                                      return   index != 0 ?
-                                        Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
-                                            SizedBox(width: 5,),
-                                            Expanded(child: Column(
+                                          return   index != 0 ?
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                            child: Row(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
+                                                SizedBox(width: 5,),
+                                                Expanded(child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      (widget.senderName[index]!.value.text??"")+"  ,  "+(widget.sendMobile[index]!.value.text??""),
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black.withOpacity(0.6)
-                                                      ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          (widget.senderName[index]!.value.text??"")+"  ,  "+(widget.sendMobile[index]!.value.text??""),
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black.withOpacity(0.6)
+                                                          ),
+                                                        ),
+                                                        //  Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                      ],
                                                     ),
-                                                    //  Icon(Icons.expand_more,color: AppColors.primaryGradient,)
+                                                    Text(stop["address"]??"Unknow",maxLines: 2,),
                                                   ],
-                                                ),
-                                                Text(stop["address"]??"Unknow",maxLines: 2,),
-                                              ],
-                                            ))
+                                                ))
 
-                                          ],
-                                        ),
-                                      ) :
-                                      SizedBox.shrink();
-                                    },
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text('${'Total distance'.tr}  :-'),
-                                      const SizedBox(
-                                        width: 20,
+                                              ],
+                                            ),
+                                          ) :
+                                          SizedBox.shrink();
+                                        },
                                       ),
-                                      Text(widget.distance,maxLines: 2,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14
-                                        ),),
-                                    ],
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text('${'Expected Time'} :-'),
-                                      const SizedBox(
-                                        width: 20,
+                                      SizedBox(height: 10,),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text('${'Total distance'.tr}  :-'),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(widget.distance,maxLines: 2,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14
+                                            ),),
+                                        ],
                                       ),
-                                      Text(widget.expectedTime,maxLines: 2,style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14
-                                      ),),
-                                    ],
-                                  ),
-                                 SizedBox(
-                                   height: 40,
-                                 )
-                                 /* Padding(
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text('${'Expected Time'} :-'),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(widget.expectedTime,maxLines: 2,style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14
+                                          ),),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 40,
+                                      )
+                                      /* Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                     child: GestureDetector(
                                       onTap: () async {
@@ -874,16 +853,16 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                       ),
                                     ),
                                   ),*/
-                                ],
-                              ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
 
-                ),
+                    ),
 
 
 
@@ -892,7 +871,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
 
 
 
-                /* SizedBox(
+                    /* SizedBox(
                    height: 50,
                    child: ListView.builder(
                      shrinkWrap: true,
@@ -927,297 +906,297 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                    },),
                  ),
             */
-                SizedBox(height: 15,),
+                    SizedBox(height: 15,),
 
-              authController.isVehicle ? Center(child: CircularProgressIndicator(color: AppColors.primaryGradient,),):
-              ListView.builder (
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: authController.vehicleData?.data?.length ?? 0,
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                itemBuilder: (context, index) {
+                    authController.isVehicle ? Center(child: CircularProgressIndicator(color: AppColors.primaryGradient,),):
+                    ListView.builder (
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: authController.vehicleData?.data?.length ?? 0,
+                      shrinkWrap: true,
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      itemBuilder: (context, index) {
 
 
-                  final double baseFare =
-                      cachedFaresAndRates?[index]['totalFare']?.toDouble() ?? 0.0;
-                  if (index >= updatedFares.length) {
-                    updatedFares.add(baseFare);
-                  }
-                  if (index >= decreaseCount.length) {
-                    decreaseCount.add(0);
-                  }
-                  if (index >= hasIncreased.length) {
-                    hasIncreased.add(false);
-                  }
-                    print('DDDDDDDDDD${widget.eLoader}');
-                  if (widget.eLoader > 30 && authController.vehicleData!.data![index].name == "E Loader") {
-                    return const SizedBox.shrink(); // hide this vehicle
-                  }
-                  return authController.isShowDriver ? SizedBox()
-                  : InkWell(
-                    onTap: () {
-                      setState(() {
-                        selectIndex = index;
-                      });
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: selectIndex == index
-                              ? AppColors.secondaryGradient
-                              : Colors.grey.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 🔹 vehicle row
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Image.network(
-                                  "${AppContants.imageURL}uploaded_files/category_img/${authController.vehicleData!.data![index].fileName}",
-                                  height: 40,
-                                ),
+                        final double baseFare =
+                            cachedFaresAndRates?[index]['totalFare']?.toDouble() ?? 0.0;
+                        if (index >= updatedFares.length) {
+                          updatedFares.add(baseFare);
+                        }
+                        if (index >= decreaseCount.length) {
+                          decreaseCount.add(0);
+                        }
+                        if (index >= hasIncreased.length) {
+                          hasIncreased.add(false);
+                        }
+                        print('DDDDDDDDDD${widget.eLoader}');
+                        if (widget.eLoader > 30 && authController.vehicleData!.data![index].name == "E Loader") {
+                          return const SizedBox.shrink(); // hide this vehicle
+                        }
+                        return authController.isShowDriver ? SizedBox()
+                            : InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectIndex = index;
+                            });
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 8),
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: selectIndex == index
+                                    ? AppColors.secondaryGradient
+                                    : Colors.grey.shade300,
                               ),
-                              Expanded(
-                                flex: 7,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-
-                                    Text(
-                                      "${authController.vehicleData!.data![index].name ?? ""}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    Text(
-                                      "${authController.vehicleData!.data![index].maxLoad ?? "0"} Kg",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black.withOpacity(0.6),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          if (selectIndex == index) ...[
-                            SizedBox(height: 30),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                              GestureDetector(
-                                onTap: () {
-                                  double currentFare = updatedFares[index];
-                                  double minFare = baseFare * 0.90; // max 10% decrease
-
-                                  if (currentFare > baseFare) {
-                                    // Unlimited decrease of 10% (baseFare se upar hai)
-                                    updatedFares[index] -= baseFare * 0.10;
-                                  } else if (currentFare > minFare) {
-                                    // Step-wise decrease until 10% total
-                                    if (decreaseCount[index] == 0)
-                                      updatedFares[index] -= baseFare * 0.05;
-                                    else if (decreaseCount[index] == 1)
-                                      updatedFares[index] -= baseFare * 0.08;
-                                    else if (decreaseCount[index] == 2)
-                                      updatedFares[index] -= baseFare * 0.10;
-
-                                    decreaseCount[index]++;
-                                    if (updatedFares[index] < minFare) updatedFares[index] = minFare;
-                                  }
-                                  setState(() {});
-                                },
-                                            child: Icon(Icons.remove_circle,
-                                              color: (updatedFares[index] <= baseFare * 0.90)
-                                                  ? Colors.grey // 10% kam ho gaya → disable
-                                                  : Colors.green,
-                                            size: 40,),
-                                          ),
-                              Spacer(),
-                              Column(
+                                // 🔹 vehicle row
+                                Row(
                                   children: [
-                                    Text(
-                                      "${AppContants.rupessSystem}${updatedFares[index].toStringAsFixed(2)}",
-                                      style: TextStyle(
-                                        fontSize: 22,
-                                        color: AppColors.primaryGradient,
-                                        fontWeight: FontWeight.w700,
+                                    Expanded(
+                                      flex: 3,
+                                      child: Image.network(
+                                        "${AppContants.imageURL}uploaded_files/category_img/${authController.vehicleData!.data![index].fileName}",
+                                        height: 40,
                                       ),
                                     ),
-                                    Text(
-                                      "${'Recommended fare'.tr}: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(2)}",
-                                      style: TextStyle(fontSize: 15, color: Colors.grey),
+                                    Expanded(
+                                      flex: 7,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          Text(
+                                            "${authController.vehicleData!.data![index].name ?? ""}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${authController.vehicleData!.data![index].maxLoad ?? "0"} Kg",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black.withOpacity(0.6),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    double currentFare = updatedFares[index];
 
-                                    if (currentFare < baseFare && decreaseCount[index] > 0) {
-                                      double percent = 0.0;
+                                if (selectIndex == index) ...[
+                                  SizedBox(height: 30),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          double currentFare = updatedFares[index];
+                                          double minFare = baseFare * 0.90; // max 10% decrease
 
-                                      if (decreaseCount[index] == 2)
-                                        percent = 0.05; // reverse of step 1
-                                      else if (decreaseCount[index] == 1)
-                                        percent = 0.08; // reverse of step 2
-                                      else if (decreaseCount[index] == 0)
-                                        percent = 0.10; // reverse of step 3
+                                          if (currentFare > baseFare) {
+                                            // Unlimited decrease of 10% (baseFare se upar hai)
+                                            updatedFares[index] -= baseFare * 0.10;
+                                          } else if (currentFare > minFare) {
+                                            // Step-wise decrease until 10% total
+                                            if (decreaseCount[index] == 0)
+                                              updatedFares[index] -= baseFare * 0.05;
+                                            else if (decreaseCount[index] == 1)
+                                              updatedFares[index] -= baseFare * 0.08;
+                                            else if (decreaseCount[index] == 2)
+                                              updatedFares[index] -= baseFare * 0.10;
 
-                                      updatedFares[index] += baseFare * percent;
-                                      decreaseCount[index]--;
+                                            decreaseCount[index]++;
+                                            if (updatedFares[index] < minFare) updatedFares[index] = minFare;
+                                          }
+                                          setState(() {});
+                                        },
+                                        child: Icon(Icons.remove_circle,
+                                          color: (updatedFares[index] <= baseFare * 0.90)
+                                              ? Colors.grey // 10% kam ho gaya → disable
+                                              : Colors.green,
+                                          size: 40,),
+                                      ),
+                                      Spacer(),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            "${AppContants.rupessSystem}${updatedFares[index].toStringAsFixed(2)}",
+                                            style: TextStyle(
+                                              fontSize: 22,
+                                              color: AppColors.primaryGradient,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${'Recommended fare'.tr}: ${AppContants.rupessSystem}${baseFare.toStringAsFixed(2)}",
+                                            style: TextStyle(fontSize: 15, color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            double currentFare = updatedFares[index];
 
-                                      // Clamp not to exceed baseFare while in reverse
-                                      if (updatedFares[index] > baseFare) {
-                                        updatedFares[index] = baseFare;
-                                        decreaseCount[index] = 0;
-                                      }
-                                    } else {
-                                      // BaseFare or above → unlimited +10% increments
-                                      updatedFares[index] += baseFare * 0.10;
-                                    }
-                                  });
-                                },
-                                  child: Icon(Icons.add_circle,
-                                      color: Colors.green, size: 40),
-                                ),
+                                            if (currentFare < baseFare && decreaseCount[index] > 0) {
+                                              double percent = 0.0;
+
+                                              if (decreaseCount[index] == 2)
+                                                percent = 0.05; // reverse of step 1
+                                              else if (decreaseCount[index] == 1)
+                                                percent = 0.08; // reverse of step 2
+                                              else if (decreaseCount[index] == 0)
+                                                percent = 0.10; // reverse of step 3
+
+                                              updatedFares[index] += baseFare * percent;
+                                              decreaseCount[index]--;
+
+                                              // Clamp not to exceed baseFare while in reverse
+                                              if (updatedFares[index] > baseFare) {
+                                                updatedFares[index] = baseFare;
+                                                decreaseCount[index] = 0;
+                                              }
+                                            } else {
+                                              // BaseFare or above → unlimited +10% increments
+                                              updatedFares[index] += baseFare * 0.10;
+                                            }
+                                          });
+                                        },
+                                        child: Icon(Icons.add_circle,
+                                            color: Colors.green, size: 40),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ],
                             ),
-                          ],
-                        ],
+                          ),
+                        );
+                      },
+                    ),
+
+
+                    SizedBox(height: 80,)
+                  ],
+                ),
+              ),
+              bottomSheet: authController.isShowDriver ?  _buildBottomSheet(authController):
+              Row(
+                children: [
+
+                  IconButton(onPressed: (){
+                    showPaymentBottomSheet(context,setState);
+
+                  }, icon: CircleAvatar(
+                      backgroundColor: AppColors.secondaryGradient,
+                      child: ImageIcon(AssetImage("assets/images/rupess.jpg"),color: Colors.white,size: 40,))),
+                  Expanded(
+                    child: InkWell(
+                      onTap:Get.find<AuthController>().isLoggedIn() ? (){
+                        print('fjdfj${widget.senderNameText.toString()}');
+                        print('fjdfj${widget.senderPhone.toString()}');
+                        if (widget.houseNoCt.isNotEmpty) {
+                          var lastKey = widget.houseNoCt.keys.last;
+                        }
+                        var lastSenderName;
+                        if (widget.senderName.isNotEmpty) {
+                          lastSenderName = widget.senderName[widget.senderName.keys.last]?.text;
+                        }
+
+                        var lastSendMobile;
+                        widget.stopLocations[0]['contact_number'] = Get.find<AuthController>().getUserPhone();
+                        if (widget.sendMobile.isNotEmpty) {
+                          lastSendMobile = widget.sendMobile[widget.sendMobile.keys.last]?.text;
+                        }
+                        var lastStopLocation;
+                        if (widget.stopLocations.isNotEmpty) {
+                          lastStopLocation = widget.stopLocations.last;
+                        }
+                        print('kfjdjfkdfjdkfjk${widget.stopLocations.toString()}');
+                        if(widget.senderNameText == null || widget.senderNameText!.isEmpty){
+                          widget.senderNameText =  Get.find<AuthController>().getUserName();
+                          print('kfjdjfkdfjdkfjk${widget.senderNameText.toString()}');
+                        }if(widget.senderPhone == null || widget.senderPhone!.isEmpty){
+                          widget.senderPhone =  Get.find<AuthController>().getUserPhone();
+                          print('kfjdjfkdfjdkfjk${widget.senderPhone.toString()}');
+                        }
+                        String pickupOtp = (1000 + Random().nextInt(9000)).toString();
+                        authController.bookingMultipleNow(
+                            pickupOtp: pickupOtp,
+                            distance: widget.distance,
+                            expectedTime: widget.expectedTime,
+                            // amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),
+                            amount: updatedFares[selectIndex].toStringAsFixed(2),
+                            totalAmount: updatedFares[selectIndex].toStringAsFixed(2),
+                            categoryId: "",
+                            categoryName: "",
+                            scheduleTime: widget.scheduleTime,
+                            scheduleDate: widget.scheduleDate,
+                            senderNameText : widget.senderNameText,
+                            senderPhone : widget.senderPhone,
+                            discount: "0",
+                            discountPercentage: "0",
+                            dropAddress: lastStopLocation["address"],
+                            dropAddressHeading: "",
+                            dropLat: lastStopLocation["lat"].toString(),
+                            dropLong: lastStopLocation["lng"].toString(),
+                            paymentType: selectedPayment,
+                            pickupAddress: widget.pickAddress,
+                            pickupHeading: "",
+                            pickupLat: widget.pickLat.toString(),
+                            pickupLong: widget.pickLng.toString(),
+                            rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
+                            receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
+                            totalDistance: calculateDistanceWithPickup(
+                                pickLat:widget.pickLat,
+                                pickLng:  widget.pickLng,
+                                stops:  widget.stopLocations
+                            ).toStringAsFixed(0), vehicleId: authController.vehicleData!.data![selectIndex].id??"", vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
+                            vehicleName: authController.vehicleData!.data![selectIndex].name??"",
+                            stopLocations: widget.stopLocations);
+                        print('fdfd${widget.scheduleDate.toString()}');
+                        print('fdfd${widget.scheduleTime.toString()}');
+                        _startTimer();
+                        startChecking();
+                        if( widget.scheduleDate != null && widget.scheduleTime != null
+                            && widget.scheduleDate != '' && widget.scheduleTime  != ''){
+                          Future.delayed(Duration(seconds: 0),() =>  Get.offAll(() => HomePage()),);
+                        }
+                      }
+                          : (){
+                        Get.to(LoginView());
+                      },
+                      child: Container(height: 45,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: AppColors.secondaryGradient
+                        ),
+                        child:authController.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 15,color: Colors.white),),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
 
+                  IconButton(onPressed: (){
+                    showNoteBottomSheet(context);
 
-                SizedBox(height: 80,)
-              ],
+                  }, icon: CircleAvatar(
+                      backgroundColor: AppColors.secondaryGradient,
+                      child: Icon(Icons.note_alt_outlined,color: Colors.white,))),
+                ],
+              ).paddingOnly(bottom: MediaQuery.of(context).size.height * .02),
             ),
-          ),
-           bottomSheet: authController.isShowDriver ?  _buildBottomSheet(authController): Row(
-             children: [
-
-               IconButton(onPressed: (){
-                 showPaymentBottomSheet(context,setState);
-
-               }, icon: CircleAvatar(
-                   backgroundColor: AppColors.secondaryGradient,
-                   child: ImageIcon(AssetImage("assets/images/rupess.jpg"),color: Colors.white,size: 40,))),
-               Expanded(
-                 child: InkWell(
-                   onTap:Get.find<AuthController>().isLoggedIn() ? (){
-                     print('fjdfj${widget.senderNameText.toString()}');
-                     print('fjdfj${widget.senderPhone.toString()}');
-                     var lastHouseNoValue;
-                     if (widget.houseNoCt.isNotEmpty) {
-                       var lastKey = widget.houseNoCt.keys.last;
-                       lastHouseNoValue = widget.houseNoCt[lastKey]?.text;
-                     }
-                     var lastSenderName;
-                     if (widget.senderName.isNotEmpty) {
-                       lastSenderName = widget.senderName[widget.senderName.keys.last]?.text;
-                     }
-
-                     var lastSendMobile;
-                     widget.stopLocations[0]['contact_number'] = Get.find<AuthController>().getUserPhone();
-                     if (widget.sendMobile.isNotEmpty) {
-                       lastSendMobile = widget.sendMobile[widget.sendMobile.keys.last]?.text;
-                     }
-                     var lastStopLocation;
-                     if (widget.stopLocations.isNotEmpty) {
-                       lastStopLocation = widget.stopLocations.last;
-                     }
-                     print('kfjdjfkdfjdkfjk${widget.stopLocations.toString()}');
-                     if(widget.senderNameText == null || widget.senderNameText!.isEmpty){
-                       widget.senderNameText =  Get.find<AuthController>().getUserName();
-                       print('kfjdjfkdfjdkfjk${widget.senderNameText.toString()}');
-                     }if(widget.senderPhone == null || widget.senderPhone!.isEmpty){
-                       widget.senderPhone =  Get.find<AuthController>().getUserPhone();
-                       print('kfjdjfkdfjdkfjk${widget.senderPhone.toString()}');
-                     }
-
-                     authController.bookingMultipleNow(
-                         distance: widget.distance,
-                         expectedTime: widget.expectedTime,
-                         // amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),
-                         amount: updatedFares[selectIndex].toStringAsFixed(2),
-                         totalAmount: updatedFares[selectIndex].toStringAsFixed(2),
-                         categoryId: "",
-                         categoryName: "",
-                         scheduleTime: widget.scheduleTime,
-                         scheduleDate: widget.scheduleDate,
-                         senderNameText : widget.senderNameText,
-                         senderPhone : widget.senderPhone,
-                         discount: "0",
-                         discountPercentage: "0",
-                         dropAddress: lastStopLocation["address"],
-                         dropAddressHeading: "",
-                         dropLat: lastStopLocation["lat"].toString(),
-                         dropLong: lastStopLocation["lng"].toString(),
-                         paymentType: selectedPayment,
-                         pickupAddress: widget.pickAddress,
-                         pickupHeading: "",
-                         pickupLat: widget.pickLat.toString(),
-                         pickupLong: widget.pickLng.toString(),
-                         rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
-                         receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
-                         totalDistance: calculateDistanceWithPickup(
-                         pickLat:widget.pickLat,
-                         pickLng:  widget.pickLng,
-                         stops:  widget.stopLocations
-                     ).toStringAsFixed(0), vehicleId: authController.vehicleData!.data![selectIndex].id??"", vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
-                         vehicleName: authController.vehicleData!.data![selectIndex].name??"",
-                         stopLocations: widget.stopLocations);
-                     print('fdfd${widget.scheduleDate.toString()}');
-                     print('fdfd${widget.scheduleTime.toString()}');
-                     _startTimer();
-                     startChecking();
-                     if( widget.scheduleDate != null && widget.scheduleTime != null
-                         && widget.scheduleDate != '' && widget.scheduleTime  != ''){
-                       Future.delayed(Duration(seconds: 0),() =>  Get.offAll(() => HomePage()),);
-                     }
-                   }
-                   : (){
-                     Get.to(LoginView());
-                   },
-                   child: Container(height: 45,
-                   width: double.infinity,
-                     alignment: Alignment.center,
-                     margin: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
-                     decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(4),
-                       color: AppColors.secondaryGradient
-                     ),
-                     child:authController.isBookingProcess ? SpinKitThreeBounce(color: Colors.white): Text("${'Process With'.tr} ${authController.vehicleData!=null && authController.vehicleData!.data!=null ? authController.vehicleData!.data![selectIndex].name!:""}",style: TextStyle(fontSize: 15,color: Colors.white),),
-                   ),
-                 ),
-               ),
-
-               IconButton(onPressed: (){
-                 showNoteBottomSheet(context);
-
-               }, icon: CircleAvatar(
-                   backgroundColor: AppColors.secondaryGradient,
-                   child: Icon(Icons.note_alt_outlined,color: Colors.white,))),
-             ],
-           ),
-               ),
-       );},
+          );},
     );
   }
 
@@ -1460,12 +1439,12 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
 
           // Driver info (shown when found)
           if (authController.driver==null || authController.driver!.driverDetails==null) ...[
-             Text(
+            Text(
               'Finding you a driver'.tr,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-             Text(
+            Text(
               'Please wait while we connect you with the nearest available driver'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey),
@@ -1510,7 +1489,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
           ] else ...[
             Row(
               children: [
-                 CircleAvatar(
+                CircleAvatar(
                   radius: 30,
                   backgroundImage: NetworkImage("${AppContants.imageURL}uploaded_files/category_img/${authController.driver!.driverDetails!.profilePhoto}"),
                 ),
@@ -1518,7 +1497,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(
+                    Text(
                       '${authController.driver!.driverDetails!.firstName}',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -1534,7 +1513,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                       children: [
                         Icon(Icons.directions_car, color: Colors.amber, size: 16),
                         const SizedBox(width: 5),
-                         Text('${authController.driver!.driverDetails!.vehicleNumber??""}'),
+                        Text('${authController.driver!.driverDetails!.vehicleNumber??""}'),
                       ],
                     ),
                   ],
@@ -1563,7 +1542,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                           child: const Icon(Icons.phone),
                         ),
                         const SizedBox(height: 5),
-                         Text('Call'.tr),
+                        Text('Call'.tr),
                       ],
                     ),
                   ),
@@ -1592,7 +1571,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                         child: const Icon(Icons.directions_car),
                       ),
                       const SizedBox(height: 5),
-                       Text('${authController.driver!.driverDetails!.categoryName}'),
+                      Text('${authController.driver!.driverDetails!.categoryName}'),
                     ],
                   ),
                   Column(
@@ -1634,7 +1613,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                 }
                 else {
                   AppContants.showNoteBottomSheet(context,authController,authController.newBookingID,false,null);
-                 // authController.cancelOrder(bookingID: authController.newBookingID,reason: "Timing Issue",comment: "Not Good Service");
+                  // authController.cancelOrder(bookingID: authController.newBookingID,reason: "Timing Issue",comment: "Not Good Service");
                 }
               },
               child: authController.isBookingDetails  ? Center(child: CircularProgressIndicator(color: AppColors.primaryGradient,),): Text(

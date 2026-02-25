@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -48,7 +49,8 @@ void main() async{
   final sharedPreferences = await SharedPreferences.getInstance();
   Get.lazyPut(() => sharedPreferences);
 
-
+  FlutterContacts.config.includeNotesOnIos13AndAbove = true;
+  FlutterContacts.config.returnUnifiedContacts = true;
   await di.init();
   await Firebase.initializeApp();
   await Permission.notification.isDenied.then((value) {

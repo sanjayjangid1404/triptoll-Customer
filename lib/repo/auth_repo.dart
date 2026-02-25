@@ -13,7 +13,7 @@ class AuthRepo{
   final SharedPreferences sharedPreferences;
   AuthRepo({required this.apiClient, required this.sharedPreferences});
 
- /* Future<Response> registration(SignUpBody signUpBody) async {
+  /* Future<Response> registration(SignUpBody signUpBody) async {
     return await apiClient.postData(
         ApiController.REGISTER_URI, signUpBody.toJson());
   }*/
@@ -96,22 +96,22 @@ class AuthRepo{
   Future<Response> getRunningBooking({String? status,String? limit,String? offset,String? userID}) async {
     return await apiClient.postData(
         AppContants.runningBookingURL,{
-          "customer_id":userID!
+      "customer_id":userID!
     });
   }
   Future<Response> feedBackDriver({String? bookingId,String? driverId,String? rating,String? userID,String? feedback}) async {
     return await apiClient.postData(AppContants.orderRatingURL,{
-          "cus_id":userID!,
-          "booking_id":bookingId,
-          "driverId":driverId,
-          "rating":rating,
-          "feedback":feedback,});
+      "cus_id":userID!,
+      "booking_id":bookingId,
+      "driverId":driverId,
+      "rating":rating,
+      "feedback":feedback,});
   }
 
   Future<Response> getBookingDetails({String? bookingID,String? userID}) async {
     // return await apiClient.getData("${AppContants.getBookingDetails}/$bookingID?user_type=customer&user_id=$userID");
     return await apiClient.getDataWithBody(AppContants.getBookingDetails, {
-          "booking_id":bookingID.toString()});
+      "booking_id":bookingID.toString()});
   }
   Future<Response> disableCustomr({String? userID}) async {
     // return await apiClient.getData("${AppContants.getBookingDetails}/$bookingID?user_type=customer&user_id=$userID");
@@ -148,44 +148,47 @@ class AuthRepo{
   Future<Response> notifyDriver(String id) async {
     return await apiClient.postData(
         AppContants.notifyDriverURL,{
-          "booking_id":id
+      "booking_id":id
     });
   }
   Future<Response> loginCustomer(String number) async {
     return await apiClient.postData(
         AppContants.loginOTPUrl,{
-          "contact_number":number
+      "contact_number":number
     });
   }
 
   Future<Response> orderPayment({String? id,String? driverID,String? key,String? status,String? orderID}) async {
     return await apiClient.postData(
         AppContants.orderPaymentURL,{
-          "booking_id":id,
-          "driver_id":driverID,
-          "transaction_id":key,
-          "payment_status":status,
-          "order_id":orderID,
+      "booking_id":id,
+      "driver_id":driverID,
+      "transaction_id":key,
+      "payment_status":status,
+      "order_id":orderID,
     });
   }
-  Future<Response> orderPaymentWallet({String? id,String? driverID,String? key,String? status,String? orderID}) async {
+  Future<Response> orderPaymentWallet({String? id,String? driverID,String? key,String? status,String? orderID,String? discountAmount,String? totalAmount,String? amount}) async {
     return await apiClient.postData(
         AppContants.orderPaymentURL,{
-          "booking_id":id,
-          "driver_id":driverID,
-          "transaction_id":key,
-          "payment_status":status,
-          "payment_type":'wallet',
-          "order_id":orderID,
+      "booking_id":id,
+      "driver_id":driverID,
+      "transaction_id":key,
+      "payment_status":status,
+      "payment_type":'wallet',
+      "order_id":orderID,
+      "discount_amount":discountAmount,
+      "total_amount":totalAmount,
+      "amount":amount,
     });
   }
   Future<Response> addWalletPayment({String? customerID,String? amount,String? trnId}) async {
     return await apiClient.postData(
         AppContants.addCustomerWalletURL,{
-          "customer_id":customerID,
-          "amount":amount,
-          "payment_type":"wallet recharge",
-          "trn_id":trnId,
+      "customer_id":customerID,
+      "amount":amount,
+      "payment_type":"wallet recharge",
+      "trn_id":trnId,
     });
   }
   Future<Response> getCity() async {
@@ -293,6 +296,7 @@ class AuthRepo{
     String? scheduleTime,
     String? senderNameText,
     String? senderPhone,
+    String? pickupOtp,
     required List<Map<String, dynamic>> stopLocations,
   }) async {
     final body = {
@@ -312,6 +316,7 @@ class AuthRepo{
       "locations": stopLocations,
       "schedule_date": scheduleDate,
       "schedule_time": scheduleTime,
+      "pickup_otp": pickupOtp,
     };
 
     return await apiClient.postData(AppContants.saveBookingMultiLocation, body);
@@ -376,7 +381,7 @@ class AuthRepo{
   bool isLoggedIn() {
     return sharedPreferences.getString(AppContants.token)!=null && sharedPreferences.getString(AppContants.token)!.isNotEmpty? true:false;
   }
- /* Future<Response> updateToken() async {
+  /* Future<Response> updateToken() async {
     String _deviceToken;
     if (GetPlatform.isIOS && !GetPlatform.isWeb) {
       FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(

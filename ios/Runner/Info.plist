@@ -39,6 +39,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to get profile image</string>
+	<key>NSContactsUsageDescription</key>
+    <string>Reason we need access to the contact list</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Please allow location for current location get on map</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

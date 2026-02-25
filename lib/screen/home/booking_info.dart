@@ -3,7 +3,10 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/util/appColors.dart';
@@ -28,9 +31,9 @@ class BookingInfo extends StatefulWidget {
   String? houseNumber;
   String? city;
   String? street;
-   BookingInfo({super.key,this.scheduleDate,this.scheduleTime,required this.dropLng,
-     this.city,this.street,this.houseNumber,
-     required this.dropLat,required this.pickAddress,required this.pickLat,required this.pickLng,required this.dropAddress});
+  BookingInfo({super.key,this.scheduleDate,this.scheduleTime,required this.dropLng,
+    this.city,this.street,this.houseNumber,
+    required this.dropLat,required this.pickAddress,required this.pickLat,required this.pickLng,required this.dropAddress});
 
   @override
   State<BookingInfo> createState() => _BookingInfoState();
@@ -181,14 +184,14 @@ class _BookingInfoState extends State<BookingInfo> {
     };
   }
 
-   Map<int, TextEditingController> houseNoCt = {};
-   Map<int, TextEditingController> senderName = {};
-   Map<int, TextEditingController> sendMobile = {};
+  Map<int, TextEditingController> houseNoCt = {};
+  Map<int, TextEditingController> senderName = {};
+  Map<int, TextEditingController> sendMobile = {};
 
-   TextEditingController cityController = TextEditingController();
-   TextEditingController addressController = TextEditingController();
-   TextEditingController senderNameController = TextEditingController();
-   TextEditingController senderPhoneController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController senderNameController = TextEditingController();
+  TextEditingController senderPhoneController = TextEditingController();
 
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
@@ -548,15 +551,63 @@ class _BookingInfoState extends State<BookingInfo> {
 
   void _updateStop(int index, String key, dynamic value) {
     setState(() {
-      stopLocations[index][key] = value; // update specific field
+      stopLocations[index][key] = value;
     });
+  }
+
+  Future<void> pickContact() async {
+    if (await Permission.contacts.request().isGranted) {
+
+      final Contact? contact = await FlutterContacts.openExternalPick();
+
+      if (contact != null) {
+        senderNameController.text = contact.displayName;
+
+        if (contact.phones.isNotEmpty) {
+          String number = contact.phones.first.number;
+
+          // Clean number (remove spaces, +91 etc)
+          number = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+          if (number.length > 10) {
+            number = number.substring(number.length - 10);
+          }
+
+          senderPhoneController.text = number;
+        }
+      }
+    } else {
+      print("Permission Denied");
+    }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
-      appBar: null,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            borderRadius: BorderRadius.circular(30),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -691,9 +742,9 @@ class _BookingInfoState extends State<BookingInfo> {
                       ),
 
                       children: [
-                       SizedBox(
-                         height: 10,
-                       ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         /// Receiver Name
                         TextFormField(
                           controller: addressController,
@@ -762,11 +813,16 @@ class _BookingInfoState extends State<BookingInfo> {
                         ),
                         const SizedBox(height: 10),
 
-                        /// Receiver Mobile
+
                         TextFormField(
                           controller: senderNameController,
-                          readOnly: false,
-                          style:  TextStyle(
+                          keyboardType: TextInputType.name,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r"[a-zA-Z\s]"), // only alphabets + space
+                            ),
+                          ],
+                          style: TextStyle(
                             fontSize: 14,
                             fontFamily: AppFonts.poppinsRegular,
                           ),
@@ -774,6 +830,12 @@ class _BookingInfoState extends State<BookingInfo> {
                             counterText: '',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
+                            ),
+                            suffixIcon:  IconButton(
+                              icon: Icon(Icons.contacts),
+                              onPressed: () {
+                                pickContact();
+                              },
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: const BorderSide(color: Colors.grey),
@@ -852,7 +914,7 @@ class _BookingInfoState extends State<BookingInfo> {
                     }
 
                     // if (!senderName.containsKey(index)) {
-                      senderName[index] = senderController;
+                    senderName[index] = senderController;
                     // }
 
                     if (!sendMobile.containsKey(index)) {
@@ -862,66 +924,27 @@ class _BookingInfoState extends State<BookingInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if(stopLocations[index]['type'] != 'pickup')
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-                          child: ExpansionTile(
-                            initiallyExpanded: true,
-                            tilePadding: EdgeInsets.zero,
-                            childrenPadding: const EdgeInsets.only(left: 35, right: 8, bottom: 10),
-                            title: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InkWell(
-                                  child: const Icon(Icons.close, color: Colors.red, size: 22),
-                                  onTap: () {
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+                            child: ExpansionTile(
+                              initiallyExpanded: true,
+                              tilePadding: EdgeInsets.zero,
+                              childrenPadding: const EdgeInsets.only(left: 35, right: 8, bottom: 10),
+                              title: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    child: const Icon(Icons.close, color: Colors.red, size: 22),
+                                    onTap: () {
 
-                                    if (index < stopLocations.length) {
-                                      setState(() {
-                                        stopLocations.removeAt(index);
-                                        houseNoCt.remove(index);
-                                        senderName.remove(index);
-                                        sendMobile.remove(index);
-
-                                      });
-                                      _addMarkers();
-                                      _getRouteBetweenPoints(
-                                        pickLat: widget.pickLat,
-                                        pickLng: widget.pickLng,
-                                        stopLocations: stopLocations,
-                                      );
-                                      calculateAllStopDistances().then((list) {
-                                        print("📦 Final list for API: $list");
-                                      });
-                                    } else {
-                                      print("Invalid index: $index");
-                                    }
-                                  },
-                                ),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => LocationPickerTypeAheadPage(
-                                            isPick: true,
-                                            title: "Drop Location",
-                                            isShare: false,
-                                          ),
-                                        ),
-                                      );
-
-                                      if (result != null) {
-                                        print("Selected Lat: ${result['lat']}");
-                                        print("Selected Lng: ${result['lng']}");
-                                        print("Selected Address: ${result['address']}");
-
+                                      if (index < stopLocations.length) {
                                         setState(() {
-                                          stopLocations[index]['lat'] = result['lat'];
-                                          stopLocations[index]['lng'] = result['lng'];
-                                          stopLocations[index]['address'] = result['address'];
-                                        });
+                                          stopLocations.removeAt(index);
+                                          houseNoCt.remove(index);
+                                          senderName.remove(index);
+                                          sendMobile.remove(index);
 
+                                        });
                                         _addMarkers();
                                         _getRouteBetweenPoints(
                                           pickLat: widget.pickLat,
@@ -931,158 +954,232 @@ class _BookingInfoState extends State<BookingInfo> {
                                         calculateAllStopDistances().then((list) {
                                           print("📦 Final list for API: $list");
                                         });
+                                      } else {
+                                        print("Invalid index: $index");
                                       }
                                     },
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Icon(Icons.location_on_outlined,
-                                            color: Colors.red, size: 30),
-                                        const SizedBox(width: 5),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Drop Location'.tr,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(stop['address'] ?? "", maxLines: 2),
-                                            ],
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LocationPickerTypeAheadPage(
+                                              isPick: true,
+                                              title: "Drop Location",
+                                              isShare: false,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        );
+
+                                        if (result != null) {
+                                          print("Selected Lat: ${result['lat']}");
+                                          print("Selected Lng: ${result['lng']}");
+                                          print("Selected Address: ${result['address']}");
+
+                                          setState(() {
+                                            stopLocations[index]['lat'] = result['lat'];
+                                            stopLocations[index]['lng'] = result['lng'];
+                                            stopLocations[index]['address'] = result['address'];
+                                          });
+
+                                          _addMarkers();
+                                          _getRouteBetweenPoints(
+                                            pickLat: widget.pickLat,
+                                            pickLng: widget.pickLng,
+                                            stopLocations: stopLocations,
+                                          );
+                                          calculateAllStopDistances().then((list) {
+                                            print("📦 Final list for API: $list");
+                                          });
+                                        }
+                                      },
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(Icons.location_on_outlined,
+                                              color: Colors.red, size: 30),
+                                          const SizedBox(width: 5),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Drop Location'.tr,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(stop['address'] ?? "", maxLines: 2),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                              onExpansionChanged: (expanded) {},
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                TextField(
+                                  controller: controller,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: AppFonts.poppinsRegular,
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  decoration: InputDecoration(
+                                    counter: const SizedBox(),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                    labelText: "House/Apartment/shop (Optional)".tr,
+                                    labelStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.6),
+                                      fontSize: 12,
+                                      fontFamily: AppFonts.poppinsMedium,
+                                      fontWeight: FontWeight.w500,
+                                      height: 0,
                                     ),
                                   ),
                                 ),
 
+                                const SizedBox(height: 10),
+
+                                TextFormField(
+                                  controller: senderController,
+                                  keyboardType: TextInputType.name,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp(r"[a-zA-Z\s]"),
+                                    ),
+                                  ],
+                                  style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
+                                  decoration: InputDecoration(
+                                    suffixIcon:  IconButton(
+                                      icon: Icon(Icons.contacts),
+                                      onPressed: () async {
+                                        if (await Permission.contacts.request().isGranted) {
+                                          final Contact? contact = await FlutterContacts.openExternalPick();
+                                          if (contact != null) {
+                                            stopLocations[index]['name'] = contact.displayName;
+                                            senderController.text = contact.displayName;
+                                            getUserName = contact.displayName;
+
+                                            if (contact.phones.isNotEmpty) {
+                                              String number = contact.phones.first.number;
+                                              number = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+                                              if (number.length > 10) {
+                                                number = number.substring(
+                                                    number.length - 10);
+                                              }
+
+                                              senderMobileController.text = number;
+                                              stopLocations[index]['contact_number'] = number;
+                                              getUserPhone = number;
+                                            }
+                                          }
+                                        } else {
+                                          print("Permission Denied");
+                                        }
+                                      },
+                                    ),
+                                    counter: SizedBox(),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                    labelText: "Receiver's Name".tr,
+                                    labelStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.6),
+                                      fontSize: 12,
+                                      fontFamily: AppFonts.poppinsMedium,
+                                      fontWeight: FontWeight.w500,
+                                      height: 0,
+                                    ),
+                                  ),
+
+                                  onChanged: (value) {
+                                    stopLocations[index]['name'] = senderController.text.trim();
+                                    getUserName = senderController.text.trim();
+                                    setState(() {
+
+                                    });
+                                    print('dfdfdfdfd:::::::::${getUserName.toString()}');
+                                  },
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                TextFormField(
+                                  controller: senderMobileController,
+                                  style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 10,
+                                  decoration: InputDecoration(
+                                    counter: SizedBox(),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                    labelText: "Receiver's Mobile Number".tr,
+                                    labelStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.6),
+                                      fontSize: 12,
+                                      fontFamily: AppFonts.poppinsMedium,
+                                      fontWeight: FontWeight.w500,
+                                      height: 0,
+                                    ),
+                                  ),
+                                  onChanged: (value) {
+                                    stopLocations[index]['contact_number'] = senderMobileController.text.trim();
+                                    getUserPhone = senderMobileController.text.trim();
+                                    setState(() {
+
+                                    });
+                                    print('dfdfdfdfd:::::::::${getUserName.toString()}');
+                                  },
+                                ),
                               ],
                             ),
-
-                            onExpansionChanged: (expanded) {},
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              TextField(
-                                controller: controller,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: AppFonts.poppinsRegular,
-                                ),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  counter: const SizedBox(),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                  labelText: "House/Apartment/shop (Optional)".tr,
-                                  labelStyle: TextStyle(
-                                    color: Colors.black.withOpacity(0.6),
-                                    fontSize: 12,
-                                    fontFamily: AppFonts.poppinsMedium,
-                                    fontWeight: FontWeight.w500,
-                                    height: 0,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              TextFormField(
-                                controller: senderController,
-                                style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  counter: SizedBox(),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                  labelText: "Receiver's Name".tr,
-                                  labelStyle: TextStyle(
-                                    color: Colors.black.withOpacity(0.6),
-                                    fontSize: 12,
-                                    fontFamily: AppFonts.poppinsMedium,
-                                    fontWeight: FontWeight.w500,
-                                    height: 0,
-                                  ),
-                                ),
-                                  onChanged: (value) {
-                                  stopLocations[index]['name'] = senderController.text.trim();
-                                  getUserName = senderController.text.trim();
-                                  setState(() {
-
-                                  });
-                                  print('dfdfdfdfd:::::::::${getUserName.toString()}');
-                                },
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              TextFormField(
-                                controller: senderMobileController,
-                                style: TextStyle(fontSize: 14, fontFamily: AppFonts.poppinsRegular),
-                                keyboardType: TextInputType.number,
-                                maxLength: 10,
-                                decoration: InputDecoration(
-                                  counter: SizedBox(),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                  labelText: "Receiver's Mobile Number".tr,
-                                  labelStyle: TextStyle(
-                                    color: Colors.black.withOpacity(0.6),
-                                    fontSize: 12,
-                                    fontFamily: AppFonts.poppinsMedium,
-                                    fontWeight: FontWeight.w500,
-                                    height: 0,
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  stopLocations[index]['contact_number'] = senderMobileController.text.trim();
-                                  getUserPhone = senderMobileController.text.trim();
-                                  setState(() {
-
-                                  });
-                                  print('dfdfdfdfd:::::::::${getUserName.toString()}');
-                                },
-                              ),
-                            ],
                           ),
-                        ),
                         if (index == stopLocations.length - 1)
                           Get.find<AuthController>().isLoggedIn() ?
                           GetBuilder<AuthController>(builder: (authController) {
@@ -1190,7 +1287,7 @@ class _BookingInfoState extends State<BookingInfo> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                       Text(
+                      Text(
                         "Add New Stop".tr,
                         style: TextStyle(
                           color: Color(0xFF0D47A1), // blue text
@@ -1305,7 +1402,9 @@ class _BookingInfoState extends State<BookingInfo> {
                     ),
                   ),
                 ),
-
+                SizedBox(
+                  height: 20,
+                )
 
               ],
             ),
