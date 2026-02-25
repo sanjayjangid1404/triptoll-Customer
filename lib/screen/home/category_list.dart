@@ -1128,8 +1128,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        widget.senderPhone =  Get.find<AuthController>().getUserPhone();
                        print('kfjdjfkdfjdkfjk${widget.senderPhone.toString()}');
                      }
-
+                     String pickupOtp = (1000 + Random().nextInt(9000)).toString();
                      authController.bookingMultipleNow(
+                         pickupOtp: pickupOtp,
                          distance: widget.distance,
                          expectedTime: widget.expectedTime,
                          // amount: (cachedFaresAndRates?[selectIndex]['totalFare'] ?? 0).toStringAsFixed(0),

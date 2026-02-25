@@ -296,6 +296,7 @@ class AuthRepo{
     String? scheduleTime,
     String? senderNameText,
     String? senderPhone,
+    String? pickupOtp,
     required List<Map<String, dynamic>> stopLocations,
   }) async {
     final body = {
@@ -315,6 +316,7 @@ class AuthRepo{
       "locations": stopLocations,
       "schedule_date": scheduleDate,
       "schedule_time": scheduleTime,
+      "pickup_otp": pickupOtp,
     };
 
     return await apiClient.postData(AppContants.saveBookingMultiLocation, body);

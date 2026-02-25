@@ -554,6 +554,7 @@ class AuthController extends GetxController implements GetxService
     String? scheduleTime,
     String? senderPhone,
     String? senderNameText,
+    String? pickupOtp,
     required List<Map<String, dynamic>> stopLocations,
   })
   async {
@@ -572,6 +573,7 @@ class AuthController extends GetxController implements GetxService
         distance: distance,
         expectedTime: expectedTime,
         amount: amount,
+        pickupOtp: pickupOtp,
         categoryId: categoryId,
         categoryName: categoryName,
         cusId: getUserID()??"",
@@ -1077,6 +1079,7 @@ class AuthController extends GetxController implements GetxService
 
 
   }
+  bool isSuccess = false;
   Future<void>orderPaymentWithWallet(String id,String driverID,String key,String status,BuildContext context,String orderID,String discountAmount,String totalAmount,String amount)
   async {
 
@@ -1094,23 +1097,19 @@ class AuthController extends GetxController implements GetxService
 
     if(response.statusCode==200 || response.statusCode ==400)
     {
-
+      isSuccess = true;
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
           text: 'Payment Completed Successfully!'.tr,
           onConfirmBtnTap: (){
-            Get.offAll(HomePage());
+            Get.back();
           }
       );
-
-      // subCategoryVehicle = SubCategoryVehicle.fromJson(response.body);
-      //
-      // isVehicle = false;
       update();
     }
     else {
-
+      isSuccess = false;
 
       // dynamic data = jsonDecode(response.body);
 

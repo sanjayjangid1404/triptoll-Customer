@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -701,7 +703,10 @@ class _OrderListState extends State<OrderList> {
                                                                             });
                                                                           }
                                                                         }
+                                                                        String pickupOtp = (1000 + Random().nextInt(9000)).toString();
+                                                                        print('pickupOtp ::${pickupOtp}');
                                                                         authController.bookingMultipleNow(
+                                                                          pickupOtp: pickupOtp,
                                                                           distance:authController.getReorderDataModel.value.distance.toString(),
                                                                           expectedTime: authController.getReorderDataModel.value.expectedTime.toString(),
                                                                           amount: authController.getReorderDataModel.value.amount.toString(),

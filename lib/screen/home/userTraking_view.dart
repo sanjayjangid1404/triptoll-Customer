@@ -17,8 +17,10 @@ import 'package:triptoll/screen/home/homeview.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:triptoll/util/appImage.dart';
+import 'package:triptoll/util/custom_snackbar.dart';
 import '../../controller/authController.dart';
 import '../../util/appContants.dart';
+import 'WalletView.dart';
 import 'feedback_screen.dart';
 
 class UserTrackingScreen extends StatefulWidget {
@@ -201,7 +203,9 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                               ),
                               elevation: 4,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(()=>WalletView());
+                            },
                             child: const Text(
                               "Recharge Wallet",
                               style: TextStyle(
@@ -217,36 +221,13 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       ],
                     ),
 
-                    /// Best Value Badge
-                    Positioned(
-                      top: -6,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFF8A00),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(18),
-                            bottomLeft: Radius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          "Best Value",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+
                   ],
                 ),
               ),
               Positioned(
-                top: -15,
-                right: -15,
+                top: 10,
+                right: 10,
                 child: GestureDetector(
                   onTap: () {
                    Get.back();
@@ -264,7 +245,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                     ),
                     child: const Icon(
                       Icons.close,
-                      size: 18,
+                      size: 25,
                       color: Color(0xFF1E5BFF),
                     ),
                   ),
@@ -289,7 +270,6 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Get.find<AuthController>().getWalletHistory();
-      showWalletPopup(context);
       print(jsonEncode(widget.bookingID!));
 
       print("${widget.driverInitialLocation}");
@@ -307,6 +287,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
 
 
+      showWalletPopup(context);
       if(Get.find<AuthController>().detailsResponse!=null){
         _initializeLocations();
         _startTracking();
@@ -419,17 +400,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     print("Signature: ${response.signature}");
 
     Get.find<AuthController>().orderPayment(widget.bookingID!.id.toString(),widget.bookingID!.driverId.toString(),response.paymentId.toString(),"success",context,customOrderId);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) =>  FeedbackBottomSheet(bookingID: widget.bookingID,),
-    );
-    // Navigate to success screen or process booking
-    // Get.to(ReviewBooking(data: bookingData));
+    Get.to(FeedbackBottomSheet(bookingID: widget.bookingID));
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -691,8 +662,8 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
           return Scaffold(
               appBar: AppBar(
+                backgroundColor: Colors.white,
                 leading: IconButton(onPressed: (){
-
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -994,7 +965,13 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                           discountedPercentage.toString(),
                           widget.bookingID.totalAmount.toString(),
                           widget.bookingID.amount.toString()
-                          );
+                      );
+                      Future.delayed(Duration(seconds: 2),() {
+                        authController.isSuccess == true ?
+                         Get.to(FeedbackBottomSheet(bookingID: widget.bookingID))
+                            : null;
+                      },);
+                      Get.find<AuthController>().getWalletHistory();
                       },
                     child: Container(
                       height: 55,
