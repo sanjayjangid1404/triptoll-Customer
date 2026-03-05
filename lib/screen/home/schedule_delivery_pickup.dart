@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'dart:convert';
 import 'package:triptoll/util/appColors.dart';
+import 'package:triptoll/util/custom_snackbar.dart';
 import 'booking_info.dart';
 
 class ScheduleDeliveryPickUpScreen extends StatefulWidget {
@@ -709,7 +710,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
                   padding: EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
-                    Get.to(LocationPickerTypeAheadPage(
+                   Get.to(LocationPickerTypeAheadPage(
                         isShare: false,
                         isPick: false,
                         pickLng: pickupLng,

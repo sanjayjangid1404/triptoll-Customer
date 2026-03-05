@@ -13,13 +13,12 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/screen/home/schedule_delivery_pickup.dart';
-// import 'package:triptoll/screen/home/whatsapp_sharelocation.dart';
 import 'package:triptoll/util/appColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart' as slider;
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/appImage.dart';
-// import 'package:app_links/app_links.dart';
+import 'package:app_links/app_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widget/nav_bar.dart';
@@ -40,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController senderName = TextEditingController();
   TextEditingController sendMobile = TextEditingController();
 
-  // late final AppLinks _appLinks;
+  late final AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
   String currentAddress = "";
   String currentAddress1 = "";
@@ -52,43 +51,43 @@ class _HomePageState extends State<HomePage> {
   int activeIndex = 0;
 
 
-  // void initDeepLinks() async {
-  //   _appLinks = AppLinks();
-  //   final Uri? initialUri = await _appLinks.getInitialLink();
-  //   if (initialUri != null) {
-  //     handleUri(initialUri);
-  //   }
-  //   _linkSubscription = _appLinks.uriLinkStream.listen((Uri uri) {
-  //     handleUri(uri);
-  //   });
-  // }
+  void initDeepLinks() async {
+    _appLinks = AppLinks();
+    final Uri? initialUri = await _appLinks.getInitialLink();
+    if (initialUri != null) {
+      handleUri(initialUri);
+    }
+    _linkSubscription = _appLinks.uriLinkStream.listen((Uri uri) {
+      handleUri(uri);
+    });
+  }
+  String formattedTime = '';
+  void handleUri(Uri uri) {
 
-  // void handleUri(Uri uri) {
-  //
-  //   print("Full URI: $uri");
-  //
-  //   double? latitude;
-  //   double? longitude;
-  //
-  //   if (uri.scheme == 'geo') {
-  //     final coords = uri.path.split(',');
-  //     latitude = double.tryParse(coords[0]);
-  //     longitude = double.tryParse(coords[1]);
-  //   }
-  //
-  //   else if (uri.queryParameters.containsKey('q')) {
-  //     final coords = uri.queryParameters['q']!.split(',');
-  //     latitude = double.tryParse(coords[0]);
-  //     longitude = double.tryParse(coords[1]);
-  //   }
-  //
-  //   print("Latitude: $latitude");
-  //   print("Longitude: $longitude");
-  //
-  //   if (latitude != null && longitude != null) {
-  //     Get.to(()=> LocationSelectionScreen(lat: latitude,long: longitude,));
-  //   }
-  // }
+    print("Full URI: $uri");
+
+    double? latitude;
+    double? longitude;
+
+    if (uri.scheme == 'geo') {
+      final coords = uri.path.split(',');
+      latitude = double.tryParse(coords[0]);
+      longitude = double.tryParse(coords[1]);
+    }
+
+    else if (uri.queryParameters.containsKey('q')) {
+      final coords = uri.queryParameters['q']!.split(',');
+      latitude = double.tryParse(coords[0]);
+      longitude = double.tryParse(coords[1]);
+    }
+
+    print("Latitude: $latitude");
+    print("Longitude: $longitude");
+
+    // if (latitude != null && longitude != null) {
+    //   Get.to(()=> LocationSelectionScreen(lat: latitude,long: longitude,));
+    // }
+  }
 
   Future<void> logUpdateError(String message) async {
     try {
@@ -287,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                             comment: "cancelled",
                             isOrder: true,
                           );
-                          Get.back();
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -317,7 +316,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // initDeepLinks();
+    initDeepLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForUpdate();
       _setCurrentLocation();
@@ -898,6 +897,8 @@ class _HomePageState extends State<HomePage> {
                                   // ),
                                   InkWell(
                                     onTap: () {
+                                      formattedTime = '';
+                                      selectedDateTimeIos = null;
                                       setState(() {
                                         select = 0;
                                       });
@@ -1203,8 +1204,8 @@ class _HomePageState extends State<HomePage> {
                                                                 print("Scheduled After: $hours hours $minutes minutes");
                                                                 Get.back();
 
-                                                                String formattedTime =
-                                                                    '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
+                                                                formattedTime =
+                                                                '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
                                                                 String onlyDate =
                                                                 DateFormat('yyyy-MM-dd').format(selectedDate!);
 
@@ -1633,6 +1634,51 @@ class _HomePageState extends State<HomePage> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Container(
+                                        constraints: const BoxConstraints(
+                                          minHeight: 28,   // 👈 controls height
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 4,     // 👈 reduced vertical padding
+                                        ),
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFFE3F2FD),
+                                              Color(0xFFBBDEFB),
+                                            ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(14), // 👈 smaller radius
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'PickUp Pin',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Poppins",
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            Text(
+                                              auhController.latestBookingListResponse[index]!.pickupOtp.toString(),
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "Poppins",
+                                                letterSpacing: 2,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                     child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory.toString(),
@@ -1802,3 +1848,4 @@ class _HomePageState extends State<HomePage> {
   }
 
 }
+

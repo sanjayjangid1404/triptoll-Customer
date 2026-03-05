@@ -19,6 +19,7 @@ import '../model/check_ticket_limit_model.dart';
 import '../model/city_responce.dart';
 import '../model/faq_model.dart';
 import '../model/faq_response_model.dart';
+import '../model/getLastFiveDropLocations_model.dart';
 import '../model/get_reorder_model.dart';
 import '../model/my_order_model.dart';
 import '../model/notification_model.dart';
@@ -1319,6 +1320,32 @@ class AuthController extends GetxController implements GetxService
 
   }
 
+
+  GetLastFiveDropLocationsModel getLastFiveDropLocationsModel = GetLastFiveDropLocationsModel();
+
+  Future<void>getLastFiveDrop({String? userId})
+  async {
+
+    getAllBookingLoading = true;
+
+    update();
+    print(getUserDeviceID());
+
+    if(getUserID()!=null && getUserID()!.isNotEmpty){
+      Response response = await authRepo.getLastFiveDropLocations(userID: getUserID());
+
+      if(response.statusCode==200 || response.statusCode ==400)
+      {
+
+        getLastFiveDropLocationsModel = GetLastFiveDropLocationsModel.fromJson(response.body);
+        update();
+      }
+      else {
+        ApiChecker.checkApi(response);
+      }
+      update();
+    }
+  }
   Future<void>checkPayment({String? status})
   async {
 

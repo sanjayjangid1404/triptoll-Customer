@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:triptoll/util/appColors.dart';
+import '../../util/custom_snackbar.dart';
 import 'booking_info.dart';
 
 class LocationPickerTypeAheadPage extends StatefulWidget {
@@ -686,8 +687,8 @@ class _LocationPickerTypeAheadPageState extends State<LocationPickerTypeAheadPag
                           street: widget.street.toString(),
                           city: widget.city.toString(),
                           dropAddress: pickupAddress,
-                          dropLat: pickupLat!,
-                          dropLng: pickupLng!,
+                          dropLat: pickupLat,
+                          dropLng: pickupLng,
                           pickAddress: widget.pickAddress!,
                           pickLat: widget.pickLat!,
                           pickLng: widget.pickLng!)),

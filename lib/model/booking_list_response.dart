@@ -4,13 +4,13 @@
 
 class BookingListResponse {
   BookingListResponse({
-      dynamic message, 
-      bool? status, 
-      List<Orders>? orders,}){
+    dynamic message,
+    bool? status,
+    List<Orders>? orders,}){
     _message = message;
     _status = status;
     _orders = orders;
-}
+  }
 
   BookingListResponse.fromJson(dynamic json) {
     _message = json['message'];
@@ -25,13 +25,13 @@ class BookingListResponse {
   dynamic _message;
   bool? _status;
   List<Orders>? _orders;
-BookingListResponse copyWith({  dynamic message,
-  bool? status,
-  List<Orders>? orders,
-}) => BookingListResponse(  message: message ?? _message,
-  status: status ?? _status,
-  orders: orders ?? _orders,
-);
+  BookingListResponse copyWith({  dynamic message,
+    bool? status,
+    List<Orders>? orders,
+  }) => BookingListResponse(  message: message ?? _message,
+    status: status ?? _status,
+    orders: orders ?? _orders,
+  );
   dynamic get message => _message;
   bool? get status => _status;
   List<Orders>? get orders => _orders;
@@ -110,66 +110,67 @@ BookingListResponse copyWith({  dynamic message,
 
 class Orders {
   Orders({
-      dynamic id, 
-      dynamic orderId, 
-      dynamic cusId, 
-      dynamic driverId, 
-      dynamic categoryId, 
-      dynamic cityId, 
-      dynamic rate, 
-      dynamic amount, 
-      dynamic totalAmount, 
-      dynamic bookingDate, 
-      dynamic orderStatus, 
-      dynamic acceptTime, 
-      dynamic closeTime, 
-      dynamic paymentType, 
-      dynamic paymentStatus, 
-      dynamic trnId, 
-      dynamic pickupLat, 
-      dynamic pickupLong, 
-      dynamic pickupAddress, 
-      dynamic vehicleCategory,
-      dynamic senderName,
-      dynamic senderContactNumber, 
-      dynamic dropLat, 
-      dynamic dropLong, 
-      dynamic dropAddress, 
-      dynamic distance, 
-      dynamic expectedTime, 
-      dynamic receiverName, 
-      dynamic receiverContactNumber, 
-      dynamic reason, 
-      dynamic additionalComment, 
-      dynamic pickedTime, 
-      dynamic deliveryTime, 
-      dynamic cancelledTime, 
-      dynamic paymentTime, 
-      dynamic currentLat, 
-      dynamic currentLng, 
-      dynamic totalDistanceTravelled, 
-      dynamic startTrip, 
-      dynamic loadingDuration, 
-      dynamic loadingTime, 
-      dynamic loadingCharge, 
-      dynamic unloadingDuration, 
-      dynamic unloadingTime, 
-      dynamic unloadingCharge, 
-      dynamic addDate, 
-      dynamic isFake, 
-      dynamic status, 
-      dynamic assignedDriverId, 
-      dynamic weight, 
-      dynamic vehicleId, 
-      dynamic model, 
-      dynamic vehicleNumber, 
-      dynamic vehicleType, 
-      dynamic firstName, 
-      dynamic lastName, 
-      dynamic contactNumber, 
-      dynamic fcmToken, 
-      Pickup? pickup, 
-      List<Dropoffs>? dropoffs,}){
+    dynamic id,
+    dynamic orderId,
+    dynamic cusId,
+    dynamic driverId,
+    dynamic categoryId,
+    dynamic cityId,
+    dynamic rate,
+    dynamic amount,
+    dynamic totalAmount,
+    dynamic bookingDate,
+    dynamic orderStatus,
+    dynamic acceptTime,
+    dynamic closeTime,
+    dynamic paymentType,
+    dynamic paymentStatus,
+    dynamic trnId,
+    dynamic pickupLat,
+    dynamic pickupLong,
+    dynamic pickupAddress,
+    dynamic vehicleCategory,
+    dynamic senderName,
+    dynamic senderContactNumber,
+    dynamic dropLat,
+    dynamic dropLong,
+    dynamic dropAddress,
+    dynamic distance,
+    dynamic expectedTime,
+    dynamic receiverName,
+    dynamic receiverContactNumber,
+    dynamic reason,
+    dynamic additionalComment,
+    dynamic pickedTime,
+    dynamic deliveryTime,
+    dynamic cancelledTime,
+    dynamic paymentTime,
+    dynamic currentLat,
+    dynamic currentLng,
+    dynamic totalDistanceTravelled,
+    dynamic startTrip,
+    dynamic loadingDuration,
+    dynamic loadingTime,
+    dynamic loadingCharge,
+    dynamic unloadingDuration,
+    dynamic unloadingTime,
+    dynamic unloadingCharge,
+    dynamic addDate,
+    dynamic isFake,
+    dynamic status,
+    dynamic assignedDriverId,
+    dynamic weight,
+    dynamic vehicleId,
+    dynamic model,
+    dynamic vehicleNumber,
+    dynamic vehicleType,
+    dynamic firstName,
+    dynamic lastName,
+    dynamic pickupOtp,
+    dynamic contactNumber,
+    dynamic fcmToken,
+    Pickup? pickup,
+    List<Dropoffs>? dropoffs,}){
     _id = id;
     _orderId = orderId;
     _cusId = cusId;
@@ -183,6 +184,7 @@ class Orders {
     _orderStatus = orderStatus;
     _acceptTime = acceptTime;
     _closeTime = closeTime;
+    _paymentType = paymentType;
     _paymentType = paymentType;
     _paymentStatus = paymentStatus;
     _trnId = trnId;
@@ -224,13 +226,14 @@ class Orders {
     _model = model;
     _vehicleNumber = vehicleNumber;
     _vehicleType = vehicleType;
+    _pickupOtp = pickupOtp;
     _firstName = firstName;
     _lastName = lastName;
     _contactNumber = contactNumber;
     _fcmToken = fcmToken;
     _pickup = pickup;
     _dropoffs = dropoffs;
-}
+  }
 
   Orders.fromJson(dynamic json) {
     _id = json['id'];
@@ -287,6 +290,7 @@ class Orders {
     _model = json['model'];
     _vehicleNumber = json['vehicle_number'];
     _vehicleType = json['vehicle_type'];
+    _pickupOtp = json['pickup_otp'];
     _firstName = json['first_name'];
     _lastName = json['last_name'];
     _contactNumber = json['contact_number'];
@@ -353,133 +357,136 @@ class Orders {
   dynamic _model;
   dynamic _vehicleNumber;
   dynamic _vehicleType;
+  dynamic _pickupOtp;
   dynamic _firstName;
   dynamic _lastName;
   dynamic _contactNumber;
   dynamic _fcmToken;
   Pickup? _pickup;
   List<Dropoffs>? _dropoffs;
-Orders copyWith({  dynamic id,
-  dynamic orderId,
-  dynamic cusId,
-  dynamic driverId,
-  dynamic categoryId,
-  dynamic cityId,
-  dynamic rate,
-  dynamic amount,
-  dynamic totalAmount,
-  dynamic bookingDate,
-  dynamic orderStatus,
-  dynamic acceptTime,
-  dynamic closeTime,
-  dynamic paymentType,
-  dynamic paymentStatus,
-  dynamic trnId,
-  dynamic pickupLat,
-  dynamic pickupLong,
-  dynamic pickupAddress,
-  dynamic vehicleCategory,
-  dynamic senderName,
-  dynamic senderContactNumber,
-  dynamic dropLat,
-  dynamic dropLong,
-  dynamic dropAddress,
-  dynamic distance,
-  dynamic expectedTime,
-  dynamic receiverName,
-  dynamic receiverContactNumber,
-  dynamic reason,
-  dynamic additionalComment,
-  dynamic pickedTime,
-  dynamic deliveryTime,
-  dynamic cancelledTime,
-  dynamic paymentTime,
-  dynamic currentLat,
-  dynamic currentLng,
-  dynamic totalDistanceTravelled,
-  dynamic startTrip,
-  dynamic loadingDuration,
-  dynamic loadingTime,
-  dynamic loadingCharge,
-  dynamic unloadingDuration,
-  dynamic unloadingTime,
-  dynamic unloadingCharge,
-  dynamic addDate,
-  dynamic isFake,
-  dynamic status,
-  dynamic assignedDriverId,
-  dynamic weight,
-  dynamic vehicleId,
-  dynamic model,
-  dynamic vehicleNumber,
-  dynamic vehicleType,
-  dynamic firstName,
-  dynamic lastName,
-  dynamic contactNumber,
-  dynamic fcmToken,
-  Pickup? pickup,
-  List<Dropoffs>? dropoffs,
-}) => Orders(  id: id ?? _id,
-  orderId: orderId ?? _orderId,
-  cusId: cusId ?? _cusId,
-  driverId: driverId ?? _driverId,
-  categoryId: categoryId ?? _categoryId,
-  cityId: cityId ?? _cityId,
-  rate: rate ?? _rate,
-  amount: amount ?? _amount,
-  totalAmount: totalAmount ?? _totalAmount,
-  bookingDate: bookingDate ?? _bookingDate,
-  orderStatus: orderStatus ?? _orderStatus,
-  acceptTime: acceptTime ?? _acceptTime,
-  closeTime: closeTime ?? _closeTime,
-  paymentType: paymentType ?? _paymentType,
-  paymentStatus: paymentStatus ?? _paymentStatus,
-  trnId: trnId ?? _trnId,
-  pickupLat: pickupLat ?? _pickupLat,
-  pickupLong: pickupLong ?? _pickupLong,
-  pickupAddress: pickupAddress ?? _pickupAddress,
-  vehicleCategory: vehicleCategory ?? _vehicleCategory,
-  senderName: senderName ?? _senderName,
-  senderContactNumber: senderContactNumber ?? _senderContactNumber,
-  dropLat: dropLat ?? _dropLat,
-  dropLong: dropLong ?? _dropLong,
-  dropAddress: dropAddress ?? _dropAddress,
-  distance: distance ?? _distance,
-  expectedTime: expectedTime ?? _expectedTime,
-  receiverName: receiverName ?? _receiverName,
-  receiverContactNumber: receiverContactNumber ?? _receiverContactNumber,
-  reason: reason ?? _reason,
-  additionalComment: additionalComment ?? _additionalComment,
-  pickedTime: pickedTime ?? _pickedTime,
-  deliveryTime: deliveryTime ?? _deliveryTime,
-  cancelledTime: cancelledTime ?? _cancelledTime,
-  paymentTime: paymentTime ?? _paymentTime,
-  currentLat: currentLat ?? _currentLat,
-  currentLng: currentLng ?? _currentLng,
-  totalDistanceTravelled: totalDistanceTravelled ?? _totalDistanceTravelled,
-  startTrip: startTrip ?? _startTrip,
-  loadingDuration: loadingDuration ?? _loadingDuration,
-  loadingTime: loadingTime ?? _loadingTime,
-  loadingCharge: loadingCharge ?? _loadingCharge,
-  unloadingDuration: unloadingDuration ?? _unloadingDuration,
-  unloadingTime: unloadingTime ?? _unloadingTime,
-  unloadingCharge: unloadingCharge ?? _unloadingCharge,
-  addDate: addDate ?? _addDate,
-  isFake: isFake ?? _isFake,
-  status: status ?? _status,
-  assignedDriverId: assignedDriverId ?? _assignedDriverId,
-  weight: weight ?? _weight,
-  vehicleId: vehicleId ?? _vehicleId,
-  model: model ?? _model,
-  vehicleNumber: vehicleNumber ?? _vehicleNumber,
-  vehicleType: vehicleType ?? _vehicleType,
-  firstName: firstName ?? _firstName,
-  lastName: lastName ?? _lastName,
-  contactNumber: contactNumber ?? _contactNumber,
-  fcmToken: fcmToken ?? _fcmToken,
-  pickup: pickup ?? _pickup,
-  dropoffs: dropoffs ?? _dropoffs,
-);
+  Orders copyWith({  dynamic id,
+    dynamic orderId,
+    dynamic cusId,
+    dynamic driverId,
+    dynamic categoryId,
+    dynamic cityId,
+    dynamic rate,
+    dynamic amount,
+    dynamic totalAmount,
+    dynamic bookingDate,
+    dynamic orderStatus,
+    dynamic acceptTime,
+    dynamic closeTime,
+    dynamic paymentType,
+    dynamic paymentStatus,
+    dynamic trnId,
+    dynamic pickupLat,
+    dynamic pickupLong,
+    dynamic pickupAddress,
+    dynamic vehicleCategory,
+    dynamic senderName,
+    dynamic senderContactNumber,
+    dynamic dropLat,
+    dynamic dropLong,
+    dynamic dropAddress,
+    dynamic distance,
+    dynamic expectedTime,
+    dynamic receiverName,
+    dynamic receiverContactNumber,
+    dynamic reason,
+    dynamic additionalComment,
+    dynamic pickedTime,
+    dynamic deliveryTime,
+    dynamic cancelledTime,
+    dynamic paymentTime,
+    dynamic currentLat,
+    dynamic currentLng,
+    dynamic totalDistanceTravelled,
+    dynamic startTrip,
+    dynamic loadingDuration,
+    dynamic loadingTime,
+    dynamic loadingCharge,
+    dynamic unloadingDuration,
+    dynamic unloadingTime,
+    dynamic unloadingCharge,
+    dynamic addDate,
+    dynamic isFake,
+    dynamic status,
+    dynamic assignedDriverId,
+    dynamic weight,
+    dynamic vehicleId,
+    dynamic model,
+    dynamic vehicleNumber,
+    dynamic vehicleType,
+    dynamic pickupOtp,
+    dynamic firstName,
+    dynamic lastName,
+    dynamic contactNumber,
+    dynamic fcmToken,
+    Pickup? pickup,
+    List<Dropoffs>? dropoffs,
+  }) => Orders(  id: id ?? _id,
+    orderId: orderId ?? _orderId,
+    cusId: cusId ?? _cusId,
+    driverId: driverId ?? _driverId,
+    categoryId: categoryId ?? _categoryId,
+    cityId: cityId ?? _cityId,
+    rate: rate ?? _rate,
+    amount: amount ?? _amount,
+    totalAmount: totalAmount ?? _totalAmount,
+    bookingDate: bookingDate ?? _bookingDate,
+    orderStatus: orderStatus ?? _orderStatus,
+    acceptTime: acceptTime ?? _acceptTime,
+    closeTime: closeTime ?? _closeTime,
+    paymentType: paymentType ?? _paymentType,
+    paymentStatus: paymentStatus ?? _paymentStatus,
+    trnId: trnId ?? _trnId,
+    pickupLat: pickupLat ?? _pickupLat,
+    pickupLong: pickupLong ?? _pickupLong,
+    pickupAddress: pickupAddress ?? _pickupAddress,
+    vehicleCategory: vehicleCategory ?? _vehicleCategory,
+    senderName: senderName ?? _senderName,
+    senderContactNumber: senderContactNumber ?? _senderContactNumber,
+    dropLat: dropLat ?? _dropLat,
+    dropLong: dropLong ?? _dropLong,
+    dropAddress: dropAddress ?? _dropAddress,
+    distance: distance ?? _distance,
+    expectedTime: expectedTime ?? _expectedTime,
+    receiverName: receiverName ?? _receiverName,
+    receiverContactNumber: receiverContactNumber ?? _receiverContactNumber,
+    reason: reason ?? _reason,
+    additionalComment: additionalComment ?? _additionalComment,
+    pickedTime: pickedTime ?? _pickedTime,
+    deliveryTime: deliveryTime ?? _deliveryTime,
+    cancelledTime: cancelledTime ?? _cancelledTime,
+    paymentTime: paymentTime ?? _paymentTime,
+    currentLat: currentLat ?? _currentLat,
+    currentLng: currentLng ?? _currentLng,
+    totalDistanceTravelled: totalDistanceTravelled ?? _totalDistanceTravelled,
+    startTrip: startTrip ?? _startTrip,
+    loadingDuration: loadingDuration ?? _loadingDuration,
+    loadingTime: loadingTime ?? _loadingTime,
+    loadingCharge: loadingCharge ?? _loadingCharge,
+    unloadingDuration: unloadingDuration ?? _unloadingDuration,
+    unloadingTime: unloadingTime ?? _unloadingTime,
+    unloadingCharge: unloadingCharge ?? _unloadingCharge,
+    addDate: addDate ?? _addDate,
+    isFake: isFake ?? _isFake,
+    status: status ?? _status,
+    assignedDriverId: assignedDriverId ?? _assignedDriverId,
+    weight: weight ?? _weight,
+    vehicleId: vehicleId ?? _vehicleId,
+    model: model ?? _model,
+    vehicleNumber: vehicleNumber ?? _vehicleNumber,
+    vehicleType: vehicleType ?? _vehicleType,
+    pickupOtp: pickupOtp ?? _pickupOtp,
+    firstName: firstName ?? _firstName,
+    lastName: lastName ?? _lastName,
+    contactNumber: contactNumber ?? _contactNumber,
+    fcmToken: fcmToken ?? _fcmToken,
+    pickup: pickup ?? _pickup,
+    dropoffs: dropoffs ?? _dropoffs,
+  );
   dynamic get id => _id;
   dynamic get orderId => _orderId;
   dynamic get cusId => _cusId;
@@ -534,6 +541,7 @@ Orders copyWith({  dynamic id,
   dynamic get model => _model;
   dynamic get vehicleNumber => _vehicleNumber;
   dynamic get vehicleType => _vehicleType;
+  dynamic get pickupOtp => _pickupOtp;
   dynamic get firstName => _firstName;
   dynamic get lastName => _lastName;
   dynamic get contactNumber => _contactNumber;
@@ -596,6 +604,7 @@ Orders copyWith({  dynamic id,
     map['model'] = _model;
     map['vehicle_number'] = _vehicleNumber;
     map['vehicle_type'] = _vehicleType;
+    map['pickup_otp'] = _pickupOtp;
     map['first_name'] = _firstName;
     map['last_name'] = _lastName;
     map['contact_number'] = _contactNumber;
@@ -625,17 +634,17 @@ Orders copyWith({  dynamic id,
 
 class Dropoffs {
   Dropoffs({
-      dynamic locationId, 
-      dynamic lat, 
-      dynamic lng, 
-      dynamic address, 
-      dynamic name, 
-      dynamic contactNumber, 
-      dynamic sequence, 
-      dynamic status, 
-      dynamic unloadingTime, 
-      dynamic unloadingDuration, 
-      dynamic unloadingCharge,}){
+    dynamic locationId,
+    dynamic lat,
+    dynamic lng,
+    dynamic address,
+    dynamic name,
+    dynamic contactNumber,
+    dynamic sequence,
+    dynamic status,
+    dynamic unloadingTime,
+    dynamic unloadingDuration,
+    dynamic unloadingCharge,}){
     _locationId = locationId;
     _lat = lat;
     _lng = lng;
@@ -647,7 +656,7 @@ class Dropoffs {
     _unloadingTime = unloadingTime;
     _unloadingDuration = unloadingDuration;
     _unloadingCharge = unloadingCharge;
-}
+  }
 
   Dropoffs.fromJson(dynamic json) {
     _locationId = json['location_id'];
@@ -673,29 +682,29 @@ class Dropoffs {
   dynamic _unloadingTime;
   dynamic _unloadingDuration;
   dynamic _unloadingCharge;
-Dropoffs copyWith({  dynamic locationId,
-  dynamic lat,
-  dynamic lng,
-  dynamic address,
-  dynamic name,
-  dynamic contactNumber,
-  dynamic sequence,
-  dynamic status,
-  dynamic unloadingTime,
-  dynamic unloadingDuration,
-  dynamic unloadingCharge,
-}) => Dropoffs(  locationId: locationId ?? _locationId,
-  lat: lat ?? _lat,
-  lng: lng ?? _lng,
-  address: address ?? _address,
-  name: name ?? _name,
-  contactNumber: contactNumber ?? _contactNumber,
-  sequence: sequence ?? _sequence,
-  status: status ?? _status,
-  unloadingTime: unloadingTime ?? _unloadingTime,
-  unloadingDuration: unloadingDuration ?? _unloadingDuration,
-  unloadingCharge: unloadingCharge ?? _unloadingCharge,
-);
+  Dropoffs copyWith({  dynamic locationId,
+    dynamic lat,
+    dynamic lng,
+    dynamic address,
+    dynamic name,
+    dynamic contactNumber,
+    dynamic sequence,
+    dynamic status,
+    dynamic unloadingTime,
+    dynamic unloadingDuration,
+    dynamic unloadingCharge,
+  }) => Dropoffs(  locationId: locationId ?? _locationId,
+    lat: lat ?? _lat,
+    lng: lng ?? _lng,
+    address: address ?? _address,
+    name: name ?? _name,
+    contactNumber: contactNumber ?? _contactNumber,
+    sequence: sequence ?? _sequence,
+    status: status ?? _status,
+    unloadingTime: unloadingTime ?? _unloadingTime,
+    unloadingDuration: unloadingDuration ?? _unloadingDuration,
+    unloadingCharge: unloadingCharge ?? _unloadingCharge,
+  );
   dynamic get locationId => _locationId;
   dynamic get lat => _lat;
   dynamic get lng => _lng;
@@ -739,16 +748,16 @@ Dropoffs copyWith({  dynamic locationId,
 
 class Pickup {
   Pickup({
-      dynamic locationId, 
-      dynamic lat, 
-      dynamic lng, 
-      dynamic address, 
-      dynamic name, 
-      dynamic contactNumber, 
-      dynamic status, 
-      dynamic loadingTime, 
-      dynamic loadingDuration, 
-      dynamic loadingCharge,}){
+    dynamic locationId,
+    dynamic lat,
+    dynamic lng,
+    dynamic address,
+    dynamic name,
+    dynamic contactNumber,
+    dynamic status,
+    dynamic loadingTime,
+    dynamic loadingDuration,
+    dynamic loadingCharge,}){
     _locationId = locationId;
     _lat = lat;
     _lng = lng;
@@ -759,7 +768,7 @@ class Pickup {
     _loadingTime = loadingTime;
     _loadingDuration = loadingDuration;
     _loadingCharge = loadingCharge;
-}
+  }
 
   Pickup.fromJson(dynamic json) {
     _locationId = json['location_id'];
@@ -783,27 +792,27 @@ class Pickup {
   dynamic _loadingTime;
   dynamic _loadingDuration;
   dynamic _loadingCharge;
-Pickup copyWith({  dynamic locationId,
-  dynamic lat,
-  dynamic lng,
-  dynamic address,
-  dynamic name,
-  dynamic contactNumber,
-  dynamic status,
-  dynamic loadingTime,
-  dynamic loadingDuration,
-  dynamic loadingCharge,
-}) => Pickup(  locationId: locationId ?? _locationId,
-  lat: lat ?? _lat,
-  lng: lng ?? _lng,
-  address: address ?? _address,
-  name: name ?? _name,
-  contactNumber: contactNumber ?? _contactNumber,
-  status: status ?? _status,
-  loadingTime: loadingTime ?? _loadingTime,
-  loadingDuration: loadingDuration ?? _loadingDuration,
-  loadingCharge: loadingCharge ?? _loadingCharge,
-);
+  Pickup copyWith({  dynamic locationId,
+    dynamic lat,
+    dynamic lng,
+    dynamic address,
+    dynamic name,
+    dynamic contactNumber,
+    dynamic status,
+    dynamic loadingTime,
+    dynamic loadingDuration,
+    dynamic loadingCharge,
+  }) => Pickup(  locationId: locationId ?? _locationId,
+    lat: lat ?? _lat,
+    lng: lng ?? _lng,
+    address: address ?? _address,
+    name: name ?? _name,
+    contactNumber: contactNumber ?? _contactNumber,
+    status: status ?? _status,
+    loadingTime: loadingTime ?? _loadingTime,
+    loadingDuration: loadingDuration ?? _loadingDuration,
+    loadingCharge: loadingCharge ?? _loadingCharge,
+  );
   dynamic get locationId => _locationId;
   dynamic get lat => _lat;
   dynamic get lng => _lng;

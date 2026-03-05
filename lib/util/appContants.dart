@@ -12,8 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'appColors.dart';
 import 'appImage.dart';
 
-class AppContants
-{
+class AppContants {
   static String appName = "TripToll";
   static String token = "Auth Token";
   static String link = "Auth Token";
@@ -30,7 +29,7 @@ class AppContants
   static String userEmail = "User Email";
   static String userPhone = "User Phone";
   static String notification = "Notification ID";
-  // static String baseURl = "https://apitest.crossroadhelpline.in/api/"; 
+  // static String baseURl = "https://apitest.crossroadhelpline.in/api/";
   // static String baseURl = "https://dev.triptoll.in/api/";
   static String baseURl = "https://triptoll.in/app-admin/api/";
   // static String imageURL = "https://dev.triptoll.in/";
@@ -61,6 +60,7 @@ class AppContants
   static String getAllBookingURL = "Booking/getCustomerAllBooking";
   static String runningBookingURL = "Booking/check_running_order_customer";
   static String orderRatingURL = "Booking/orderRating";
+  static String getLastFiveDropLocationsURL = "Booking/getLastFiveDropLocations";
   static String getBookingDetails = "Booking/getBookingDetail";
   static String driverDetailsURL = "Driver/getDriverDetails";
   static String driverDetailURL = "Driver/getDriverDetail";
@@ -203,7 +203,7 @@ class AppContants
     }
   }
 
- static  String getCarImage(String plan)
+  static  String getCarImage(String plan)
   {
     if(plan.toLowerCase() == "lifetime pan india" )
     {
@@ -382,7 +382,7 @@ class AppContants
                 }).toList(),
                 onChanged: (value) {
                   // setState(() {
-                    selectedReason = value;
+                  selectedReason = value;
                   // });
                 },
                 validator: (value) =>
@@ -450,12 +450,12 @@ class AppContants
   }
 
   static List<String>subTitle = ["Our 24/7 Support is Just a Call away.","Get Quick and Reliable Fuel Delivery Service Wherever You Are","Our 24/7 Support is Just a Call away.","Our 24/7 Support is Just a Call away.","Stranded with a dead battery? Our Battery Jump Start service is here to get you back on the road swiftly and safely. Available 24/7, our team ensures professional assistance to revive your vehicle's battery in no time.","Our 24/7 Support is Just a Call away.","Experience hassle-free car maintenance with Service on Wheels. From oil changes to full inspections, our certified mechanics bring the garage to you. Book now and save time, every time.","Crossroads Helpline is here 24/7 to assist you in getting the best price for your car, quickly and easily.",
-  "Get the right insurance for your car, giving you confidence and protection every time you drive.","Stranded on the road with a flat Tyre, empty fuel, or a sudden breakdown? Don’t worry! With our expert 2-wheeler roadside assistance, help is just a call away.",
-  "Facing unexpected car troubles? Our expert technicians are here to identify issues like overheating, fluid leaks, or mechanical failures with precision. Get back on the road in no time!","Experience peace of mind with our comprehensive on-road emergency assistance services. From ambulance support to hotel bookings, we’re your reliable partner during unexpected situations.","Stranded on the road? Get essential spare parts delivered right to your location — batteries, tyres, oil, coolant, air filters, and more. Quick, efficient, and reliable service at your fingertips!"];
+    "Get the right insurance for your car, giving you confidence and protection every time you drive.","Stranded on the road with a flat Tyre, empty fuel, or a sudden breakdown? Don’t worry! With our expert 2-wheeler roadside assistance, help is just a call away.",
+    "Facing unexpected car troubles? Our expert technicians are here to identify issues like overheating, fluid leaks, or mechanical failures with precision. Get back on the road in no time!","Experience peace of mind with our comprehensive on-road emergency assistance services. From ambulance support to hotel bookings, we’re your reliable partner during unexpected situations.","Stranded on the road? Get essential spare parts delivered right to your location — batteries, tyres, oil, coolant, air filters, and more. Quick, efficient, and reliable service at your fingertips!"];
   static List<String>headingTitle = ["Flat Tyre? Quick, Reliable, and Hassle-Free Tyre Puncture Assistance","Out of Fuel? We’re Just a Call Away!","Reliable Towing Assistance Services Near You","Immediate Key Lockout Assistance – Get Back on the Road Fast!","Quick and Reliable Battery Jump Start Service","Reliable Minor Repairs for Your Vehicle at Your Convenience","Expert Car Care, Right at Your Doorstep!","Get the Best Price Instantly","Complete Car Insurance Coverage","Quick & Reliable 2-Wheeler Roadside Assistance Anytime, Anywhere!","Swift and Reliable Emergency Roadside Car Inspection",
     "On-Road Emergency Assistance: Always Here When You Need Us","On-Road Emergency Assistance: Always Here When You Need Us","Convenient Spare Parts Delivery at Your Location!"];
   static List<String>categoryIMage = ["https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ftyre-1.ac21755a.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffuel.d0e3b897.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ftowing-service.6a5086ba.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FIMG_9470.9ec43f17.webp&w=828&q=75",
-  "https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcar-repairing-3.418ed364.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fservice-on-wheel-image-2.85211773.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fstep-3.970ef15d.webp&w=640&q=75","https://wpblogassets.paytm.com/paytmblog/uploads/2021/09/15_Insurance_-What-is-Vehicle-Insurance-800x500.jpg","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2F2-wheeler-tyre-puncture.ee2af555.jpg&w=828&q=75",
-  "https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75"];
+    "https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcar-repairing-3.418ed364.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fservice-on-wheel-image-2.85211773.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fstep-3.970ef15d.webp&w=640&q=75","https://wpblogassets.paytm.com/paytmblog/uploads/2021/09/15_Insurance_-What-is-Vehicle-Insurance-800x500.jpg","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2F2-wheeler-tyre-puncture.ee2af555.jpg&w=828&q=75",
+    "https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FBattery-Jumpstart.2f3a0c5c.webp&w=828&q=75"];
 }
 

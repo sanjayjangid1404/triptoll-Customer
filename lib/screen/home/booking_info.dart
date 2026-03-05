@@ -201,7 +201,7 @@ class _BookingInfoState extends State<BookingInfo> {
   @override
   void initState() {
     super.initState();
-    if( widget.houseNumber != '' && widget.street  != '' && widget.city != ''){
+    if(widget.pickAddress != ''){
       cityController.text =  widget.city.toString();
       addressController.text =  widget.pickAddress.toString();
     }
@@ -556,28 +556,38 @@ class _BookingInfoState extends State<BookingInfo> {
   }
 
   Future<void> pickContact() async {
-    if (await Permission.contacts.request().isGranted) {
+
+    if (await FlutterContacts.requestPermission()) {
 
       final Contact? contact = await FlutterContacts.openExternalPick();
 
       if (contact != null) {
-        senderNameController.text = contact.displayName;
 
-        if (contact.phones.isNotEmpty) {
-          String number = contact.phones.first.number;
+        final Contact? fullContact =
+        await FlutterContacts.getContact(
+          contact.id,
+          withProperties: true,
+        );
 
-          // Clean number (remove spaces, +91 etc)
-          number = number.replaceAll(RegExp(r'[^0-9]'), '');
+        if (fullContact != null) {
 
-          if (number.length > 10) {
-            number = number.substring(number.length - 10);
+          senderNameController.text = fullContact.displayName;
+
+          if (fullContact.phones.isNotEmpty) {
+
+            String number = fullContact.phones.first.number;
+
+            number = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+            if (number.length > 10) {
+              number = number.substring(number.length - 10);
+            }
+
+            senderPhoneController.text = number;
           }
-
-          senderPhoneController.text = number;
         }
       }
-    } else {
-      print("Permission Denied");
+
     }
   }
   @override
@@ -1077,29 +1087,57 @@ class _BookingInfoState extends State<BookingInfo> {
                                     suffixIcon:  IconButton(
                                       icon: Icon(Icons.contacts),
                                       onPressed: () async {
-                                        if (await Permission.contacts.request().isGranted) {
+
+                                        // Use flutter_contacts permission (NOT permission_handler)
+                                        if (await FlutterContacts.requestPermission()) {
+
                                           final Contact? contact = await FlutterContacts.openExternalPick();
+
                                           if (contact != null) {
-                                            stopLocations[index]['name'] = contact.displayName;
-                                            senderController.text = contact.displayName;
-                                            getUserName = contact.displayName;
 
-                                            if (contact.phones.isNotEmpty) {
-                                              String number = contact.phones.first.number;
-                                              number = number.replaceAll(RegExp(r'[^0-9]'), '');
+                                            // IMPORTANT: fetch full contact with properties
+                                            final Contact? fullContact =
+                                            await FlutterContacts.getContact(
+                                              contact.id,
+                                              withProperties: true,
+                                            );
 
-                                              if (number.length > 10) {
-                                                number = number.substring(
-                                                    number.length - 10);
+                                            if (fullContact != null) {
+
+                                              // Set name
+                                              stopLocations[index]['name'] = fullContact.displayName;
+                                              senderController.text = fullContact.displayName;
+                                              getUserName = fullContact.displayName;
+
+                                              // Set phone
+                                              if (fullContact.phones.isNotEmpty) {
+
+                                                String number = fullContact.phones.first.number;
+
+                                                // Clean number
+                                                number = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+                                                if (number.length > 10) {
+                                                  number = number.substring(number.length - 10);
+                                                }
+
+                                                senderMobileController.text = number;
+                                                stopLocations[index]['contact_number'] = number;
+                                                getUserPhone = number;
+
+                                              } else {
+
+                                                senderMobileController.text = '';
+                                                stopLocations[index]['contact_number'] = '';
+                                                getUserPhone = '';
                                               }
-
-                                              senderMobileController.text = number;
-                                              stopLocations[index]['contact_number'] = number;
-                                              getUserPhone = number;
                                             }
                                           }
+
                                         } else {
+
                                           print("Permission Denied");
+
                                         }
                                       },
                                     ),

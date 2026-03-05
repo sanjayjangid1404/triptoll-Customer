@@ -49,8 +49,7 @@ void main() async{
   final sharedPreferences = await SharedPreferences.getInstance();
   Get.lazyPut(() => sharedPreferences);
 
-  FlutterContacts.config.includeNotesOnIos13AndAbove = true;
-  FlutterContacts.config.returnUnifiedContacts = true;
+  FlutterContacts.config.includeNotesOnIos13AndAbove = false;
   await di.init();
   await Firebase.initializeApp();
   await Permission.notification.isDenied.then((value) {
