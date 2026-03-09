@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       handleUri(uri);
     });
   }
-
+  String formattedTime = '';
   void handleUri(Uri uri) {
 
     print("Full URI: $uri");
@@ -287,7 +287,7 @@ class _HomePageState extends State<HomePage> {
                             comment: "cancelled",
                             isOrder: true,
                           );
-                          Get.back();
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -898,6 +898,8 @@ class _HomePageState extends State<HomePage> {
                               // ),
                               InkWell(
                                 onTap: () {
+                                  formattedTime = '';
+                                  selectedDateTimeIos = null;
                                   setState(() {
                                     select = 0;
                                   });
@@ -1203,7 +1205,7 @@ class _HomePageState extends State<HomePage> {
                                                             print("Scheduled After: $hours hours $minutes minutes");
                                                             Get.back();
 
-                                                            String formattedTime =
+                                                             formattedTime =
                                                                 '${selectedDateTimeIos!.hour.toString().padLeft(2, '0')}:${selectedDateTimeIos!.minute.toString().padLeft(2, '0')}';
                                                             String onlyDate =
                                                             DateFormat('yyyy-MM-dd').format(selectedDate!);
@@ -1633,6 +1635,51 @@ class _HomePageState extends State<HomePage> {
                          return Column(
                            crossAxisAlignment: CrossAxisAlignment.start,
                            children: [
+                             Align(
+                                 alignment: Alignment.centerRight,
+                                 child: Container(
+                                   constraints: const BoxConstraints(
+                                     minHeight: 28,   // 👈 controls height
+                                   ),
+                                   padding: const EdgeInsets.symmetric(
+                                     horizontal: 10,
+                                     vertical: 4,     // 👈 reduced vertical padding
+                                   ),
+                                   decoration: BoxDecoration(
+                                     gradient: const LinearGradient(
+                                       colors: [
+                                         Color(0xFFE3F2FD),
+                                         Color(0xFFBBDEFB),
+                                       ],
+                                     ),
+                                     borderRadius: BorderRadius.circular(14), // 👈 smaller radius
+                                   ),
+                                   child: Column(
+                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                     mainAxisAlignment: MainAxisAlignment.start,
+                                     children: [
+                                       Text(
+                                         'PickUp Pin',
+                                         style: const TextStyle(
+                                           fontSize: 16,
+                                           fontWeight: FontWeight.w500,
+                                           fontFamily: "Poppins",
+                                           color: Colors.black87,
+                                         ),
+                                       ),
+                                       Text(
+                                         auhController.latestBookingListResponse[index]!.pickupOtp.toString(),
+                                         style: const TextStyle(
+                                           fontSize: 18,
+                                           fontWeight: FontWeight.w600,
+                                           fontFamily: "Poppins",
+                                           letterSpacing: 2,
+                                           color: Colors.black87,
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 )),
                              Padding(
                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory.toString(),

@@ -12,8 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'appColors.dart';
 import 'appImage.dart';
 
-class AppContants
-{
+class AppContants {
   static String appName = "TripToll";
   static String token = "Auth Token";
   static String link = "Auth Token";
@@ -61,6 +60,7 @@ class AppContants
   static String getAllBookingURL = "Booking/getCustomerAllBooking";
   static String runningBookingURL = "Booking/check_running_order_customer";
   static String orderRatingURL = "Booking/orderRating";
+  static String getLastFiveDropLocationsURL = "Booking/getLastFiveDropLocations";
   static String getBookingDetails = "Booking/getBookingDetail";
   static String driverDetailsURL = "Driver/getDriverDetails";
   static String driverDetailURL = "Driver/getDriverDetail";

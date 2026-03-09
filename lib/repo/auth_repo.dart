@@ -99,6 +99,12 @@ class AuthRepo{
           "customer_id":userID!
     });
   }
+  Future<Response> getLastFiveDropLocations({String? userID}) async {
+    return await apiClient.postData(
+        AppContants.getLastFiveDropLocationsURL,{
+          "customer_id":userID!
+    });
+  }
   Future<Response> feedBackDriver({String? bookingId,String? driverId,String? rating,String? userID,String? feedback}) async {
     return await apiClient.postData(AppContants.orderRatingURL,{
           "cus_id":userID!,

@@ -166,7 +166,8 @@ class Orders {
       dynamic vehicleType, 
       dynamic firstName, 
       dynamic lastName, 
-      dynamic contactNumber, 
+      dynamic pickupOtp,
+      dynamic contactNumber,
       dynamic fcmToken, 
       Pickup? pickup, 
       List<Dropoffs>? dropoffs,}){
@@ -183,6 +184,7 @@ class Orders {
     _orderStatus = orderStatus;
     _acceptTime = acceptTime;
     _closeTime = closeTime;
+    _paymentType = paymentType;
     _paymentType = paymentType;
     _paymentStatus = paymentStatus;
     _trnId = trnId;
@@ -224,6 +226,7 @@ class Orders {
     _model = model;
     _vehicleNumber = vehicleNumber;
     _vehicleType = vehicleType;
+    _pickupOtp = pickupOtp;
     _firstName = firstName;
     _lastName = lastName;
     _contactNumber = contactNumber;
@@ -287,6 +290,7 @@ class Orders {
     _model = json['model'];
     _vehicleNumber = json['vehicle_number'];
     _vehicleType = json['vehicle_type'];
+    _pickupOtp = json['pickup_otp'];
     _firstName = json['first_name'];
     _lastName = json['last_name'];
     _contactNumber = json['contact_number'];
@@ -353,6 +357,7 @@ class Orders {
   dynamic _model;
   dynamic _vehicleNumber;
   dynamic _vehicleType;
+  dynamic _pickupOtp;
   dynamic _firstName;
   dynamic _lastName;
   dynamic _contactNumber;
@@ -413,6 +418,7 @@ Orders copyWith({  dynamic id,
   dynamic model,
   dynamic vehicleNumber,
   dynamic vehicleType,
+  dynamic pickupOtp,
   dynamic firstName,
   dynamic lastName,
   dynamic contactNumber,
@@ -473,6 +479,7 @@ Orders copyWith({  dynamic id,
   model: model ?? _model,
   vehicleNumber: vehicleNumber ?? _vehicleNumber,
   vehicleType: vehicleType ?? _vehicleType,
+  pickupOtp: pickupOtp ?? _pickupOtp,
   firstName: firstName ?? _firstName,
   lastName: lastName ?? _lastName,
   contactNumber: contactNumber ?? _contactNumber,
@@ -534,6 +541,7 @@ Orders copyWith({  dynamic id,
   dynamic get model => _model;
   dynamic get vehicleNumber => _vehicleNumber;
   dynamic get vehicleType => _vehicleType;
+  dynamic get pickupOtp => _pickupOtp;
   dynamic get firstName => _firstName;
   dynamic get lastName => _lastName;
   dynamic get contactNumber => _contactNumber;
@@ -596,6 +604,7 @@ Orders copyWith({  dynamic id,
     map['model'] = _model;
     map['vehicle_number'] = _vehicleNumber;
     map['vehicle_type'] = _vehicleType;
+    map['pickup_otp'] = _pickupOtp;
     map['first_name'] = _firstName;
     map['last_name'] = _lastName;
     map['contact_number'] = _contactNumber;

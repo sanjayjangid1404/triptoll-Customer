@@ -162,7 +162,20 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       print("Error in reverse geocoding: $e");
     }
   }
+  GoogleMapController? _mapController;
+  Future<void> _getCurrentLocation2() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
+    setState(() {
+      currentLocation = LatLng(position.latitude, position.longitude);
+      _getAddressFromLatLng(position.latitude, position.longitude,false);
+    });
+
+    mapController?.animateCamera(
+      CameraUpdate.newLatLng(currentLocation!),
+    );
+  }
   Future<void> _getAddressFromLatLng(double lat, double lng,bool current) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
@@ -222,6 +235,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
     final regExp = RegExp(r'^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$');
     return regExp.hasMatch(value);
   }
+
   Future<Map<String, dynamic>> _getAddressFromLatLngSearch(
       double lat, double lng) async {
 
@@ -417,6 +431,19 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
                 pickupLng = position.target.longitude;
               });
             },
+          ),
+          Positioned(
+            bottom: 150,
+            left: 20,
+            child: FloatingActionButton(
+              heroTag: "btnCurrentLocation",
+              backgroundColor: Colors.white,
+              onPressed: _getCurrentLocation2,
+              child: const Icon(
+                Icons.my_location,
+                color: Colors.blue,
+              ),
+            ),
           ),
           Positioned(
             top: 90,

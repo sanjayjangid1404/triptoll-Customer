@@ -287,7 +287,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
 
 
-      showWalletPopup(context);
+      // showWalletPopup(context);
       if(Get.find<AuthController>().detailsResponse!=null){
         _initializeLocations();
         _startTracking();
@@ -658,7 +658,9 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
             // _initializeLocations();
             // _startTracking();
           }
-          originalAmount = double.parse(widget.bookingID.totalAmount.toString());
+          widget.bookingID.totalAmount != null ?
+          originalAmount = double.parse(widget.bookingID.totalAmount ?? 0.0):
+          null;
 
           return Scaffold(
               appBar: AppBar(
@@ -724,6 +726,54 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                minHeight: 28,   // 👈 controls height
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,     // 👈 reduced vertical padding
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFE3F2FD),
+                                    Color(0xFFBBDEFB),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(14), // 👈 smaller radius
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                   'PickUp Pin',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Poppins",
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.bookingID.pickupOtp.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: "Poppins",
+                                      letterSpacing: 2,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                        SizedBox(
+                          height: 3,
+                        ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

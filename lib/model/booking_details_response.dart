@@ -82,7 +82,8 @@ class BookingDetailsResponse {
       dynamic senderContactNumber, 
       dynamic dropLat, 
       dynamic dropLong, 
-      dynamic dropAddress, 
+      dynamic pickupOtp,
+      dynamic dropAddress,
       dynamic distance, 
       dynamic expectedTime, 
       dynamic receiverName, 
@@ -140,6 +141,7 @@ class BookingDetailsResponse {
     _senderContactNumber = senderContactNumber;
     _dropLat = dropLat;
     _dropLong = dropLong;
+    _pickupOtp = pickupOtp;
     _dropAddress = dropAddress;
     _distance = distance;
     _expectedTime = expectedTime;
@@ -199,6 +201,7 @@ class BookingDetailsResponse {
     _senderContactNumber = json['sender_contact_number'];
     _dropLat = json['drop_lat'];
     _dropLong = json['drop_long'];
+    _pickupOtp = json['pickup_otp'];
     _dropAddress = json['drop_address'];
     _distance = json['distance'];
     _expectedTime = json['expected_time'];
@@ -263,6 +266,7 @@ class BookingDetailsResponse {
   dynamic _senderContactNumber;
   dynamic _dropLat;
   dynamic _dropLong;
+  dynamic _pickupOtp;
   dynamic _dropAddress;
   dynamic _distance;
   dynamic _expectedTime;
@@ -323,6 +327,7 @@ BookingDetailsResponse copyWith({  dynamic id,
   dynamic senderContactNumber,
   dynamic dropLat,
   dynamic dropLong,
+  dynamic pickupOtp,
   dynamic dropAddress,
   dynamic distance,
   dynamic expectedTime,
@@ -381,6 +386,7 @@ BookingDetailsResponse copyWith({  dynamic id,
   senderContactNumber: senderContactNumber ?? _senderContactNumber,
   dropLat: dropLat ?? _dropLat,
   dropLong: dropLong ?? _dropLong,
+  pickupOtp: pickupOtp ?? _pickupOtp,
   dropAddress: dropAddress ?? _dropAddress,
   distance: distance ?? _distance,
   expectedTime: expectedTime ?? _expectedTime,
@@ -440,6 +446,7 @@ BookingDetailsResponse copyWith({  dynamic id,
   dynamic get senderContactNumber => _senderContactNumber;
   dynamic get dropLat => _dropLat;
   dynamic get dropLong => _dropLong;
+  dynamic get pickupOtp => _pickupOtp;
   dynamic get dropAddress => _dropAddress;
   dynamic get distance => _distance;
   dynamic get expectedTime => _expectedTime;
@@ -501,6 +508,7 @@ BookingDetailsResponse copyWith({  dynamic id,
     map['sender_contact_number'] = _senderContactNumber;
     map['drop_lat'] = _dropLat;
     map['drop_long'] = _dropLong;
+    map['pickup_otp'] = _pickupOtp;
     map['drop_address'] = _dropAddress;
     map['distance'] = _distance;
     map['expected_time'] = _expectedTime;
