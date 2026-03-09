@@ -19,13 +19,18 @@ class _ContactUsPageState extends State<ContactUsPage> {
   String? selectedFaqId;
   FaqDriverResponse? selectedFaq;
   Key _dropdownKey = UniqueKey();
-
+  Future<void> _openWebsite() async {
+    final Uri url = Uri.parse("https://triptoll.in/");
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
   @override
   void initState() {
     super.initState();
     authController.getDriverFAQ();
     authController.checkTicket({
-      "driver_id":authController.getUserID().toString(),
+      "driver_id": authController.getUserID().toString(),
       "user_type":"customer"
     });
   }
@@ -46,7 +51,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
              Column(
               children: [
                 Icon(Icons.headset_mic, size: 60, color: Colors.blue),
@@ -123,7 +127,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     padding: const EdgeInsets.only(left: 34.0),
                     child: GestureDetector(
                       onTap: () {
-                        // Handle website tap
+                        _openWebsite();
                       },
                       child: Text(
                         "https://triptoll.in/",
