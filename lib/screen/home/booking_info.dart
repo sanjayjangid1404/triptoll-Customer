@@ -198,6 +198,24 @@ class _BookingInfoState extends State<BookingInfo> {
   List<Map<String, dynamic>> stopLocations = [];
   String getUserName = '';
   String getUserPhone = '';
+  String removeEmoji(String text) {
+    final emojiRegex = RegExp(
+      r'[\u{1F600}-\u{1F64F}' // emoticons
+      r'\u{1F300}-\u{1F5FF}' // symbols & pictographs
+      r'\u{1F680}-\u{1F6FF}' // transport & map symbols
+      r'\u{1F700}-\u{1F77F}'
+      r'\u{1F780}-\u{1F7FF}'
+      r'\u{1F800}-\u{1F8FF}'
+      r'\u{1F900}-\u{1F9FF}'
+      r'\u{1FA00}-\u{1FA6F}'
+      r'\u{1FA70}-\u{1FAFF}'
+      r'\u{2600}-\u{26FF}'   // misc symbols
+      r'\u{2700}-\u{27BF}]', // dingbats
+      unicode: true,
+    );
+
+    return text.replaceAll(emojiRegex, '');
+  }
   @override
   void initState() {
     super.initState();
@@ -561,7 +579,8 @@ class _BookingInfoState extends State<BookingInfo> {
       final Contact? contact = await FlutterContacts.openExternalPick();
 
       if (contact != null) {
-        senderNameController.text = contact.displayName;
+        String cleanName = removeEmoji(contact.displayName);
+        senderNameController.text = cleanName;
 
         if (contact.phones.isNotEmpty) {
           String number = contact.phones.first.number;
@@ -819,7 +838,7 @@ class _BookingInfoState extends State<BookingInfo> {
                           keyboardType: TextInputType.name,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                              RegExp(r"[a-zA-Z\s]"), // only alphabets + space
+                              RegExp(r"[a-zA-Z\s]"),
                             ),
                           ],
                           style: TextStyle(
@@ -1080,9 +1099,11 @@ class _BookingInfoState extends State<BookingInfo> {
                                         if (await Permission.contacts.request().isGranted) {
                                           final Contact? contact = await FlutterContacts.openExternalPick();
                                           if (contact != null) {
-                                            stopLocations[index]['name'] = contact.displayName;
-                                            senderController.text = contact.displayName;
-                                            getUserName = contact.displayName;
+                                            String cleanName = removeEmoji(contact.displayName);
+
+                                            stopLocations[index]['name'] = cleanName;
+                                            senderController.text = cleanName;
+                                            getUserName = cleanName;
 
                                             if (contact.phones.isNotEmpty) {
                                               String number = contact.phones.first.number;
@@ -1314,15 +1335,24 @@ class _BookingInfoState extends State<BookingInfo> {
 
                         print("Total Distance: ${resultTotal['total_distance']}");
                         print("Total Time: ${resultTotal['total_time']}");
+                        print("📍 pickLat: ${widget.pickLat}");
+                        print("📍 pickLng: ${widget.pickLng}");
+                        print("📍 dropLat: ${widget.dropLat}");
+                        print("📍 dropLng: ${widget.dropLng}");
+
                         String totalDistanceNew = resultTotal['total_distance'].toString();
                         String distanceString = resultTotal['total_distance'].toString();
                         distanceString = distanceString.replaceAll(RegExp(r'[a-zA-Z\s]'), '');
                         double eLoader = double.tryParse(distanceString) ?? 0.0;
                         String totalTimeNew = resultTotal['total_time'].toString();
                         final chosen = result['chosen'];
-                        final km = (chosen['distanceValue'] as int) / 1000.0;
+                        print("🧠 stopLocations: $stopLocations");
+                        print("🧠 chosen full: $chosen");
+                        final km = ((chosen['distanceValue'] ?? 0).toDouble()) / 1000.0;
                         final duration = chosen['durationText'];
-
+                        print("chosen: $chosen");
+                        print("distanceValue: ${chosen['distanceValue']}");
+                        print("type: ${chosen['distanceValue']?.runtimeType}");
                         // Store them in string variables
                         String distanceText = "${km.toStringAsFixed(2)} KM";
                         String timeText = duration;

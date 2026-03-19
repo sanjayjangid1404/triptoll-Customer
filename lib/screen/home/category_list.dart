@@ -222,48 +222,74 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
     }
   }
 
-  double calculateDistanceWithPickup({
+  Future<double> calculateDistanceWithPickup({
     required double pickLat,
     required double pickLng,
     required List<Map<String, dynamic>> stops,
-  }) {
-    double totalDistance = 0.0;
+  }) async {
 
-    if (stops.isEmpty) return 0.0;
+    if (stops.isEmpty) return 0;
 
-    // 1. Pickup से पहला stop तक distance
-    double distanceToFirstStop = Geolocator.distanceBetween(
-      pickLat,
-      pickLng,
-      stops.first['lat'],
-      stops.first['lng'],
-    );
-    totalDistance += distanceToFirstStop / 1000;
+    String apiKey = "AIzaSyAddnEWMk05vtngwZAc13ub52nY2OIRmWk";
 
-    // 2. बाकी सभी stops के बीच distance
-    for (int i = 0; i < stops.length - 1; i++) {
-      double segmentDistance = Geolocator.distanceBetween(
-        stops[i]['lat'],
-        stops[i]['lng'],
-        stops[i + 1]['lat'],
-        stops[i + 1]['lng'],
-      );
-      totalDistance += segmentDistance / 1000;
+    String origin = "$pickLat,$pickLng";
+
+    String destination =
+        "${stops.last['lat']},${stops.last['lng']}";
+
+    String waypoints = "";
+
+    if (stops.length > 1) {
+      waypoints = stops
+          .sublist(0, stops.length - 1)
+          .map((s) => "${s['lat']},${s['lng']}")
+          .join("|");
     }
 
-    return double.parse(totalDistance.toStringAsFixed(2)); // Round 2 decimals
+    String url =
+        "https://maps.googleapis.com/maps/api/directions/json?"
+        "origin=$origin"
+        "&destination=$destination"
+        "&waypoints=$waypoints"
+        "&key=$apiKey";
+
+    print("Directions API URL: $url");
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+
+      final data = json.decode(response.body);
+
+      double totalDistance = 0;
+
+      List legs = data['routes'][0]['legs'];
+
+      for (var leg in legs) {
+        totalDistance += leg['distance']['value'];
+      }
+
+      double km = totalDistance / 1000;
+
+      print("Google Route Distance KM: $km");
+
+      return double.parse(km.toStringAsFixed(2));
+    }
+
+    return 0;
   }
 
   Map<String, double> calculateFare({
     required double distanceInKm,
     required Data vehicleData,
-    required int stopCount, // 👈 add this
+    required int stopCount,
   }) {
+
     final double baseFare = double.parse(vehicleData.baseFare.toString());
     final double baseFareUpto =
     double.parse(vehicleData.baseFareUpto.toString());
     final double extraPrice =
-    double.parse(vehicleData.extraPrice.toString());
+    double.parse(vehicleData.extraPrice.toString()); // ₹19 flat
     final double perLocationCharge =
     double.parse(vehicleData.perLocationCharge.toString());
 
@@ -274,32 +300,49 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       double.parse(vehicleData.rate4PerKm.toString()),
     ];
 
+    print("Distance In Km: $distanceInKm");
+    print("Base Fare: $baseFare");
+    print("Base Fare Upto: $baseFareUpto");
+    print("Extra Price (Flat): $extraPrice");
+    print("Rates: $rates");
+
     double totalFare = 0;
     double randomRate = 0;
 
     if (distanceInKm <= baseFareUpto) {
-      final double extraPercent = (baseFare * extraPrice) / 100;
-      totalFare = baseFare + extraPercent;
+
+      print("Distance within base range");
+
+      totalFare = baseFare + extraPrice;
+
     } else {
-      final double extraDistance = distanceInKm - baseFareUpto;
+
+      double extraDistance = distanceInKm - baseFareUpto;
+
+      print("Extra Distance: $extraDistance");
+
       randomRate = rates[Random().nextInt(rates.length)];
-      final double extraFare = extraDistance * randomRate;
 
-      totalFare = baseFare + extraFare;
+      print("Selected Rate: $randomRate");
 
-      // add percentage
-      final double extraPercent = (totalFare * extraPrice) / 100;
-      totalFare += extraPercent;
+      double extraFare = extraDistance * randomRate;
+
+      print("Extra Fare: $extraFare");
+
+      totalFare = baseFare + extraFare + extraPrice;
+
     }
 
-    // ✅ PER LOCATION CHARGE LOGIC
     if (stopCount > 2) {
+
       int extraStops = stopCount - 2;
+
       double locationCharge = extraStops * perLocationCharge;
-      totalFare += locationCharge;
 
       print("Extra Stops: $extraStops");
-      print("Location Charge Added: $locationCharge");
+      print("Location Charge: $locationCharge");
+
+      totalFare += locationCharge;
     }
 
     print("Final Fare: $totalFare");
@@ -309,11 +352,10 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
       'randomRate': randomRate,
     };
   }
-
-  calculateAndCacheFares(AuthController authController) {
+  calculateAndCacheFares(AuthController authController) async{
     if (widget.pickLat == null || widget.pickLng == null) return;
 
-    final distance = calculateDistanceWithPickup(
+    final double distance = await calculateDistanceWithPickup(
       pickLat: widget.pickLat,
       pickLng: widget.pickLng,
       stops: widget.stopLocations,
@@ -595,7 +637,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                             _mapController = controller;
 
                             // Improved delayed route drawing
-                            Future.delayed(const Duration(milliseconds: 500), () {
+                            // Future.delayed(const Duration(milliseconds: 500), () {
                               if (mounted && !_isRouteDrawn) {
                                 _getRouteBetweenPoints(
                                   stopLocations: widget.stopLocations,
@@ -603,7 +645,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                   pickLng: widget.pickLng,
                                 );
                               }
-                            });
+                            // });
                           },
                         ),
                       ),
@@ -1100,7 +1142,7 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                    child: ImageIcon(AssetImage("assets/images/rupess.jpg"),color: Colors.white,size: 40,))),
                Expanded(
                  child: InkWell(
-                   onTap:Get.find<AuthController>().isLoggedIn() ? (){
+                   onTap:Get.find<AuthController>().isLoggedIn() ? () async {
                      print('fjdfj${widget.senderNameText.toString()}');
                      print('fjdfj${widget.senderPhone.toString()}');
                      if (widget.houseNoCt.isNotEmpty) {
@@ -1129,6 +1171,11 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                        print('kfjdjfkdfjdkfjk${widget.senderPhone.toString()}');
                      }
                      String pickupOtp = (1000 + Random().nextInt(9000)).toString();
+                     double distance = await calculateDistanceWithPickup(
+                       pickLat: widget.pickLat!,
+                       pickLng: widget.pickLng!,
+                       stops: widget.stopLocations,
+                     );
                      authController.bookingMultipleNow(
                          pickupOtp: pickupOtp,
                          distance: widget.distance,
@@ -1155,11 +1202,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                          pickupLong: widget.pickLng.toString(),
                          rate: (cachedFaresAndRates?[selectIndex]['randomRate'] ?? 0).toString(),
                          receiverContactNumber: lastSendMobile, receiverName: lastSenderName, stopAddress: lastStopLocation["address"], stopCharge: "",
-                         totalDistance: calculateDistanceWithPickup(
-                         pickLat:widget.pickLat,
-                         pickLng:  widget.pickLng,
-                         stops:  widget.stopLocations
-                     ).toStringAsFixed(0), vehicleId: authController.vehicleData!.data![selectIndex].id??"", vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
+                         totalDistance: distance.toStringAsFixed(0),
+                         vehicleId: authController.vehicleData!.data![selectIndex].id??"",
+                         vehicleImg: authController.vehicleData!.data![selectIndex].fileName??"",
                          vehicleName: authController.vehicleData!.data![selectIndex].name??"",
                          stopLocations: widget.stopLocations);
                      print('fdfd${widget.scheduleDate.toString()}');

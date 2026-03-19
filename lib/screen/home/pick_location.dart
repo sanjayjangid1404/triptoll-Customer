@@ -550,8 +550,13 @@ class _LocationPickerTypeAheadPageState
                       pickController.text = suggestion['description'];
                       pickupAddress = suggestion['description'];
                       if (widget.isShare == true) {
-                        widget.pickLat = latLng['lat']!;
-                        widget.pickLng = latLng['lng']!;
+                        print('pickup select karne pe ${latLng['lat']!}');
+                        print('pickup select karne pe ${latLng['lng']!}');
+
+                        pickupLat = latLng['lat']!;
+                        pickupLng = latLng['lng']!;
+                        print('pickup select karne pe ${widget.pickLat}');
+                        print('pickup select karne pe ${widget.pickLng}');
                       } else {
                         pickupLat = latLng['lat']!;
                         pickupLng = latLng['lng']!;

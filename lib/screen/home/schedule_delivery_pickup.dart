@@ -151,7 +151,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
         final address =
-            "${place.name}, ${place.subLocality}, ${place.locality}, ${place.country}";
+            "${place.name}, ${place.subLocality}, ${place.locality}, ${place.subAdministrativeArea}, ${place.administrativeArea}";
         setState(() {
         pickController.text = address;
         pickupAddress = address;
@@ -279,20 +279,52 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
   double pickupLngShare =0.0;
   Future<String> _getCityFromLatLng(double lat, double lng) async {
     try {
-      List<Placemark> placemarks =
-      await placemarkFromCoordinates(lat, lng);
+      final url =
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
 
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks.first;
-        return place.locality ??
-            place.subAdministrativeArea ??
-            place.administrativeArea ??
-            "Unknown City";
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
+
+      if (data["status"] != "OK") {
+        return "Unknown City";
       }
+
+      String city = "";
+      String locality = "";
+
+      for (var result in data["results"]) {
+        for (var component in result["address_components"]) {
+
+          List types = component["types"];
+
+          if (types.contains("administrative_area_level_2")) {
+            city = component["long_name"];
+          }
+
+          if (types.contains("locality")) {
+            locality = component["long_name"];
+          }
+        }
+      }
+
+
+      city = city
+          .replaceAll("Division", "")
+          .replaceAll("District", "")
+          .replaceAll("division", "")
+          .replaceAll("district", "")
+          .trim();
+
+      /// If city still empty → use locality
+      if (city.isEmpty) {
+        city = locality;
+      }
+
+      return city.isEmpty ? "Unknown City" : city;
     } catch (e) {
-      print("City error: $e");
+      print("City detect error: $e");
+      return "Unknown City";
     }
-    return "Unknown City";
   }
   Future<void> _handlePlaceSelection(Map<String, dynamic> suggestion) async {
     final latLng = await _getPlaceLatLng(suggestion['place_id']);
