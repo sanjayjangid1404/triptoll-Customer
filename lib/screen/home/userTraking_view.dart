@@ -700,7 +700,6 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-
                     margin: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -726,53 +725,49 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                              constraints: const BoxConstraints(
-                                minHeight: 28,   // 👈 controls height
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,     // 👈 reduced vertical padding
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFFE3F2FD),
-                                    Color(0xFFBBDEFB),
-                                  ],
+                        Container(
+                          width: Get.width,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 4,     // 👈 reduced vertical padding
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFFE3F2FD),
+                                Color(0xFFBBDEFB),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(14), // 👈 smaller radius
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                               'PickUp Pin',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: "Poppins",
+                                  color: Colors.black87,
                                 ),
-                                borderRadius: BorderRadius.circular(14), // 👈 smaller radius
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                   'PickUp Pin',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "Poppins",
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  Text(
-                                    widget.bookingID.pickupOtp.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: "Poppins",
-                                      letterSpacing: 2,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                widget.bookingID.pickupOtp.toString(),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "Poppins",
+                                  letterSpacing: 2,
+                                  color: Colors.black87,
+                                ),
                               ),
-                            )),
+                            ],
+                          ),
+                        ),
                         SizedBox(
-                          height: 3,
+                          height: 7,
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1682,7 +1682,7 @@ class _HomePageState extends State<HomePage> {
                                  )),
                              Padding(
                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                               child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory.toString(),
+                               child: Text(auhController.latestBookingListResponse[index]!.vehicleCategory ?? '',
                                  maxLines: 1,
                                  style: TextStyle(fontSize: 13),),
                              ),

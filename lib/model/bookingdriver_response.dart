@@ -91,61 +91,61 @@ BookingdriverResponse copyWith({  bool? status,
 
 class DriverDetails {
   DriverDetails({
-      String? id, 
-      String? uniqId, 
+      dynamic id, 
+      dynamic uniqId, 
       dynamic ownerId, 
-      String? categoryId, 
-      String? weight, 
-      String? vehicleId, 
-      String? referralCode, 
+      dynamic categoryId, 
+      dynamic weight, 
+      dynamic vehicleId, 
+      dynamic referralCode, 
       dynamic executiveCode, 
       dynamic referralPrice, 
-      String? username, 
-      String? profilePhoto,
-      String? password,
-      String? model, 
-      String? rcNo, 
-      String? vehicleNumber, 
-      String? vehicleType, 
-      String? firstName, 
-      String? lastName, 
-      String? email, 
+      dynamic username, 
+      dynamic profilePhoto,
+      dynamic password,
+      dynamic model, 
+      dynamic rcNo, 
+      dynamic vehicleNumber, 
+      dynamic vehicleType, 
+      dynamic firstName, 
+      dynamic lastName, 
+      dynamic email, 
       dynamic countryCode, 
-      String? contactNumber, 
-      String? gender, 
-      String? address, 
-      String? lat, 
-      String? long, 
-      String? description, 
-      String? cityId, 
-      String? bankName, 
-      String? accountNo, 
-      String? ifscCode, 
-      String? upiId, 
+      dynamic contactNumber, 
+      dynamic gender, 
+      dynamic address, 
+      dynamic lat, 
+      dynamic long, 
+      dynamic description, 
+      dynamic cityId, 
+      dynamic bankName, 
+      dynamic accountNo, 
+      dynamic ifscCode, 
+      dynamic upiId, 
       dynamic trnId, 
-      String? commission, 
-      String? status, 
-      String? walletAmount, 
-      String? registrationFees, 
-      String? categoryFees, 
-      String? paymentStatus, 
-      String? adharNo, 
-      String? panNo, 
-      String? licenseNo, 
-      String? insurance, 
-      String? kyc, 
-      String? runningOrder, 
-      String? addDate, 
-      String? updateDate, 
-      String? loginStatus, 
-      String? onlineTime, 
-      String? loginHours, 
-      String? lastLoginOn, 
-      String? readStatus, 
-      String? userStatus, 
-      String? weightValue, 
-      String? weightType, 
-      String? categoryName,}){
+      dynamic commission, 
+      dynamic status, 
+      dynamic walletAmount, 
+      dynamic registrationFees, 
+      dynamic categoryFees, 
+      dynamic paymentStatus, 
+      dynamic adharNo, 
+      dynamic panNo, 
+      dynamic licenseNo, 
+      dynamic insurance, 
+      dynamic kyc, 
+      dynamic runningOrder, 
+      dynamic addDate, 
+      dynamic updateDate, 
+      dynamic loginStatus, 
+      dynamic onlineTime, 
+      dynamic loginHours, 
+      dynamic lastLoginOn, 
+      dynamic readStatus, 
+      dynamic userStatus, 
+      dynamic weightValue, 
+      dynamic weightType, 
+      dynamic categoryName,}){
     _id = id;
     _uniqId = uniqId;
     _ownerId = ownerId;
@@ -228,7 +228,7 @@ class DriverDetails {
     _gender = json['gender'];
     _address = json['address'];
     _lat = json['lat'];
-    _long = json['long'];
+    _long = json['lng'];
     _description = json['description'];
     _cityId = json['city_id'];
     _bankName = json['bank_name'];
@@ -260,116 +260,116 @@ class DriverDetails {
     _weightType = json['weight_type'];
     _categoryName = json['category_name'];
   }
-  String? _id;
-  String? _uniqId;
+  dynamic _id;
+  dynamic _uniqId;
   dynamic _ownerId;
-  String? _categoryId;
-  String? _weight;
-  String? _vehicleId;
-  String? _referralCode;
+  dynamic _categoryId;
+  dynamic _weight;
+  dynamic _vehicleId;
+  dynamic _referralCode;
   dynamic _executiveCode;
   dynamic _referralPrice;
-  String? _username;
-  String? _profilePhoto;
-  String? _password;
-  String? _model;
-  String? _rcNo;
-  String? _vehicleNumber;
-  String? _vehicleType;
-  String? _firstName;
-  String? _lastName;
-  String? _email;
+  dynamic _username;
+  dynamic _profilePhoto;
+  dynamic _password;
+  dynamic _model;
+  dynamic _rcNo;
+  dynamic _vehicleNumber;
+  dynamic _vehicleType;
+  dynamic _firstName;
+  dynamic _lastName;
+  dynamic _email;
   dynamic _countryCode;
-  String? _contactNumber;
-  String? _gender;
-  String? _address;
-  String? _lat;
-  String? _long;
-  String? _description;
-  String? _cityId;
-  String? _bankName;
-  String? _accountNo;
-  String? _ifscCode;
-  String? _upiId;
+  dynamic _contactNumber;
+  dynamic _gender;
+  dynamic _address;
+  dynamic _lat;
+  dynamic _long;
+  dynamic _description;
+  dynamic _cityId;
+  dynamic _bankName;
+  dynamic _accountNo;
+  dynamic _ifscCode;
+  dynamic _upiId;
   dynamic _trnId;
-  String? _commission;
-  String? _status;
-  String? _walletAmount;
-  String? _registrationFees;
-  String? _categoryFees;
-  String? _paymentStatus;
-  String? _adharNo;
-  String? _panNo;
-  String? _licenseNo;
-  String? _insurance;
-  String? _kyc;
-  String? _runningOrder;
-  String? _addDate;
-  String? _updateDate;
-  String? _loginStatus;
-  String? _onlineTime;
-  String? _loginHours;
-  String? _lastLoginOn;
-  String? _readStatus;
-  String? _userStatus;
-  String? _weightValue;
-  String? _weightType;
-  String? _categoryName;
-DriverDetails copyWith({  String? id,
-  String? uniqId,
+  dynamic _commission;
+  dynamic _status;
+  dynamic _walletAmount;
+  dynamic _registrationFees;
+  dynamic _categoryFees;
+  dynamic _paymentStatus;
+  dynamic _adharNo;
+  dynamic _panNo;
+  dynamic _licenseNo;
+  dynamic _insurance;
+  dynamic _kyc;
+  dynamic _runningOrder;
+  dynamic _addDate;
+  dynamic _updateDate;
+  dynamic _loginStatus;
+  dynamic _onlineTime;
+  dynamic _loginHours;
+  dynamic _lastLoginOn;
+  dynamic _readStatus;
+  dynamic _userStatus;
+  dynamic _weightValue;
+  dynamic _weightType;
+  dynamic _categoryName;
+DriverDetails copyWith({  dynamic id,
+  dynamic uniqId,
   dynamic ownerId,
-  String? categoryId,
-  String? weight,
-  String? vehicleId,
-  String? referralCode,
+  dynamic categoryId,
+  dynamic weight,
+  dynamic vehicleId,
+  dynamic referralCode,
   dynamic executiveCode,
   dynamic referralPrice,
-  String? username,
-  String? profilePhoto,
-  String? password,
-  String? model,
-  String? rcNo,
-  String? vehicleNumber,
-  String? vehicleType,
-  String? firstName,
-  String? lastName,
-  String? email,
+  dynamic username,
+  dynamic profilePhoto,
+  dynamic password,
+  dynamic model,
+  dynamic rcNo,
+  dynamic vehicleNumber,
+  dynamic vehicleType,
+  dynamic firstName,
+  dynamic lastName,
+  dynamic email,
   dynamic countryCode,
-  String? contactNumber,
-  String? gender,
-  String? address,
-  String? lat,
-  String? long,
-  String? description,
-  String? cityId,
-  String? bankName,
-  String? accountNo,
-  String? ifscCode,
-  String? upiId,
+  dynamic contactNumber,
+  dynamic gender,
+  dynamic address,
+  dynamic lat,
+  dynamic long,
+  dynamic description,
+  dynamic cityId,
+  dynamic bankName,
+  dynamic accountNo,
+  dynamic ifscCode,
+  dynamic upiId,
   dynamic trnId,
-  String? commission,
-  String? status,
-  String? walletAmount,
-  String? registrationFees,
-  String? categoryFees,
-  String? paymentStatus,
-  String? adharNo,
-  String? panNo,
-  String? licenseNo,
-  String? insurance,
-  String? kyc,
-  String? runningOrder,
-  String? addDate,
-  String? updateDate,
-  String? loginStatus,
-  String? onlineTime,
-  String? loginHours,
-  String? lastLoginOn,
-  String? readStatus,
-  String? userStatus,
-  String? weightValue,
-  String? weightType,
-  String? categoryName,
+  dynamic commission,
+  dynamic status,
+  dynamic walletAmount,
+  dynamic registrationFees,
+  dynamic categoryFees,
+  dynamic paymentStatus,
+  dynamic adharNo,
+  dynamic panNo,
+  dynamic licenseNo,
+  dynamic insurance,
+  dynamic kyc,
+  dynamic runningOrder,
+  dynamic addDate,
+  dynamic updateDate,
+  dynamic loginStatus,
+  dynamic onlineTime,
+  dynamic loginHours,
+  dynamic lastLoginOn,
+  dynamic readStatus,
+  dynamic userStatus,
+  dynamic weightValue,
+  dynamic weightType,
+  dynamic categoryName,
 }) => DriverDetails(  id: id ?? _id,
   uniqId: uniqId ?? _uniqId,
   ownerId: ownerId ?? _ownerId,
@@ -426,61 +426,61 @@ DriverDetails copyWith({  String? id,
   weightType: weightType ?? _weightType,
   categoryName: categoryName ?? _categoryName,
 );
-  String? get id => _id;
-  String? get uniqId => _uniqId;
+  dynamic get id => _id;
+  dynamic get uniqId => _uniqId;
   dynamic get ownerId => _ownerId;
-  String? get categoryId => _categoryId;
-  String? get weight => _weight;
-  String? get vehicleId => _vehicleId;
-  String? get referralCode => _referralCode;
+  dynamic get categoryId => _categoryId;
+  dynamic get weight => _weight;
+  dynamic get vehicleId => _vehicleId;
+  dynamic get referralCode => _referralCode;
   dynamic get executiveCode => _executiveCode;
   dynamic get referralPrice => _referralPrice;
-  String? get username => _username;
-  String? get profilePhoto => _profilePhoto;
-  String? get password => _password;
-  String? get model => _model;
-  String? get rcNo => _rcNo;
-  String? get vehicleNumber => _vehicleNumber;
-  String? get vehicleType => _vehicleType;
-  String? get firstName => _firstName;
-  String? get lastName => _lastName;
-  String? get email => _email;
+  dynamic get username => _username;
+  dynamic get profilePhoto => _profilePhoto;
+  dynamic get password => _password;
+  dynamic get model => _model;
+  dynamic get rcNo => _rcNo;
+  dynamic get vehicleNumber => _vehicleNumber;
+  dynamic get vehicleType => _vehicleType;
+  dynamic get firstName => _firstName;
+  dynamic get lastName => _lastName;
+  dynamic get email => _email;
   dynamic get countryCode => _countryCode;
-  String? get contactNumber => _contactNumber;
-  String? get gender => _gender;
-  String? get address => _address;
-  String? get lat => _lat;
-  String? get long => _long;
-  String? get description => _description;
-  String? get cityId => _cityId;
-  String? get bankName => _bankName;
-  String? get accountNo => _accountNo;
-  String? get ifscCode => _ifscCode;
-  String? get upiId => _upiId;
+  dynamic get contactNumber => _contactNumber;
+  dynamic get gender => _gender;
+  dynamic get address => _address;
+  dynamic get lat => _lat;
+  dynamic get long => _long;
+  dynamic get description => _description;
+  dynamic get cityId => _cityId;
+  dynamic get bankName => _bankName;
+  dynamic get accountNo => _accountNo;
+  dynamic get ifscCode => _ifscCode;
+  dynamic get upiId => _upiId;
   dynamic get trnId => _trnId;
-  String? get commission => _commission;
-  String? get status => _status;
-  String? get walletAmount => _walletAmount;
-  String? get registrationFees => _registrationFees;
-  String? get categoryFees => _categoryFees;
-  String? get paymentStatus => _paymentStatus;
-  String? get adharNo => _adharNo;
-  String? get panNo => _panNo;
-  String? get licenseNo => _licenseNo;
-  String? get insurance => _insurance;
-  String? get kyc => _kyc;
-  String? get runningOrder => _runningOrder;
-  String? get addDate => _addDate;
-  String? get updateDate => _updateDate;
-  String? get loginStatus => _loginStatus;
-  String? get onlineTime => _onlineTime;
-  String? get loginHours => _loginHours;
-  String? get lastLoginOn => _lastLoginOn;
-  String? get readStatus => _readStatus;
-  String? get userStatus => _userStatus;
-  String? get weightValue => _weightValue;
-  String? get weightType => _weightType;
-  String? get categoryName => _categoryName;
+  dynamic get commission => _commission;
+  dynamic get status => _status;
+  dynamic get walletAmount => _walletAmount;
+  dynamic get registrationFees => _registrationFees;
+  dynamic get categoryFees => _categoryFees;
+  dynamic get paymentStatus => _paymentStatus;
+  dynamic get adharNo => _adharNo;
+  dynamic get panNo => _panNo;
+  dynamic get licenseNo => _licenseNo;
+  dynamic get insurance => _insurance;
+  dynamic get kyc => _kyc;
+  dynamic get runningOrder => _runningOrder;
+  dynamic get addDate => _addDate;
+  dynamic get updateDate => _updateDate;
+  dynamic get loginStatus => _loginStatus;
+  dynamic get onlineTime => _onlineTime;
+  dynamic get loginHours => _loginHours;
+  dynamic get lastLoginOn => _lastLoginOn;
+  dynamic get readStatus => _readStatus;
+  dynamic get userStatus => _userStatus;
+  dynamic get weightValue => _weightValue;
+  dynamic get weightType => _weightType;
+  dynamic get categoryName => _categoryName;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -508,7 +508,7 @@ DriverDetails copyWith({  String? id,
     map['gender'] = _gender;
     map['address'] = _address;
     map['lat'] = _lat;
-    map['long'] = _long;
+    map['lng'] = _long;
     map['description'] = _description;
     map['city_id'] = _cityId;
     map['bank_name'] = _bankName;
