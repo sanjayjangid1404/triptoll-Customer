@@ -570,7 +570,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
             },
           ),
           Positioned(
-            bottom: 135,
+            bottom: 175,
             left: 20,
             child: FloatingActionButton(
               heroTag: "btnCurrentLocation",
@@ -586,61 +586,104 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
             top: 125,
             left: 16,
             right: 16,
-            child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
-              child:TextFormField(
-                controller: pickController,
-                focusNode: _focusNode,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: '${'Enter'.tr} ${widget.title!.tr}',
-                  prefixIcon: const Icon(Icons.location_on, color: Colors.blue),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+            child: Column(
+              children: [
+                Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child:TextFormField(
+                    controller: pickController,
+                    focusNode: _focusNode,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      hintText: '${'Enter'.tr} ${widget.title!.tr}',
+                      prefixIcon: const Icon(Icons.location_on, color: Colors.blue),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      _onTextChanged();
+                    },
+                    onTap: () {
+                      pickController.clear();
+                      suggestions.clear();
+                      setState(() => showSuggestions = false);
+                    },
+                    onFieldSubmitted: (value) async {
+                      value = value.trim();
+                      if (value.isEmpty) return;
+
+                      if (_isLatLng(value)) {
+                        final parts = value.split(',');
+                        final lat = double.parse(parts[0].trim());
+                        final lng = double.parse(parts[1].trim());
+
+                        final address =
+                        await _getAddressFromLatLngSearch(lat, lng);
+
+                        _handleLatLngSelection(
+                          lat,
+                          lng,
+                          address['description'],
+                        );
+                        return;
+                      }
+
+                      final list = await _getPlaceSuggestions(value);
+                      if (list.isNotEmpty) {
+                        _handlePlaceSelection(list.first);
+                      }
+
+                      FocusScope.of(context).unfocus();
+                      setState(() => showSuggestions = false);
+                    },
                   ),
                 ),
-                onChanged: (value) {
-                  _onTextChanged();
-                },
-                onTap: () {
-                  pickController.clear();
-                  suggestions.clear();
-                  setState(() => showSuggestions = false);
-                },
-                onFieldSubmitted: (value) async {
-                  value = value.trim();
-                  if (value.isEmpty) return;
+                if (showSuggestions) ...[
+                  const SizedBox(height: 4),
+                  Material(
+                    elevation: 6,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: suggestions.length,
+                      itemBuilder: (context, index) {
+                        final suggestion = suggestions[index];
+                        return ListTile(
+                          leading: const Icon(Icons.location_on),
+                          title: Text(suggestion['description']),
+                          onTap: () async {
+                            _isSelectingSuggestion = true;
 
-                  if (_isLatLng(value)) {
-                    final parts = value.split(',');
-                    final lat = double.parse(parts[0].trim());
-                    final lng = double.parse(parts[1].trim());
+                            FocusScope.of(context).unfocus();
 
-                    final address =
-                    await _getAddressFromLatLngSearch(lat, lng);
+                            await _handlePlaceSelection(suggestion);
 
-                    _handleLatLngSelection(
-                      lat,
-                      lng,
-                      address['description'],
-                    );
-                    return;
-                  }
+                            setState(() {
+                              showSuggestions = false;
+                              suggestions.clear();
+                            });
 
-                  final list = await _getPlaceSuggestions(value);
-                  if (list.isNotEmpty) {
-                    _handlePlaceSelection(list.first);
-                  }
+                            // 🔥 small delay so controller listener ignore ho jaye
+                            Future.delayed(const Duration(milliseconds: 100), () {
+                              _isSelectingSuggestion = false;
+                            });
+                          },
 
-                  FocusScope.of(context).unfocus();
-                  setState(() => showSuggestions = false);
-                },
-              ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
+
           Align(
             alignment: Alignment.center,
             child: Icon(Icons.location_pin, size: 50, color: Colors.red),

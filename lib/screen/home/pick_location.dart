@@ -382,6 +382,7 @@ class _LocationPickerTypeAheadPageState
         setState(() {
           showSuggestions = false;
           suggestions.clear();
+          isClick = false;
         });
         return;
       }
@@ -580,9 +581,15 @@ class _LocationPickerTypeAheadPageState
                       ),
                     ),
                     onChanged: (value) {
+                      setState(() {
+                        isClick = true; // 🔥 API list hide
+                      });
                       _onTextChanged();
                     },
                     onTap: () {
+                      setState(() {
+                        isClick = true; // 🔥 API list hide
+                      });
                       pickController.clear();
                       suggestions.clear();
                       setState(() => showSuggestions = false);
