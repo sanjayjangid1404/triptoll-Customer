@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ import '../model/vehicle_data.dart';
 import '../model/wallet_responce_model.dart';
 import '../repo/auth_repo.dart';
 import '../screen/home/userTraking_view.dart';
+import '../socket/socket_connect_file.dart';
 import '../util/appContants.dart';
 import '../util/custom_snackbar.dart';
 import '../util/route_helper.dart';
@@ -313,6 +315,8 @@ class AuthController extends GetxController implements GetxService
         print('sddsd${response.body['last_name']}');
         print('sddsd${response.body['contact_number']}');
         authRepo.saveLName(response.body['last_name']);
+        final socketController = Get.find<ChatController>();
+        socketController.reconnectWithNewToken();
 
         // if(response.body["success"]) {
         //   showCustomSnackBar(response.body["message"], getXSnackBar: false,isError: false);
@@ -1400,8 +1404,44 @@ class AuthController extends GetxController implements GetxService
     if(response.statusCode==200 || response.statusCode ==400)
     {
 
-     // getAllBookingLoading = false;
+      final socketController = Get.find<ChatController>();
+      if (socketController.socket?.connected == true) {
 
+        socketController.socket?.emitWithAck(
+          "cancelBooking", {
+            "booking_id" : bookingID ?? "0",
+          },
+          ack: (response) {
+            if (kDebugMode) {
+              print("Server response: $response");
+            }
+
+            if (response == null) {
+              if (kDebugMode) {
+                print("❌ No response from server");
+              }
+              return;
+            }
+
+            if (response["status"] == "success") {
+              if (kDebugMode) {
+                // showCustomSnackBar('${response["message"]}',isError: false,getXSnackBar: true);
+                print("✅ Success: ${response["message"]}");
+              }
+              final payload = {
+                "booking_id": bookingID ?? "0",
+              };
+              if (kDebugMode) {
+                print("DRIVER LOCATION PAYLOAD: $payload");
+              }
+            } else {
+              if (kDebugMode) {
+                print("❌ Error: ${response["message"]}");
+              }
+            }
+          },
+        );
+      }
       if(isOrder!){
         getAllBooking(status: "all",limit: "100");
         showCustomSnackBar(response.body['message'].toString(),isError: false,getXSnackBar: true);

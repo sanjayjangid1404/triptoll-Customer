@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/auth/loginView.dart';
 import 'package:triptoll/screen/home/homeview.dart';
 import 'package:triptoll/screen/landing_page.dart';
+import 'package:triptoll/socket/socket_connect_file.dart';
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/route_helper.dart';
 import 'controller/authController.dart';
@@ -66,6 +67,7 @@ void main() async{
   };
   /* await FaceCamera.initialize();
   await Firebase.initializeApp();*/
+  Get.put(ChatController(), permanent: true);
   runApp( MyApp());
   MapShareHandler.init();
 }
