@@ -147,19 +147,39 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
   }
   Future<void> _getAddressFromLatLngShare(double lat, double lng) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        final address =
-            "${place.name}, ${place.subLocality}, ${place.locality}, ${place.subAdministrativeArea}, ${place.administrativeArea}";
+      final url =
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
+
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'OK') {
+        String address = '';
+
+        for (var result in data['results']) {
+          if (result['formatted_address'] != null &&
+              !result['formatted_address'].contains('+') &&
+              (result['types'].contains('street_address') ||
+                  result['types'].contains('premise') ||
+                  result['types'].contains('route') ||
+                  result['types'].contains('neighborhood'))) {
+            address = result['formatted_address'];
+            break;
+          }
+        }
+
+// fallback
+        if (address.isEmpty) {
+          address = data['results'][0]['formatted_address'];
+        }
+
         setState(() {
-        pickController.text = address;
-        pickupAddress = address;
-        print('address address${address}');
+          pickController.text = address;
+          pickupAddress = address;
         });
       }
     } catch (e) {
-      print("Error in reverse geocoding: $e");
+      print("Error: $e");
     }
   }
   GoogleMapController? _mapController;
@@ -176,28 +196,47 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
       CameraUpdate.newLatLng(currentLocation!),
     );
   }
-  Future<void> _getAddressFromLatLng(double lat, double lng,bool current) async {
+
+
+  Future<void> _getAddressFromLatLng(double lat, double lng, bool current) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        final address =
-            "${place.name}, ${place.subLocality}, ${place.locality}, ${place.country}";
-        setState(() {
-          if(current) {
-            pickController.text = "";
-            pickupAddress = "";
+      final url =
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
+
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'OK') {
+        String address = '';
+
+        for (var result in data['results']) {
+          if (result['formatted_address'] != null &&
+              !result['formatted_address'].contains('+') &&
+              (result['types'].contains('street_address') ||
+                  result['types'].contains('premise') ||
+                  result['types'].contains('route') ||
+                  result['types'].contains('neighborhood'))) {
+            address = result['formatted_address'];
+            break;
           }
-          else
-          {
-            log('ddddd::::${address}');
+        }
+
+        if (address.isEmpty) {
+          address = data['results'][0]['formatted_address'];
+        }
+
+        setState(() {
+          if (current) {
+            pickController.text = "";
+            pickupAddress = '';
+          } else {
             pickController.text = address;
             pickupAddress = address;
           }
         });
       }
     } catch (e) {
-      print("Error in reverse geocoding: $e");
+      print("Geocoding error: $e");
     }
   }
   Future<Map<String, double>> _getPlaceLatLng(String placeId) async {
@@ -236,20 +275,28 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
     return regExp.hasMatch(value);
   }
 
-  Future<Map<String, dynamic>> _getAddressFromLatLngSearch(
-      double lat, double lng) async {
+  Future<Map<String, dynamic>> _getAddressFromLatLngSearch(double lat, double lng) async {
+    final url =
+        "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
 
-    final placemarks = await placemarkFromCoordinates(lat, lng);
+    final response = await http.get(Uri.parse(url));
+    final data = json.decode(response.body);
 
-    final place = placemarks.first;
+    if (data['status'] == 'OK') {
+      return {
+        'description': data['results'][0]['formatted_address'],
+        'lat': lat,
+        'lng': lng,
+      };
+    }
 
     return {
-      'description':
-      '${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}',
+      'description': 'Unknown location',
       'lat': lat,
       'lng': lng,
     };
   }
+
 
   @override
   void initState() {
@@ -431,7 +478,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
           GoogleMap(
             initialCameraPosition: CameraPosition(
               target: widget.isShare == true ? LatLng(pickupLatShare, pickupLngShare) : LatLng(pickupLat, pickupLng),
-              zoom: 15,
+              zoom: 18,
             ),
             onMapCreated: (controller) {
               mapController = controller;

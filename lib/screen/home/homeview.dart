@@ -15,7 +15,6 @@ import 'package:triptoll/screen/home/pick_location.dart';
 import 'package:triptoll/screen/home/schedule_delivery_pickup.dart';
 import 'package:triptoll/screen/home/whatsapp_sharelocation.dart';
 import 'package:triptoll/util/appColors.dart';
-import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart' as slider;
 import 'package:triptoll/util/appContants.dart';
 import 'package:triptoll/util/appImage.dart';
@@ -113,7 +112,7 @@ class _HomePageState extends State<HomePage> {
       }
 
     } catch (e) {
-      await logUpdateError(e.toString());
+      // await logUpdateError(e.toString());
     }
   }
   slider.CarouselSliderController controller = slider.CarouselSliderController();
@@ -205,7 +204,6 @@ class _HomePageState extends State<HomePage> {
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-        // Permission denied permanently, handle gracefully
         return;
       }
     }
@@ -480,22 +478,12 @@ class _HomePageState extends State<HomePage> {
         extendBodyBehindAppBar: true,
 
         appBar: AppBar(
-            // backgroundColor: Colors.white.withOpacity(0.4),
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.transparent,
             shadowColor: Colors.transparent,
             elevation: 0,
             centerTitle: false,
-            // actions: [
-            //   Padding(
-            //     padding: const EdgeInsets.all(2.0),
-            //     child: Image.asset(AppImage.splashLogo),
-            //   ),
-            //
-            //   SizedBox(width: 10,)
-            // ],
             leading: IconButton(onPressed: (){
-
               _scaffoldKey.currentState?.openDrawer();
             },
                 icon: CircleAvatar(
@@ -590,7 +578,7 @@ class _HomePageState extends State<HomePage> {
                         : GoogleMap(
                       initialCameraPosition: CameraPosition(
                         target: currentLocation ?? const LatLng(0, 0), // fallback for null
-                        zoom: 15,
+                        zoom: 16,
                       ),
                       markers: {
                         Marker(

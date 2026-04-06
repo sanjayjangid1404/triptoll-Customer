@@ -159,45 +159,81 @@ class _LocationPickerTypeAheadPageState
 
   Future<void> _getAddressFromLatLngShare(double lat, double lng) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        final address =
-            "${place.name}, ${place.subLocality}, ${place.locality}, ${place
-            .country}";
+      final url =
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
+
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'OK') {
+        String address = '';
+
+        for (var result in data['results']) {
+          if (result['formatted_address'] != null &&
+              !result['formatted_address'].contains('+') &&
+              (result['types'].contains('street_address') ||
+                  result['types'].contains('premise') ||
+                  result['types'].contains('route') ||
+                  result['types'].contains('neighborhood'))) {
+            address = result['formatted_address'];
+            break;
+          }
+        }
+
+// fallback
+        if (address.isEmpty) {
+          address = data['results'][0]['formatted_address'];
+        }
+
         setState(() {
           pickController.text = address;
           pickupAddress = address;
-          print('address address${address}');
         });
       }
     } catch (e) {
-      print("Error in reverse geocoding: $e");
+      print("Error: $e");
     }
   }
 
-  Future<void> _getAddressFromLatLng(double lat, double lng,
-      bool current) async {
+  Future<void> _getAddressFromLatLng(double lat, double lng, bool current) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        final address =
-            "${place.name}, ${place.subLocality}, ${place.locality}, ${place
-            .country}";
+      final url =
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
+
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'OK') {
+        String address = '';
+
+        for (var result in data['results']) {
+          if (result['formatted_address'] != null &&
+              !result['formatted_address'].contains('+') &&
+              (result['types'].contains('street_address') ||
+                  result['types'].contains('premise') ||
+                  result['types'].contains('route') ||
+                  result['types'].contains('neighborhood'))) {
+            address = result['formatted_address'];
+            break;
+          }
+        }
+
+        if (address.isEmpty) {
+          address = data['results'][0]['formatted_address'];
+        }
+
         setState(() {
           if (current) {
             pickController.text = "";
             pickupAddress = '';
-          }
-          else {
+          } else {
             pickController.text = address;
             pickupAddress = address;
           }
         });
       }
     } catch (e) {
-      print("Error in reverse geocoding: $e");
+      print("Geocoding error: $e");
     }
   }
 
@@ -288,17 +324,23 @@ class _LocationPickerTypeAheadPageState
     return regExp.hasMatch(value);
   }
 
-  Future<Map<String, dynamic>> _getAddressFromLatLngSearch(double lat,
-      double lng) async
-  {
-    final placemarks = await placemarkFromCoordinates(lat, lng);
+  Future<Map<String, dynamic>> _getAddressFromLatLngSearch(double lat, double lng) async {
+    final url =
+        "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$googleApiKey";
 
-    final place = placemarks.first;
+    final response = await http.get(Uri.parse(url));
+    final data = json.decode(response.body);
+
+    if (data['status'] == 'OK') {
+      return {
+        'description': data['results'][0]['formatted_address'],
+        'lat': lat,
+        'lng': lng,
+      };
+    }
 
     return {
-      'description':
-      '${place.name}, ${place.locality}, ${place.administrativeArea}, ${place
-          .country}',
+      'description': 'Unknown location',
       'lat': lat,
       'lng': lng,
     };
@@ -353,7 +395,7 @@ class _LocationPickerTypeAheadPageState
                 target: widget.isShare == true ? LatLng(
                     pickupLatShare, pickupLngShare) : LatLng(
                     pickupLat, pickupLng),
-                zoom: 15,
+                zoom: 18,
               ),
               onMapCreated: (controller) {
                 mapController = controller;
@@ -389,6 +431,10 @@ class _LocationPickerTypeAheadPageState
                   pickupLng = position.target.longitude;
                 });
               },
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Icon(Icons.location_pin, size: 50, color: Colors.red),
             ),
             isClick == false
                 ? Positioned(
@@ -572,11 +618,6 @@ class _LocationPickerTypeAheadPageState
                   },
                 ),
               ),
-            ),
-
-            Align(
-              alignment: Alignment.center,
-              child: Icon(Icons.location_pin, size: 50, color: Colors.red),
             ),
             Positioned(
               bottom: MediaQuery
