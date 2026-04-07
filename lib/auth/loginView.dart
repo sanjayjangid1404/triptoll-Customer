@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/auth/SignUp.dart';
 import 'package:triptoll/controller/authController.dart';
+import '../firebase/firebase_otp.dart';
 import '../screen/widget/nav_bar.dart';
 import '../util/appColors.dart';
 import '../util/appContants.dart';
@@ -627,7 +628,7 @@ class _LoginViewState extends State<LoginView> {
 
                     //action Button
                     InkWell(
-                      onTap: (){
+                      onTap: () async {
                        // Get.offAllNamed(RouteHelper.getHomeView());
 
                         if(emailCt.text.isEmpty && emailCt.text.length !=10)
@@ -636,12 +637,17 @@ class _LoginViewState extends State<LoginView> {
                           }
                         else if(otpCon.text.isEmpty || otpCon.text.trim() !=OTP){
                           showCustomSnackBar("Enter valid otp".tr, getXSnackBar: false,isError: true);
+                          await logOtpError(
+                          enteredOtp: otpCon.text.trim(),
+                          apiOtp: OTP,
+                          phone: emailCt.text.trim(),
+                          );
                         }
 
                         else
                         {
 
-                          authController.loginFunctionNew(emailCt.text, otpCon.text);
+                          authController.loginFunctionNew(emailCt.text, otpCon.text.trim());
                           // authController.loginFunction(emailCt.text, passwordCt.text);
 
 

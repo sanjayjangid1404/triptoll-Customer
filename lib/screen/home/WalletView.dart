@@ -335,7 +335,7 @@ class _WalletViewState extends State<WalletView> {
                         return 'Invalid amount'.tr;
                       }
 
-                      if (amount < 100) {
+                      if (amount < 0) {
                         return 'Minimum amount is ₹100'.tr;
                       }
 
@@ -379,7 +379,7 @@ class _WalletViewState extends State<WalletView> {
                           }
 
                           double? amount = double.tryParse(amountText);
-                          if (amount == null || amount < 100) {
+                          if (amount == null || amount < 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(
                                   'Amount must be at least ₹100')),

@@ -1551,12 +1551,13 @@ class AuthController extends GetxController implements GetxService
         print("driverLng!=>${bookingDetailsResponse!.startTrip}!");
         print("driverLng!=>${bookingDetailsResponse!.paymentStatus}!");
         if(bookingDetailsResponse!.startTrip.toString().toLowerCase() == "yes"){
+          final drop = bookingDetailsResponse!.dropoffs![0];
           Get.to(UserTrackingScreen(
               driver: driver!,
               bookingID: bookingDetailsResponse!,
               bookingIdNew: bookingID!,
-              bookingLocation: LatLng(double.parse(bookingDetailsResponse!.dropLat!),
-                  double.parse(bookingDetailsResponse!.dropLong!)),
+              bookingLocation: LatLng(double.parse(drop.lat.toString()),
+                  double.parse(drop.lng.toString())),
               driverInitialLocation: LatLng(double.parse(driverLat),
                   double.parse(driverLng))));
         }

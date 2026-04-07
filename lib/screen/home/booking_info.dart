@@ -192,7 +192,6 @@ class _BookingInfoState extends State<BookingInfo> {
    TextEditingController addressController = TextEditingController();
    TextEditingController senderNameController = TextEditingController();
    TextEditingController senderPhoneController = TextEditingController();
-
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
   List<Map<String, dynamic>> stopLocations = [];
@@ -573,32 +572,35 @@ class _BookingInfoState extends State<BookingInfo> {
     });
   }
 
-  Future<void> pickContact() async {
-    if (await Permission.contacts.request().isGranted) {
+    Future<void> pickContact() async {
+      if (await Permission.contacts.request().isGranted) {
 
-      final Contact? contact = await FlutterContacts.openExternalPick();
+        final Contact? contact = await FlutterContacts.openExternalPick();
 
-      if (contact != null) {
-        String cleanName = removeEmoji(contact.displayName);
-        senderNameController.text = cleanName;
+        if (contact != null) {
+          String cleanName = removeEmoji(contact.displayName);
+          senderNameController.text = cleanName;
 
-        if (contact.phones.isNotEmpty) {
-          String number = contact.phones.first.number;
+          if (contact.phones.isNotEmpty) {
+            String number = contact.phones.first.number;
 
-          // Clean number (remove spaces, +91 etc)
-          number = number.replaceAll(RegExp(r'[^0-9]'), '');
+            // Clean number (remove spaces, +91 etc)
+            number = number.replaceAll(RegExp(r'[^0-9]'), '');
 
-          if (number.length > 10) {
-            number = number.substring(number.length - 10);
+            if (number.startsWith('91') && number.length > 10) {
+              number = number.substring(2);
+            }
+            if (number.length > 10) {
+              number = number.substring(number.length - 10);
+            }
+
+            senderPhoneController.text = number;
           }
-
-          senderPhoneController.text = number;
         }
+      } else {
+        print("Permission Denied");
       }
-    } else {
-      print("Permission Denied");
     }
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1108,6 +1110,9 @@ class _BookingInfoState extends State<BookingInfo> {
                                             if (contact.phones.isNotEmpty) {
                                               String number = contact.phones.first.number;
                                               number = number.replaceAll(RegExp(r'[^0-9]'), '');
+                                              if (number.startsWith('91') && number.length > 10) {
+                                                number = number.substring(2);
+                                              }
 
                                               if (number.length > 10) {
                                                 number = number.substring(

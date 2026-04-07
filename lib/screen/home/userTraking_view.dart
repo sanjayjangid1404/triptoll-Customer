@@ -965,11 +965,11 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                         setState(() {
                           isChecked = value ?? false;
                           originalAmount = double.parse(widget.bookingID.totalAmount.toString());
-                          discountedAmount = isChecked
-                              ? originalAmount - (originalAmount * 0.10)
-                              : originalAmount;
-                          discountedPercentage = (originalAmount * 10) / 100;
-                          print('discount percantage ${discountedPercentage.toString()}');
+                          // discountedAmount = isChecked
+                          //     ? originalAmount - (originalAmount * 0.10)
+                          //     : originalAmount;
+                          // discountedPercentage = (originalAmount * 10) / 100;
+                          // print('discount percantage ${discountedPercentage.toString()}');
                         });
                       },
                     ),
@@ -1032,39 +1032,41 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                         transitionBuilder: (child, animation) {
                           return ScaleTransition(scale: animation, child: child);
                         },
-                        child: isChecked
-                            ? Row(
-                          key: ValueKey("discounted"),
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "${AppContants.rupessSystem} ${originalAmount.toStringAsFixed(2)}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              "${AppContants.rupessSystem} ${discountedAmount.toStringAsFixed(2)}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 6),
-                            Text(
-                              "(10% OFF)",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.yellow,
-                              ),
-                            ),
-                          ],
-                        )
-                            : Text(
+                        child:
+                        // isChecked
+                        //     ? Row(
+                        //   key: ValueKey("discounted"),
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Text(
+                        //       "${AppContants.rupessSystem} ${originalAmount.toStringAsFixed(2)}",
+                        //       style: TextStyle(
+                        //         fontSize: 14,
+                        //         color: Colors.white70,
+                        //         decoration: TextDecoration.lineThrough,
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 8),
+                        //     Text(
+                        //       "${AppContants.rupessSystem} ${discountedAmount.toStringAsFixed(2)}",
+                        //       style: TextStyle(
+                        //         fontSize: 18,
+                        //         fontWeight: FontWeight.bold,
+                        //         color: Colors.white,
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 6),
+                        //     Text(
+                        //       "(10% OFF)",
+                        //       style: TextStyle(
+                        //         fontSize: 12,
+                        //         color: Colors.yellow,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // )
+                        //     :
+                        Text(
                           "${'Pay'.tr} ${AppContants.rupessSystem} ${originalAmount.toStringAsFixed(2)}",
                           key: ValueKey("original"),
                           style: TextStyle(fontSize: 16, color: Colors.white),
