@@ -775,7 +775,22 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                                         child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "$index",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Icon(Icons.location_on_outlined,color: Colors.red,size: 30,),
+
+                                              ],
+                                            ),
                                             SizedBox(width: 5,),
                                             Expanded(child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
