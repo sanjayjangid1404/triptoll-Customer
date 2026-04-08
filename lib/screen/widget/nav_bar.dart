@@ -496,6 +496,9 @@ class _NavBarState extends State<NavBar> {
                   height: 16,
                   width: 16),
               onTap: () {
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+                authController.getLastFiveDropLocationsModel = GetLastFiveDropLocationsModel();
                 Get.to(LoginView());
               },
             ),

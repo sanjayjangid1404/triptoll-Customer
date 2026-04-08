@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -270,6 +271,7 @@ class _LocationPickerTypeAheadPageState
     }
   }
  bool isClick = false;
+  final FocusNode _focusNode = FocusNode();
   @override
   void initState() {
     // TODO: implement initState
@@ -374,6 +376,86 @@ class _LocationPickerTypeAheadPageState
   bool isFromSuggestion = false;
   bool isInitialLoad = true;
   bool hasUserInteracted = false;
+  bool _isProgrammaticChange = false;
+  bool _isSelectingSuggestion = false;
+  Timer? _debounce;
+  String _lastValue = '';
+  List<Map<String, dynamic>> suggestions = [];
+  bool showSuggestions = false;
+  void _onTextChanged() {
+    if (_isProgrammaticChange || _isSelectingSuggestion) return;
+
+    final value = pickController.text.trim();
+
+    // 🔥 PASTE DETECTION
+    final bool isPaste =
+        (value.length - _lastValue.length) > 3;
+    _lastValue = value;
+
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 350), () async {
+      if (value.isEmpty) {
+        if (!mounted) return;
+        setState(() {
+          showSuggestions = false;
+          suggestions.clear();
+          isClick = false;
+        });
+        return;
+      }
+
+      /// 🔹 LAT LNG (unchanged)
+      if (_isLatLng(value)) {
+        setState(() {
+          showSuggestions = false;
+          suggestions.clear();
+        });
+
+        final parts = value.split(',');
+        final lat = double.parse(parts[0].trim());
+        final lng = double.parse(parts[1].trim());
+
+        final address =
+        await _getAddressFromLatLngSearch(lat, lng);
+
+        _handleLatLngSelection(
+          lat,
+          lng,
+          address['description'],
+        );
+        return;
+      }
+
+
+      /// 🔹 ADDRESS SEARCH
+      final data = await _getPlaceSuggestions(value);
+      if (!mounted || data.isEmpty) return;
+
+      // ✅ PASTE → AUTO MOVE MAP
+      if (isPaste) {
+        _isSelectingSuggestion = true;
+
+        await _handlePlaceSelection(data.first);
+
+        setState(() {
+          showSuggestions = false;
+          suggestions.clear();
+        });
+
+        Future.delayed(const Duration(milliseconds: 120), () {
+          _isSelectingSuggestion = false;
+        });
+        return;
+      }
+
+      // ✅ TYPE → SHOW SUGGESTIONS ONLY
+      setState(() {
+        suggestions = data;
+        showSuggestions = true;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -512,122 +594,108 @@ class _LocationPickerTypeAheadPageState
             )
                 : SizedBox.shrink(),
             Positioned(
-              top: 90,
+              top: 130,
               left: 16,
               right: 16,
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(8),
-                child: TypeAheadField<Map<String, dynamic>>(
-                  textFieldConfiguration: TextFieldConfiguration(
+              child: Column(
+                children: [
+                  TextFormField(
                     controller: pickController,
-                    onSubmitted: (value) async {
-                      if (value.isEmpty) return;
+                    focusNode: _focusNode,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      hintText: '${'Enter'.tr} ${widget.title!.tr}',
+                      prefixIcon: const Icon(Icons.location_on, color: Colors.blue),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onChanged: (value) {
                       setState(() {
-                      isClick = true;
+                        isClick = true; // 🔥 API list hide
                       });
+                      _onTextChanged();
+                    },
+                    onTap: () {
+                      setState(() {
+                        isClick = true; // 🔥 API list hide
+                      });
+                      pickController.clear();
+                      suggestions.clear();
+                      setState(() => showSuggestions = false);
+                    },
+                    onFieldSubmitted: (value) async {
+                      value = value.trim();
+                      if (value.isEmpty) return;
+
                       if (_isLatLng(value)) {
                         final parts = value.split(',');
                         final lat = double.parse(parts[0].trim());
                         final lng = double.parse(parts[1].trim());
 
-                        final address = await _getAddressFromLatLngSearch(
-                            lat, lng);
+                        final address =
+                        await _getAddressFromLatLngSearch(lat, lng);
 
                         _handleLatLngSelection(
                           lat,
                           lng,
                           address['description'],
                         );
+                        return;
                       }
-                      else {
-                        final suggestions = await _getPlaceSuggestions(value);
 
-                        if (suggestions.isNotEmpty) {
-                          _handlePlaceSelection(suggestions.first);
-                        }
+                      final list = await _getPlaceSuggestions(value);
+                      if (list.isNotEmpty) {
+                        _handlePlaceSelection(list.first);
                       }
+
+                      FocusScope.of(context).unfocus();
+                      setState(() => showSuggestions = false);
                     },
-                    textInputAction: TextInputAction.search,
-                    onTap: () {
-                      setState(() {
-                        isClick = true;
-                      });
-                      setState(() {
-                        pickController.text = '';
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: '${'Enter'.tr} ${widget.title!.tr}',
-                      prefixIcon: Icon(Icons.location_on, color: Colors.blue),
-                      border: OutlineInputBorder(borderRadius: BorderRadius
-                          .circular(8)),
-                      filled: true,
-                      fillColor: Colors.white,
+                  ),
+
+
+                  if (showSuggestions) ...[
+                    const SizedBox(height: 4),
+                    Material(
+                      elevation: 6,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: suggestions.length,
+                        itemBuilder: (context, index) {
+                          final suggestion = suggestions[index];
+                          return ListTile(
+                            leading: const Icon(Icons.location_on),
+                            title: Text(suggestion['description']),
+                            onTap: () async {
+                              _isSelectingSuggestion = true;
+
+                              FocusScope.of(context).unfocus();
+
+                              await _handlePlaceSelection(suggestion);
+
+                              setState(() {
+                                showSuggestions = false;
+                                suggestions.clear();
+                              });
+
+                              // 🔥 small delay so controller listener ignore ho jaye
+                              Future.delayed(const Duration(milliseconds: 100), () {
+                                _isSelectingSuggestion = false;
+                              });
+                            },
+
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  suggestionsBoxDecoration: SuggestionsBoxDecoration(
-                    color: Colors.white,
-                    elevation: 6,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  suggestionsCallback: _getPlaceSuggestions,
-                  itemBuilder: (context, suggestion) {
-                    return ListTile(
-                      leading: Icon(Icons.location_on),
-                      title: Text(suggestion['description']),
-                    );
-                  },
-                  onSuggestionSelected: (suggestion) async {
-                    if (suggestion['isLatLng'] == true) {
-                      final parts = suggestion['latLngText'].split(',');
-                      final lat = double.parse(parts[0].trim());
-                      final lng = double.parse(parts[1].trim());
-
-                      final address =
-                      await _getAddressFromLatLngSearch(lat, lng);
-
-                      _handleLatLngSelection(
-                        lat,
-                        lng,
-                        address['description'],
-                      );
-                      return;
-                    }
-                    final latLng = await _getPlaceLatLng(
-                        suggestion['place_id']);
-                    double lat = latLng['lat']!;
-                    double lng = latLng['lng']!;
-                    String city = await _getCityFromLatLng(lat, lng);
-                    if (widget.isPick == true) {
-                      widget.city = city;
-                      print('city is address ${widget.city.toString()}');
-                    }
-                    setState(() {
-                      pickController.text = suggestion['description'];
-                      pickupAddress = suggestion['description'];
-                      if (widget.isShare == true) {
-                        print('pickup select karne pe ${latLng['lat']!}');
-                        print('pickup select karne pe ${latLng['lng']!}');
-
-                        pickupLat = latLng['lat']!;
-                        pickupLng = latLng['lng']!;
-                        print('pickup select karne pe ${widget.pickLat}');
-                        print('pickup select karne pe ${widget.pickLng}');
-                      } else {
-                        pickupLat = latLng['lat']!;
-                        pickupLng = latLng['lng']!;
-                      }
-                    });
-                    if (widget.isShare == true) {
-                      double pickupLat = latLng['lat']!;
-                      double pickupLng = latLng['lng']!;
-                      _moveToLocation(pickupLat, pickupLng);
-                    } else {
-                      _moveToLocation(pickupLat, pickupLng);
-                    }
-                  },
-                ),
+                  ],
+                ],
               ),
             ),
             Positioned(
