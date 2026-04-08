@@ -1295,6 +1295,8 @@ class _BookingInfoState extends State<BookingInfo> {
                       calculateAllStopDistances().then((list) {
                         print("📦 Final list for API: $list");
                       });
+                    }else{
+                      print('nothing is coming');
                     }
                   },
                   child: Row(

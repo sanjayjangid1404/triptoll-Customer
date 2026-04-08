@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:triptoll/screen/home/pick_location.dart';
 import 'dart:convert';
 import 'package:triptoll/util/appColors.dart';
+import '../../controller/authController.dart';
 import 'booking_info.dart';
 
 class ScheduleDeliveryPickUpScreen extends StatefulWidget {
@@ -644,6 +645,11 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
                   padding: EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
+                  final auth = Get.find<AuthController>();
+                  auth.pickupAddressMultiLocation = pickupAddress.toString();
+                  auth.pickupAddressMultiLocationLat = pickupLat.toString();
+                  auth.pickupAddressMultiLocationLng = pickupLng.toString();
+                  auth.pickupAddressMultiLocationCity = currentAddress.toString();
                     Get.to(LocationPickerTypeAheadPage(
                         isShare: false,
                         isPick: false,
@@ -652,7 +658,7 @@ class _ScheduleDeliveryPickUpScreenState extends State<ScheduleDeliveryPickUpScr
                         houseNumber: currentAddress.toString(),
                         street: currentAddress.toString(),
                         city: currentAddress.toString(),
-                        pickAddress: pickupAddress.toString(),
+                        pickAddress:  Get.find<AuthController>().pickupAddressMultiLocation.toString(),
                         title: "Drop Location",
                         date: widget.date,
                         time: widget.time,

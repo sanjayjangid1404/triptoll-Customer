@@ -453,22 +453,33 @@ class _LocationPickerTypeAheadPageState
 
                   return GestureDetector(
                     onTap: (){
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) =>
-                            BookingInfo(
-                                scheduleDate: widget.date,
-                                scheduleTime: widget.time,
-                                houseNumber: widget.houseNumber.toString(),
-                                street: widget.street.toString(),
-                                city: widget.city.toString(),
-                                dropAddress: item.address.toString(),
-                                dropLat: double.parse(item.lat.toString()),
-                                dropLng: double.parse(item.lng.toString()),
-                                pickAddress: widget.pickAddress!,
-                                pickLat: widget.pickLat!,
-                                pickLng: widget.pickLng!)),
-                      );
+                      if (widget.isPick!) {
+                        Navigator.pop(context, {
+                          'lat': double.parse(item.lat.toString()),
+                          'lng': double.parse(item.lng.toString()),
+                          'address': item.address.toString(),
+                        });
+                        print('qwertyuiback${widget.pickLat.toString()}');
+                      }
+
+                        else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) =>
+                                BookingInfo(
+                                    scheduleDate: widget.date,
+                                    scheduleTime: widget.time,
+                                    houseNumber: authController.pickupAddressMultiLocationCity,
+                                    street: authController.pickupAddressMultiLocationCity,
+                                    city: authController.pickupAddressMultiLocationCity,
+                                    dropAddress: item.address.toString(),
+                                    dropLat: double.parse(item.lat.toString()),
+                                    dropLng: double.parse(item.lng.toString()),
+                                    pickAddress: authController.pickupAddressMultiLocation,
+                                    pickLat: double.parse( authController.pickupAddressMultiLocationLat),
+                                    pickLng: double.parse( authController.pickupAddressMultiLocationLng))),
+                          );
+                        }
                     },
                     child: Container(
                       color: Colors.white,
