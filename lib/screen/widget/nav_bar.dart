@@ -500,6 +500,7 @@ class _NavBarState extends State<NavBar> {
                 await prefs.clear();
                 authController.getLastFiveDropLocationsModel = GetLastFiveDropLocationsModel();
                 Get.to(LoginView());
+
               },
             ),
             Get.find<AuthController>().isLoggedIn() ?
