@@ -1320,7 +1320,10 @@ class AuthController extends GetxController implements GetxService
 
   }
 
-
+  String pickupAddressMultiLocation = '';
+  String pickupAddressMultiLocationLat = '';
+  String pickupAddressMultiLocationLng = '';
+  String pickupAddressMultiLocationCity = '';
   GetLastFiveDropLocationsModel getLastFiveDropLocationsModel = GetLastFiveDropLocationsModel();
 
   Future<void>getLastFiveDrop({String? userId})
