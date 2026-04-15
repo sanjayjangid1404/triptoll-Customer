@@ -427,6 +427,7 @@ class AppContants {
                         reason: selectedReason!,
                         comment: _noteController.text,
                         isOrder: isOrder);
+                    Get.back();
                     back;
                     back;
                   }

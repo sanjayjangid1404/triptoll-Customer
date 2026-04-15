@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:triptoll/auth/SignUp.dart';
 import 'package:triptoll/controller/authController.dart';
@@ -375,14 +376,11 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 80,),
-
-                    //logo
+                    SizedBox(height: 60,),
                     Center(child: Padding(
                       padding: const EdgeInsets.all(3.0),
-                      child: Image.asset(AppImage.logoWithName,height: 200,),
+                      child: Image.asset(AppImage.logoWithName,height: 160),
                     )),
-
                     SizedBox(height: 25,),
 
                     Center(
@@ -411,24 +409,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    // SizedBox(height: 8,),
-                    // Center(
-                    //   child: Text(
-                    //     'Well Send Your a 6 Digit OTP on Your Mobile Number For Verification',
-                    //     textAlign: TextAlign.center,
-                    //     style: TextStyle(
-                    //       color: Colors.black.withOpacity(0.4),
-                    //       fontSize: 14,
-                    //       fontFamily: AppFonts.poppinsRegular,
-                    //
-                    //       height: 0,
-                    //     ),
-                    //   ),
-                    // ),
                     SizedBox(height: 30,),
-
-                    //userNAme
-
 
                     TextField(
                       controller: emailCt,
@@ -505,128 +486,71 @@ class _LoginViewState extends State<LoginView> {
                           height: 0,
                         ),
                       ),
+                      inputFormatters: [
+                        PhoneNumberFormatter(),
+                      ],
                     ),
-
-                    SizedBox(height: 15,),
-
-                    // TextField(
-                    //   controller: passwordCt,
-                    //   obscureText: _obscureText,
-                    //   style: const TextStyle(
-                    //     fontSize: 14,
-                    //     fontFamily: 'Poppins',
-                    //   ),
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(8),
-                    //     ),
-                    //     focusedBorder: OutlineInputBorder(
-                    //       borderSide: const BorderSide(color: Colors.grey),
-                    //       borderRadius: BorderRadius.circular(8),
-                    //     ),
-                    //     enabledBorder: OutlineInputBorder(
-                    //       borderSide: const BorderSide(color: Colors.grey),
-                    //       borderRadius: BorderRadius.circular(8),
-                    //     ),
-                    //     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    //     hintText: "Password".tr,
-                    //     hintStyle: const TextStyle(
-                    //       color: Color(0xFF868686),
-                    //       fontSize: 15,
-                    //       fontWeight: FontWeight.w500,
-                    //       height: 0,
-                    //     ),
-                    //     suffixIcon: IconButton(
-                    //       icon: Icon(
-                    //         _obscureText ? Icons.visibility_off : Icons.visibility,
-                    //         color: Colors.grey,
-                    //         size: 20,
-                    //       ),
-                    //       onPressed: () {
-                    //         setState(() {
-                    //           _obscureText = !_obscureText;
-                    //         });
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    TextField(
+                    SizedBox(height: 25,),
+                    PinCodeTextField(
+                      appContext: context,
+                      length: 6,
                       controller: otpCon,
-                      style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
                       keyboardType: TextInputType.number,
-                      maxLength: 10,
-                      decoration: InputDecoration(
-                        counter: SizedBox(),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        fillColor: Color(0xFFC11F1F),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
-                        hintText: "OTP".tr,
-                        // suffixIcon:otpVerify ? SizedBox(): InkWell(
-                        //   onTap: (){
-                        //
-                        //     if(otpCon.text.isNotEmpty && otpCon.text.length ==6 && otpCon.text == OTP) {
-                        //       setState(() {
-                        //         otpVerify = true;
-                        //       });
-                        //       showCustomSnackBar("OTP Verify".tr,isError: false);
-                        //     }
-                        //     else {
-                        //       showCustomSnackBar("Invalid OTP".tr);
-                        //     }
-                        //   },
-                        //   child: Padding(
-                        //     padding: EdgeInsets.all(12.0),
-                        //     child: Text("Verify".tr,style: TextStyle(fontSize: 14,color: Colors.green,fontWeight: FontWeight.bold),),
-                        //   ),
-                        // ),
-                        hintStyle: TextStyle(
-                          color: Color(0xFF868686),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                        ),
+                      animationType: AnimationType.fade,
+                      textStyle: TextStyle(
+                        fontSize: 16,
+                        fontFamily: AppFonts.poppinsRegular,
                       ),
 
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(10),
+                        fieldHeight: 50,
+                        fieldWidth: 50,
+                        activeFillColor: Colors.white,
+                        selectedFillColor: Colors.white,
+                        inactiveFillColor: Colors.white,
+                        activeColor: AppColors.primaryGradient,
+                        selectedColor: AppColors.primaryGradient,
+                        inactiveColor: Colors.grey,
+                        borderWidth: 0.5,
+                      ),
+                      enableActiveFill: true,
+
+                      animationDuration: Duration(milliseconds: 300),
+
+                      onChanged: (value) {
+                        print("OTP: $value");
+                      },
+
+                      onCompleted: (value) async {
+
+                        if(emailCt.text.isEmpty && emailCt.text.length !=10)
+                        {
+                          showCustomSnackBar("Invalid mobile no.".tr, getXSnackBar: false,isError: true);
+                        }
+                        else if(otpCon.text.isEmpty || otpCon.text.trim() !=OTP){
+                          showCustomSnackBar("Enter valid otp".tr, getXSnackBar: false,isError: true);
+                          await logOtpError(
+                          enteredOtp: otpCon.text.trim(),
+                          apiOtp: OTP,
+                          phone: emailCt.text.trim(),
+                          );
+                        }
+                        else
+                        {
+
+                          authController.loginFunctionNew(emailCt.text, otpCon.text.trim());
+                          // authController.loginFunction(emailCt.text, passwordCt.text);
+
+
+
+                          //  Get.to(VerificationScreen());
+                        }
+                      },
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 40),
 
-                    // Align(
-                    //   alignment: Alignment.centerRight,
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       // TODO: Navigate to forget password screen
-                    //       Get.to(Forgot());
-                    //       print("Forget Password tapped");
-                    //     },
-                    //     child: Text(
-                    //       "Forgot Password?".tr,
-                    //       style: TextStyle(
-                    //           fontSize: 14,
-                    //           fontFamily: 'Poppins',
-                    //           color: AppColors.secondaryGradient,
-                    //           // decoration: TextDecoration.underline,
-                    //           // decorationColor: AppColors.primaryGradient
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-
-
-                    SizedBox(height: 30,),
-
-                    //action Button
                     InkWell(
                       onTap: () async {
                        // Get.offAllNamed(RouteHelper.getHomeView());
