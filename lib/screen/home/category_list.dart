@@ -143,11 +143,14 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
           });
     }
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+
       setState(() {
         _waitingTime++;
       });
       if (Get.find<AuthController>().driver!=null) {
         _timer.cancel();
+        if (!mounted) return;
         setState(() {
           _driverAccepted = true;
         });
@@ -1013,35 +1016,53 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                         children: [
                           // 🔹 vehicle row
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                flex: 3,
-                                child: Image.network(
-                                  "${AppContants.imageURL}uploaded_files/category_img/${authController.vehicleData!.data![index].fileName}",
-                                  height: 40,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 7,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-
-                                    Text(
-                                      "${authController.vehicleData!.data![index].name ?? ""}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
+                                    Expanded(
+                                      flex: 3,
+                                      child: Image.network(
+                                        "${AppContants.imageURL}uploaded_files/category_img/${authController.vehicleData!.data![index].fileName}",
+                                        height: 40,
                                       ),
                                     ),
-                                    Text(
-                                      "${authController.vehicleData!.data![index].maxLoad ?? "0"} Kg",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black.withOpacity(0.6),
+                                    Expanded(
+                                      flex: 7,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                
+                                          Text(
+                                            "${authController.vehicleData!.data![index].name ?? ""}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${authController.vehicleData!.data![index].maxLoad ?? "0"} Kg",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black.withOpacity(0.6),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
+                                ),
+                              ),
+                              selectIndex == index
+                                  ?
+                              Text('') : Text(
+                                "${AppContants.rupessSystem}${updatedFares[index].toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: AppColors.primaryGradient,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],
@@ -1226,6 +1247,9 @@ class _CategoryListState extends State<CategoryList>  with SingleTickerProviderS
                      print('fdfd${widget.scheduleTime.toString()}');
                      _startTimer();
                      startChecking();
+                    setState(() {
+                      authController.isDeepLinkHandled = true;
+                    });
                      if( widget.scheduleDate != null && widget.scheduleTime != null
                          && widget.scheduleDate != '' && widget.scheduleTime  != ''){
                        Future.delayed(Duration(seconds: 0),() =>  Get.offAll(() => HomePage()),);

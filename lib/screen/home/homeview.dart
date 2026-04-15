@@ -52,10 +52,14 @@ class _HomePageState extends State<HomePage> {
 
 
   void initDeepLinks() async {
+    final controller = Get.find<AuthController>();
     _appLinks = AppLinks();
-    final Uri? initialUri = await _appLinks.getInitialLink();
-    if (initialUri != null) {
-      handleUri(initialUri);
+    if (!controller.isDeepLinkHandled) {
+      final Uri? initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null) {
+        Get.find<AuthController>().isDeepLinkHandled = true;
+        handleUri(initialUri);
+      }
     }
     _linkSubscription = _appLinks.uriLinkStream.listen((Uri uri) {
       handleUri(uri);
@@ -329,15 +333,6 @@ class _HomePageState extends State<HomePage> {
 
       startBookingRefresh();
       _getCurrentLocation();
-      Get.snackbar(
-        "Booking",
-        "Click on schedule delivery button to proceed booking",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.blue,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(10),
-        duration: const Duration(seconds: 10),
-      );
       setState(() {
 
       });
@@ -1262,7 +1257,7 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Image.asset(AppImage.scheduleDelivery,width: 25,),
                                       SizedBox(width: 4,),
-                                      Text("Delivery".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
+                                      Text("Proceed To Booking".tr,style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),)
                                     ],
                                   ),
                                 ),
@@ -1755,10 +1750,12 @@ class _HomePageState extends State<HomePage> {
                                  padding: const EdgeInsets.only(top: 8),
                                  child: InkWell(
                                    onTap: () {
-                                     showCancelDialog(
-                                       context,
-                                       authController.latestBookingListResponse[index]!.id.toString(),
-                                     );
+                                     AppContants.showNoteBottomSheet(context,authController, authController.latestBookingListResponse[index]!.id.toString(),true,null);
+
+                                     // showCancelDialog(
+                                     //   context,
+                                     //   authController.latestBookingListResponse[index]!.id.toString(),
+                                     // );
                                    },
                                    child: Container(
                                      width: Get.width,

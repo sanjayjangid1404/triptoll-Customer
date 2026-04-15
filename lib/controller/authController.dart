@@ -52,6 +52,7 @@ class AuthController extends GetxController implements GetxService
   List<Orders?> latestBookingListResponse = [];
   List<FaqModel?> faqLIstResponse = [];
   VehicleData? vehicleData = VehicleData();
+  bool isDeepLinkHandled = false;
   int? getIndex;
   List<String>banners = ["https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLifetime-Family-Plan-offer-slider.1c6725bf.webp&w=3840&q=75",
     "https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FFree-Car-Care-Kit.46a9b3ee.webp&w=3840&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FTitanium-Family-Plan.d35e75e6.webp&w=3840&q=75","https://crossroadshelpline.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FPlatinum-Family-Plan.2eb81b06.webp&w=3840&q=75"];
@@ -1411,6 +1412,7 @@ class AuthController extends GetxController implements GetxService
         // Get.back();
       }
       else {
+        getAllBooking(status: "all",limit: "100");
         Get.offAll(HomePage());
       }
       update();

@@ -450,7 +450,6 @@ class _LocationPickerTypeAheadPageState
                 itemBuilder: (context, index) {
                   final item = authController
                       .getLastFiveDropLocationsModel.data![index];
-
                   return GestureDetector(
                     onTap: (){
                       if (widget.isPick!) {
@@ -461,8 +460,33 @@ class _LocationPickerTypeAheadPageState
                         });
                         print('qwertyuiback${widget.pickLat.toString()}');
                       }
-
+                      else{
+                        if (widget.isShare == true) {
+                          print('class mean:::share location is work ${pickupLat
+                              .toString() + pickupLng.toString() +
+                              widget.pickLat!.toString()}');
+                          print(
+                              'class mean:::share location is work ${ pickController
+                                  .text.toString()}');
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) =>
+                                BookingInfo(
+                                    scheduleDate: widget.date,
+                                    scheduleTime: widget.time,
+                                    pickAddress: widget.pickAddress.toString(),
+                                    pickLat: widget.pickLat!,
+                                    pickLng: widget.pickLng!,
+                                    houseNumber: widget.houseNumber.toString(),
+                                    street: widget.street.toString(),
+                                    city: widget.city.toString(),
+                                    dropAddress: item.address.toString(),
+                                    dropLat: double.parse(item.lat.toString()),
+                                    dropLng: double.parse(item.lng.toString()))),
+                          );
+                        }
                         else {
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) =>
@@ -480,6 +504,8 @@ class _LocationPickerTypeAheadPageState
                                     pickLng: double.parse( authController.pickupAddressMultiLocationLng))),
                           );
                         }
+                      }
+
                     },
                     child: Container(
                       color: Colors.white,

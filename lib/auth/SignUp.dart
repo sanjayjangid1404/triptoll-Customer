@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:triptoll/controller/authController.dart';
 
@@ -62,7 +63,9 @@ class _SignupState extends State<Signup> {
     });
   }
   Future<void> sendOtp() async {
+    if (!isOtpButtonEnabled) return;
     setState(() {
+      isOtpButtonEnabled = false;
       isLoading = true;
       apiResponse = "";
     });
@@ -101,12 +104,14 @@ class _SignupState extends State<Signup> {
         showCustomSnackBar(message.toString(),isError: true);
         setState(() {
           apiResponse = "Error: ${response.statusCode}";
+          isOtpButtonEnabled = true;
           isVerify = false;
           isSHowOTP = true;
         });
       }
     } catch (e) {
       setState(() {
+        isOtpButtonEnabled = true;
         apiResponse = "Exception: $e";
       });
     }
@@ -297,44 +302,47 @@ class _SignupState extends State<Signup> {
 
                           borderRadius: BorderRadius.circular(8),
                         ),
-
                         suffixIcon: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 8.0),
-                              child: GestureDetector(
-                                onTap:isOtpButtonEnabled
-                                    ?  () {
-                                  // TODO: Navigate to signup screen
-
-                                  if(phoneCt.text.isNotEmpty && phoneCt.text.length ==10) {
+                              child: ElevatedButton(
+                                onPressed: isOtpButtonEnabled
+                                    ? ()  {
+                                  if (phoneCt.text.isNotEmpty && phoneCt.text.length == 10) {
                                     sendOtp();
                                     setState(() {
                                       otpVerify = false;
                                     });
+                                  } else {
+                                    showCustomSnackBar("Enter valid phone number".tr);
                                   }
-                                  else{
-                                    showCustomSnackBar("Enter valid OTP".tr);
-                                  }
-                                } : null,
-                                child:  Text(
+                                }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  backgroundColor: AppColors.secondaryGradient,
+                                  disabledBackgroundColor: Colors.grey.shade300,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                ),
+                                child: Text(
                                   isOtpButtonEnabled
                                       ? "GET OTP".tr
                                       : "${'Retry in'.tr} $secondsRemaining s",
                                   style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.secondaryGradient,
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.bold,
-                                      decorationColor: AppColors.primaryGradient
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: isOtpButtonEnabled ? Colors.white : Colors.grey,
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-
                         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Adjust the vertical padding
                         hintText: "Mobile Number".tr,
                         hintStyle: TextStyle(
@@ -344,6 +352,9 @@ class _SignupState extends State<Signup> {
                           height: 0,
                         ),
                       ),
+                      inputFormatters: [
+                        PhoneNumberFormatter(),
+                      ],
                     ),
                   ),
 
@@ -355,13 +366,10 @@ class _SignupState extends State<Signup> {
                       controller: otpCt,
                       style: TextStyle(fontSize: 14,fontFamily: AppFonts.poppinsRegular),
                       keyboardType: TextInputType.number,
-                      maxLength: 10,
+                      maxLength: 6,
                       decoration: InputDecoration(
                         counter: SizedBox(),
                         border: OutlineInputBorder(
-
-
-
                           borderRadius: BorderRadius.circular(8),
                         ),
                         fillColor: Color(0xFFC11F1F),
@@ -402,7 +410,18 @@ class _SignupState extends State<Signup> {
                           height: 0,
                         ),
                       ),
-
+                      onChanged: (value) {
+                        if (value.length == 6) {
+                          if (otpCt.text.length == 6 && otpCt.text == OTP) {
+                            setState(() {
+                              otpVerify = true;
+                            });
+                            showCustomSnackBar("OTP Verified".tr, isError: false);
+                          } else if (otpCt.text.length == 6) {
+                            showCustomSnackBar("Invalid OTP".tr);
+                          }
+                        }
+                      },
                     ),
                   ):SizedBox(),
                   SizedBox(height: 10,),
@@ -731,6 +750,34 @@ class _SignupState extends State<Signup> {
               ),
             ),
           ),
+    );
+  }
+}
+
+
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+
+    String newText = newValue.text;
+
+    // Remove non-digits
+    newText = newText.replaceAll(RegExp(r'[^0-9]'), '');
+
+    // Remove 91 from start (only if pasted)
+    if (newText.startsWith('91') && newText.length > 10) {
+      newText = newText.substring(2);
+    }
+
+    // ❗ FIX: agar 10 se zyada ho raha hai → allow hi mat karo
+    if (newText.length > 10) {
+      return oldValue; // 👈 yahi main fix hai
+    }
+
+    return TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
     );
   }
 }
