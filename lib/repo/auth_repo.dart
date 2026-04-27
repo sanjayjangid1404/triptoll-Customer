@@ -93,12 +93,12 @@ class AuthRepo{
         "${AppContants.getAllBookingURL}?status=$status&limit=$limit&user_id=$userID&user_type=customer");
   }
 
-  Future<Response> getRunningBooking({String? status,String? limit,String? offset,String? userID}) async {
-    return await apiClient.postData(
-        AppContants.runningBookingURL,{
-          "customer_id":userID!
-    });
-  }
+  // Future<Response> getRunningBooking({String? status,String? limit,String? offset,String? userID}) async {
+  //   return await apiClient.postData(
+  //       AppContants.runningBookingURL,{
+  //         "customer_id":userID!
+  //   });
+  // }
   Future<Response> getLastFiveDropLocations({String? userID}) async {
     return await apiClient.postData(
         AppContants.getLastFiveDropLocationsURL,{

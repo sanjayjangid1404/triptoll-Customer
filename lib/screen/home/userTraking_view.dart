@@ -19,6 +19,7 @@ import 'package:http/http.dart' as http;
 import 'package:triptoll/util/appImage.dart';
 import 'package:triptoll/util/custom_snackbar.dart';
 import '../../controller/authController.dart';
+import '../../socket/socket_connect_file.dart';
 import '../../util/appContants.dart';
 import 'WalletView.dart';
 import 'feedback_screen.dart';
@@ -400,6 +401,34 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     print("Signature: ${response.signature}");
 
     Get.find<AuthController>().orderPayment(widget.bookingID!.id.toString(),widget.bookingID!.driverId.toString(),response.paymentId.toString(),"success",context,customOrderId);
+    final chatController = Get.find<ChatController>();
+    final payload = {
+      "booking_id":widget.bookingID.id.toString(),
+      "status": "paid"
+    };
+
+    print("📤 Sending Payload: $payload");
+    chatController.socket?.emitWithAck("updateStatus", {
+      "booking_id":   widget.bookingID.id.toString(),
+      "status": "paid"
+    },
+        ack: (response) {
+          print("ACK Response: $response");
+
+          if (response != null && response["status"] == true) {
+            print("✅ Status updated successfully");
+          } else {
+            print("❌ Failed to update status");
+          }
+        });
+    chatController.socket?.emitWithAck("completeTrip", {
+      "booking_id": widget.bookingID.id.toString(),
+      "driver_id": widget.bookingID.driverId.toString()
+    },
+        ack: (response) {
+          print("endTripSocket: $response");
+        }
+    );
     Get.to(FeedbackBottomSheet(bookingID: widget.bookingID));
   }
 

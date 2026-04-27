@@ -6,6 +6,7 @@ import 'package:triptoll/controller/authController.dart';
 import 'package:triptoll/screen/home/order_list.dart';
 import '../../auth/loginView.dart';
 import '../../util/appColors.dart';
+import '../../util/route_helper.dart';
 import '../home/WalletView.dart';
 import '../payment/payment_list.dart';
 import '../sideMenu_item/contact_us.dart';
@@ -480,7 +481,13 @@ class _NavBarState extends State<NavBar> {
                 color: Colors.red,
                 height: 16,
                 width: 16),
-              onTap: () => authController.logoutUser(),
+              onTap: () async {
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                // ✅ Clear all stored preferences
+                await prefs.clear();
+                Get.to(RouteHelper.login);
+              },
             ) :  ListTile(
               visualDensity: VisualDensity.compact,
               dense: true,

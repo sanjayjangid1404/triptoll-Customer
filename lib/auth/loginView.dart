@@ -47,6 +47,7 @@ class _LoginViewState extends State<LoginView> {
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (secondsRemaining > 1) {
+        if (!mounted) return;
         setState(() {
           secondsRemaining--;
         });

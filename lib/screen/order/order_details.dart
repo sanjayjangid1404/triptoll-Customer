@@ -72,6 +72,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                         Text('Order Id',
                           style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w500),),
                         Text("#${authController.bookingDetailsResponse!.orderId??""}",style: TextStyle(fontSize: 14,color: AppColors.secondaryGradient,fontWeight: FontWeight.w500),),
+                      Text('Booking Id',
+                          style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w500),),
+                        Text("#${authController.bookingDetailsResponse!.id??""}",style: TextStyle(fontSize: 14,color: AppColors.secondaryGradient,fontWeight: FontWeight.w500),),
                       ],
                     ),
                     Column(

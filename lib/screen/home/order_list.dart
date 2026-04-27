@@ -790,6 +790,33 @@ class _OrderListState extends State<OrderList> {
                             ),
                           ) :
                           SizedBox.shrink(),
+                          authController.bookingListResponse.value.orders![index].driverId!=null && authController.bookingListResponse.value.orders![index].driverId!.isNotEmpty
+                          &&  authController.bookingListResponse.value.orders![index].orderStatus.toString().toLowerCase() !="delivered" &&
+                              authController.bookingListResponse.value.orders![index].orderStatus.toString().toLowerCase() !="paid" ?
+
+                          InkWell(
+                            onTap: (){
+                              Get.find<AuthController>().getBookingDriverHome(driverID:authController.bookingListResponse.value.orders![index].driverId.toString(),isCall: true,
+                                  bookingID: authController.bookingListResponse.value.orders![index].id.toString());
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
+                              child: Container(
+                                  width:double.infinity,
+                                  height:35,
+                                  alignment:Alignment.center,
+
+                                  decoration:BoxDecoration(
+                                      color: AppColors.secondaryGradient,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: Text(
+                                    authController.bookingListResponse.value.orders![index].orderStatus.toString().toLowerCase() !="delivered" ?   "Track Order" :
+                                    "${'Pay'.tr} ${AppContants.rupessSystem} ${ authController.bookingListResponse.value.orders![index].totalAmount}",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),)),
+                            ),
+                          )
+                              :
+                          SizedBox(),
                         ],
                       ),
                     ),

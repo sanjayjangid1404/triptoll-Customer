@@ -183,20 +183,20 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void startBookingRefresh() {
-    _timer?.cancel(); // Cancel previous timer if exists
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-
-
-      Get.find<AuthController>().latestBooking(status: "all",limit: "1",offset: "10");
-
-      setState(() {
-
-      });
-
-    });
-    _timer = Timer.periodic(const Duration(seconds: 10), (_) =>  Get.find<AuthController>().latestBooking(status: "all",limit: "1",offset: "10"));
-  }
+  // void startBookingRefresh() {
+  //   _timer?.cancel(); // Cancel previous timer if exists
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //
+  //
+  //     Get.find<AuthController>().latestBooking(status: "all",limit: "1",offset: "10");
+  //
+  //     setState(() {
+  //
+  //     });
+  //
+  //   });
+  //   _timer = Timer.periodic(const Duration(seconds: 10), (_) =>  Get.find<AuthController>().latestBooking(status: "all",limit: "1",offset: "10"));
+  // }
 
   void stopBookingRefresh() {
     _timer?.cancel();
@@ -331,7 +331,7 @@ class _HomePageState extends State<HomePage> {
         "user_type":"customer"
       });
 
-      startBookingRefresh();
+      // startBookingRefresh();
       _getCurrentLocation();
       setState(() {
 
@@ -1802,6 +1802,7 @@ class _HomePageState extends State<HomePage> {
                                    ),
                                  )
                               :
+                             SizedBox(),
                              // Row(
                              //   mainAxisAlignment: MainAxisAlignment.end,
                              //   children: [
@@ -1816,7 +1817,6 @@ class _HomePageState extends State<HomePage> {
                              //     )
                              //   ],
                              // ),
-                             SizedBox(),
                              SizedBox(height: 10,),
                            ],
                          );

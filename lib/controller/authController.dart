@@ -169,12 +169,12 @@ class AuthController extends GetxController implements GetxService
     _timer?.cancel();
 
     // Fetch immediately first
-    latestBooking(status: "all", limit: "1", offset: "10");
+    // latestBooking(status: "all", limit: "1", offset: "10");
 
     // Then refresh every 10 seconds
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      latestBooking(status: "all", limit: "1", offset: "10");
-    });
+    // _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    //   latestBooking(status: "all", limit: "1", offset: "10");
+    // });
   }
 
   void stopBookingRefresh() {
@@ -631,7 +631,7 @@ class AuthController extends GetxController implements GetxService
       // सिर्फ activeBookingID वाली call ही चलानी है
       getBookingDriver(bookingID: activeBookingID);
 
-      latestBooking(status: "all", limit: "1", offset: "10");
+      // latestBooking(status: "all", limit: "1", offset: "10");
 
       update();
     }
@@ -1104,6 +1104,34 @@ class AuthController extends GetxController implements GetxService
     if(response.statusCode==200 || response.statusCode ==400)
     {
       isSuccess = true;
+      final chatController = Get.find<ChatController>();
+      final payload = {
+        "booking_id":id.toString(),
+        "status": "paid"
+      };
+
+      print("📤 Sending Payload: $payload");
+      chatController.socket?.emitWithAck("updateStatus", {
+        "booking_id":  id.toString(),
+        "status": "paid"
+      },
+          ack: (response) {
+            print("ACK Response: $response");
+
+            if (response != null && response["status"] == true) {
+              print("✅ Status updated successfully");
+            } else {
+              print("❌ Failed to update status");
+            }
+          });
+      chatController.socket?.emitWithAck("completeTrip", {
+        "booking_id":id.toString(),
+        "driver_id":driverID.toString()
+      },
+          ack: (response) {
+            print("endTripSocket: $response");
+          }
+      );
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
@@ -1275,55 +1303,55 @@ class AuthController extends GetxController implements GetxService
 
   }
 
-  Future<void>latestBooking({String? status,String? limit,String? offset})
-  async {
-
-    getAllBookingLoading = true;
-
-    update();
-    print(getUserDeviceID());
-
-    if(getUserID()!=null && getUserID()!.isNotEmpty){
-      Response response = await authRepo.getRunningBooking(status: status,limit: limit,offset: offset,userID: getUserID());
-
-
-
-      latestBookingListResponse = [];
-      if(response.statusCode==200 || response.statusCode ==400)
-      {
-
-
-        if(response.body["orders"]!=null) {
-          for (int i = 0; i < response.body["orders"].length; i++) {
-            latestBookingListResponse.add(Orders.fromJson(response.body["orders"][i]));
-          }
-        }
-
-        // getAllBookingLoading = false;
-        update();
-      }
-      else {
-
-
-        // dynamic data = jsonDecode(response.body);
-
-        ApiChecker.checkApi(response);
-
-
-
-
-      }
-
-      getAllBookingLoading = false;
-      update();
-
-    }
-
-   // vehicleData = null;
-
-
-
-  }
+  // Future<void>latestBooking({String? status,String? limit,String? offset})
+  // async {
+  //
+  //   getAllBookingLoading = true;
+  //
+  //   update();
+  //   print(getUserDeviceID());
+  //
+  //   if(getUserID()!=null && getUserID()!.isNotEmpty){
+  //     Response response = await authRepo.getRunningBooking(status: status,limit: limit,offset: offset,userID: getUserID());
+  //
+  //
+  //
+  //     latestBookingListResponse = [];
+  //     if(response.statusCode==200 || response.statusCode ==400)
+  //     {
+  //
+  //
+  //       if(response.body["orders"]!=null) {
+  //         for (int i = 0; i < response.body["orders"].length; i++) {
+  //           latestBookingListResponse.add(Orders.fromJson(response.body["orders"][i]));
+  //         }
+  //       }
+  //
+  //       // getAllBookingLoading = false;
+  //       update();
+  //     }
+  //     else {
+  //
+  //
+  //       // dynamic data = jsonDecode(response.body);
+  //
+  //       ApiChecker.checkApi(response);
+  //
+  //
+  //
+  //
+  //     }
+  //
+  //     getAllBookingLoading = false;
+  //     update();
+  //
+  //   }
+  //
+  //  // vehicleData = null;
+  //
+  //
+  //
+  // }
 
   String pickupAddressMultiLocation = '';
   String pickupAddressMultiLocationLat = '';
@@ -1417,7 +1445,7 @@ class AuthController extends GetxController implements GetxService
           },
           ack: (response) {
             if (kDebugMode) {
-              print("Server response: $response");
+              print("Server response uccess: custoemr  : $response");
             }
 
             if (response == null) {
@@ -1430,13 +1458,13 @@ class AuthController extends GetxController implements GetxService
             if (response["status"] == "success") {
               if (kDebugMode) {
                 // showCustomSnackBar('${response["message"]}',isError: false,getXSnackBar: true);
-                print("✅ Success: ${response["message"]}");
+                print("✅ Success: customer  ${response["message"]}");
               }
               final payload = {
                 "booking_id": bookingID ?? "0",
               };
               if (kDebugMode) {
-                print("DRIVER LOCATION PAYLOAD: $payload");
+                print("Cancel order adsds: $payload");
               }
             } else {
               if (kDebugMode) {
@@ -1936,7 +1964,7 @@ class AuthController extends GetxController implements GetxService
     await prefs.clear();
 
     // ✅ Optional: navigate to login or splash screen
-    Get.offAndToNamed(RouteHelper.login);
+    Get.offAllNamed(RouteHelper.login);
   }
 
 
