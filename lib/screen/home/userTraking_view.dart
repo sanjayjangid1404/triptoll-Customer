@@ -21,6 +21,7 @@ import 'package:triptoll/util/custom_snackbar.dart';
 import '../../controller/authController.dart';
 import '../../socket/socket_connect_file.dart';
 import '../../util/appContants.dart';
+import '../sideMenu_item/contact_us.dart';
 import 'WalletView.dart';
 import 'feedback_screen.dart';
 
@@ -848,7 +849,21 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
                                   child: CircleAvatar(backgroundColor: AppColors.secondaryGradient,
                                     child: Icon(Icons.call_outlined,color: Colors.white,),
                                   ),
-                                ))
+                                )),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  onTap: () => Get.to(ContactUsPage()),
+                                  child: CircleAvatar(backgroundColor: AppColors.secondaryGradient,
+                                    child: Image.asset('assets/images/customer-service.png',
+                                        color: Colors.white,
+                                        height: 22,
+                                        width: 20),
+                                  ),
+                                )),
                           ],
                         ),
                         SizedBox(height: 10,),
